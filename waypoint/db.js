@@ -161,6 +161,11 @@ export async function init() {
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS condition TEXT");
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS ai_search BOOLEAN");
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS ai_product BOOLEAN");
+  await pool.query("ALTER TABLE hotels ADD COLUMN IF NOT EXISTS source_id TEXT");
+  await pool.query("ALTER TABLE hotels ADD COLUMN IF NOT EXISTS details JSONB");
+  for (const c of ["location TEXT", "date_visited TEXT", "photos JSONB", "language TEXT", "contributions INTEGER", "avatar TEXT"]) await pool.query(`ALTER TABLE reviews ADD COLUMN IF NOT EXISTS ${c}`);
+  // backfill source_id from the bundled seed for hotels that predate this column
+  for (const h of CITY_LISTINGS) if (h.sourceId) await pool.query("UPDATE hotels SET source_id=$2 WHERE id=$1 AND source_id IS NULL", [h.id, h.sourceId]);
 
   // RESEED=1 replaces every hotel/review/city with the current src/cities.js
   // seed data (votes, favourites and participant tracking are kept — they are
@@ -208,9 +213,10 @@ async function seed() {
 async function upsertHotelClient(client, h) {
   await client.query(
     `INSERT INTO hotels
-       (id,city,city_name,name,place,rating,review_count,rank,price,tags,gradient,tc,lat,lng,seo,about,amenities,sub_ratings,image,images,sort_order)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
+       (id,city,city_name,name,place,rating,review_count,rank,price,tags,gradient,tc,lat,lng,seo,about,amenities,sub_ratings,image,images,sort_order,source_id,details)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)
      ON CONFLICT (id) DO UPDATE SET
+       source_id=COALESCE(EXCLUDED.source_id, hotels.source_id), details=COALESCE(EXCLUDED.details, hotels.details),
        city=EXCLUDED.city, city_name=EXCLUDED.city_name, name=EXCLUDED.name, place=EXCLUDED.place,
        rating=EXCLUDED.rating, review_count=EXCLUDED.review_count, rank=EXCLUDED.rank, price=EXCLUDED.price,
        tags=EXCLUDED.tags, gradient=EXCLUDED.gradient, tc=EXCLUDED.tc, lat=EXCLUDED.lat, lng=EXCLUDED.lng,
@@ -224,16 +230,20 @@ async function upsertHotelClient(client, h) {
       JSON.stringify(h.amenities || []), JSON.stringify(h.subRatings || h.sub_ratings || {}),
       h.image || null, JSON.stringify(h.images || []),
       h.sortOrder ?? h.sort_order ?? 0,
+      h.sourceId || h.source_id || null,
+      h.details ? JSON.stringify(h.details) : null,
     ]
   );
 }
 
 async function insertReviewClient(client, hotelId, r) {
   await client.query(
-    `INSERT INTO reviews(hotel_id,author,origin,rating,month,trip_type,title,body,helpful,verified,source)
-     VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+    `INSERT INTO reviews(hotel_id,author,origin,rating,month,trip_type,title,body,helpful,verified,source,location,date_visited,photos,language,contributions,avatar)
+     VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
     [hotelId, r.author, r.from || r.origin, r.rating, r.month, r.tripType || r.trip_type,
-     r.title, r.text || r.body, r.helpful || 0, Boolean(r.verified), r.source || "quote"]
+     r.title, r.text || r.body, r.helpful || 0, Boolean(r.verified), r.source || "quote",
+     r.location || null, r.dateVisited || r.date_visited || null, JSON.stringify(r.photos || []), r.language || null,
+     r.contributions ?? null, r.avatar || null]
   );
 }
 
@@ -265,7 +275,7 @@ function hotelRowToApi(r) {
     place: r.place, rating: r.rating, reviewCount: r.review_count, rank: r.rank,
     price: r.price, tags: r.tags || [], gradient: r.gradient || [], tc: r.tc,
     lat: r.lat, lng: r.lng, seo: r.seo || "", about: r.about || "",
-    amenities: r.amenities || [], subRatings: r.sub_ratings || {},
+    amenities: r.amenities || [], subRatings: r.sub_ratings || {}, details: r.details || {},
     image: r.image || "", images: r.images || [],
     sortOrder: r.sort_order ?? 0,
   };
@@ -339,7 +349,59 @@ export async function getReviews(hotelId) {
     id: r.id, author: r.author, from: r.origin, rating: r.rating, month: r.month,
     tripType: r.trip_type, title: r.title, text: r.body, helpful: r.helpful,
     verified: r.verified, source: r.source,
+    location: r.location || "", dateVisited: r.date_visited || "", photos: r.photos || [], language: r.language || "",
+    contributions: r.contributions ?? null, avatar: r.avatar || "",
   }));
+}
+
+/* ---------------- guest reviews import ----------------
+   rows: [{ hotelSourceId, author, rating, date, title, text, tripType }]
+   Reviews are matched to hotels by TripAdvisor source id (or by our hotel id).
+   For every hotel that appears in `rows`, its existing guest reviews are replaced. */
+export async function importReviews(rows) {
+  const bySource = new Map(), byId = new Map();
+  const hotels = HAS_DB ? (await pool.query("SELECT id, source_id FROM hotels")).rows.map(r => ({ id: r.id, sourceId: r.source_id }))
+                        : mem.hotels.map(h => ({ id: h.id, sourceId: h.sourceId }));
+  for (const h of hotels) { if (h.sourceId) bySource.set(String(h.sourceId), h.id); byId.set(h.id, h.id); }
+  const grouped = new Map(); let unmatched = 0;
+  for (const r of rows) {
+    const key = String(r.hotelSourceId || "").trim();
+    const hid = bySource.get(key) || byId.get(key);
+    if (!hid) { unmatched++; continue; }
+    if (!grouped.has(hid)) grouped.set(hid, []);
+    let photos = [];
+    try { const a = typeof r.photos === "string" ? JSON.parse(r.photos || "[]") : (r.photos || []); if (Array.isArray(a)) photos = a.filter(x => x && x.url); } catch { photos = []; }
+    grouped.get(hid).push({
+      author: r.author || "Guest", from: "", rating: Math.max(1, Math.min(5, Math.round(Number(r.rating) || 0))) || null,
+      month: r.date || "", tripType: r.tripType || "", title: r.title || "", text: r.text || "",
+      helpful: parseInt(r.helpful, 10) || 0, verified: false, source: "quote",
+      location: r.location || "", dateVisited: r.dateVisited || "", photos, language: r.language || "",
+      contributions: parseInt(r.contributions, 10) || null, avatar: r.avatar || "",
+    });
+  }
+  let imported = 0;
+  if (!HAS_DB) {
+    for (const [hid, list] of grouped) { mem.reviews[hid] = list.map((x, i) => ({ id: i + 1, ...x })); imported += list.length; }
+  } else {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      for (const [hid, list] of grouped) {
+        await client.query("DELETE FROM reviews WHERE hotel_id=$1 AND source='quote'", [hid]);
+        for (const r of list) await insertReviewClient(client, hid, r);
+        imported += list.length;
+      }
+      await client.query("COMMIT");
+    } catch (e) { await client.query("ROLLBACK"); throw e; } finally { client.release(); }
+  }
+  return { hotels: grouped.size, reviews: imported, unmatchedRows: unmatched };
+}
+
+/* how many guest reviews each hotel currently has (admin) */
+export async function reviewCounts() {
+  if (!HAS_DB) return Object.fromEntries(Object.entries(mem.reviews).map(([k, v]) => [k, v.filter(r => r.source === "quote").length]).filter(([, n]) => n > 0));
+  const { rows } = await pool.query("SELECT hotel_id, COUNT(*)::int AS n FROM reviews WHERE source='quote' GROUP BY hotel_id");
+  return Object.fromEntries(rows.map(r => [r.hotel_id, r.n]));
 }
 
 /* ---------------- import (upsert hotels + their reviews) ---------------- */

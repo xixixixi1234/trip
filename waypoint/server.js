@@ -5,7 +5,7 @@ import path from "path";
 import multer from "multer";
 import { fileURLToPath } from "url";
 import * as db from "./db.js";
-import { parseTravelersChoiceCsv } from "./import_csv.js";
+import { parseTravelersChoiceCsv, parseCsv as parseCsvText } from "./import_csv.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -53,6 +53,36 @@ function withLocalImages(hotels) {
 console.log(`[images] remote fallback ${REMOTE_FALLBACK ? "ON (IMAGE_REMOTE_FALLBACK=1)" : "off — only local images are served"}`);
 app.use("/images", express.static(path.join(__dirname, "public", "images"), { maxAge: "7d", immutable: true }));
 
+/* ---- review photos (downloaded by scripts/download_review_images.js into public/images/reviews) ----
+   Only photos that exist locally are sent to the browser; the original URLs never leave the server. */
+const REVIEW_IMG_DIR = path.join(__dirname, "public", "images", "reviews");
+const localReviewImages = new Map();   // key (photo_id or url hash) -> filename
+function scanReviewImages() {
+  localReviewImages.clear();
+  try { for (const f of fs.readdirSync(REVIEW_IMG_DIR)) { const m = /^(.+)\.(jpe?g|png|webp|gif)$/i.exec(f); if (m) localReviewImages.set(m[1], f); } } catch {}
+  console.log(`[images] ${localReviewImages.size} local review photos in public/images/reviews`);
+}
+scanReviewImages();
+function photoKey(p) {
+  if (p.photo_id) return String(p.photo_id);
+  let h = 2166136261; const u = String(p.url || ""); for (let i = 0; i < u.length; i++) { h ^= u.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return "u" + (h >>> 0).toString(16);
+}
+const AVATAR_DIR = path.join(__dirname, "public", "images", "avatars");
+const localAvatars = new Map();
+try { for (const f of fs.readdirSync(AVATAR_DIR)) { const m = /^(.+)\.(jpe?g|png|webp|gif)$/i.exec(f); if (m) localAvatars.set(m[1], f); } } catch {}
+console.log(`[images] ${localAvatars.size} local reviewer avatars in public/images/avatars`);
+function withLocalReviewPhotos(reviews) {
+  return reviews.map(r => {
+    const af = r.avatar ? localAvatars.get(photoKey({ url: r.avatar })) : null;
+    return {
+      ...r,
+      avatar: af ? `/images/avatars/${af}` : "",     // local file or nothing — never the original URL
+      photos: (r.photos || []).map(p => { const f = localReviewImages.get(photoKey(p)); return f ? { src: `/images/reviews/${f}`, caption: p.caption || "" } : null; }).filter(Boolean),
+    };
+  });
+}
+
 /* ============================================================
    Public data API (hotels, cities, reviews) — served from the DB
    ============================================================ */
@@ -92,7 +122,7 @@ app.get("/api/hotels", async (req, res) => {
 });
 
 app.get("/api/hotels/:id/reviews", async (req, res) => {
-  try { res.json(await db.getReviews(req.params.id)); }
+  try { res.json(withLocalReviewPhotos(await db.getReviews(req.params.id))); }
   catch (e) { console.error(e); res.status(500).json({ error: "failed to load reviews" }); }
 });
 
@@ -363,6 +393,34 @@ app.get("/api/admin/export/hotel_events.csv", requireAdmin, async (_req, res) =>
   } catch (e) { console.error(e); res.status(500).json({ error: "export failed" }); }
 });
 
+/* admin: import guest reviews (CSV produced by scripts/filter_reviews.py)
+   columns: hotel_id (TripAdvisor id, e.g. 210755), author, rating (1-5), date, title, text, trip_type */
+const uploadBig = multer({ storage: multer.memoryStorage(), limits: { fileSize: 200 * 1024 * 1024 } });
+app.post("/api/admin/import-reviews", requireAdmin, uploadBig.single("file"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "Please choose a CSV file." });
+    const text = req.file.buffer.toString("utf8");
+    const table = parseCsvText(text);
+    if (table.length < 2) return res.status(400).json({ error: "CSV appears to be empty." });
+    const header = table[0].map(h => h.trim().replace(/^\ufeff/, "").toLowerCase());
+    const col = name => header.indexOf(name);
+    const need = ["hotel_id", "text"];
+    for (const n of need) if (col(n) < 0) return res.status(400).json({ error: `Missing column "${n}". Expected: hotel_id, author, rating, date, title, text, trip_type` });
+    const get = (r, name) => { const i = col(name); return i >= 0 ? (r[i] ?? "") : ""; };
+    const rows = table.slice(1).filter(r => r.length > 1).map(r => ({
+      hotelSourceId: get(r, "hotel_id"), author: get(r, "author"), rating: get(r, "rating"),
+      date: get(r, "date"), title: get(r, "title"), text: get(r, "text"), tripType: get(r, "trip_type"),
+      location: get(r, "location"), dateVisited: get(r, "date_visited"), helpful: get(r, "helpful"), photos: get(r, "photos"), language: get(r, "language"),
+      contributions: get(r, "contributions"), avatar: get(r, "avatar"),
+    })).filter(r => String(r.text).trim());
+    const result = await db.importReviews(rows);
+    res.json({ ok: true, rowsInFile: rows.length, ...result });
+  } catch (e) { console.error("Review import failed:", e); res.status(400).json({ error: e.message || "Import failed" }); }
+});
+app.get("/api/admin/review-counts", requireAdmin, async (_req, res) => {
+  try { res.json(await db.reviewCounts()); } catch (e) { res.status(500).json({ error: "failed" }); }
+});
+
 /* admin: edit a hotel's official description / AI summary */
 app.post("/api/admin/hotel-text", requireAdmin, async (req, res) => {
   const { id, about, seo } = req.body || {};
@@ -619,6 +677,18 @@ const ADMIN_HTML = `<!doctype html>
   <!-- IMPORT -->
   <div class="view" id="view-import">
     <div class="panel">
+      <h2 style="margin-top:0">Import guest reviews</h2>
+      <p class="sub">Upload the CSV produced by <code>scripts/filter_reviews.py</code> (columns: <code>hotel_id, author, location, rating, date, date_visited, title, text, trip_type, helpful, photos, language, contributions, avatar</code>; only <code>hotel_id</code> and <code>text</code> are required; <code>hotel_id</code> is the TripAdvisor id such as 210755). Review photos show only after <code>npm run review-images</code> has downloaded them.. Reviews are matched to the 400 hotels by that id. For each hotel present in the file, its existing reviews are <b>replaced</b>; hotels not in the file are untouched. Reviews show on the hotel detail page.</p>
+      <form id="reviewForm">
+        <label>Reviews CSV</label>
+        <input type="file" name="file" accept=".csv" required />
+        <div style="margin-top:10px;display:flex;gap:10px;align-items:center"><button class="btn" type="submit">Import reviews</button><span class="muted" id="reviewMsg"></span></div>
+      </form>
+      <div id="reviewStats" class="muted" style="margin-top:10px"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Import hotels</h2>
       <p class="sub" style="margin-top:0">Upload a <b>Travelers' Choice format</b> CSV (same columns as the sample data). It is cleaned automatically and ranked by "has AI review, then has guest quote, then award winner, then high rating", keeping the top 400 per city by default (no hard rating cutoff, mixed quality), then written to the database. Existing hotels are updated (deduped by hotel name). If your CSV has an <b>image_url</b> column, hotel photos are loaded automatically (single URL, or several separated by | or comma).</p>
       <form id="importForm">
         <label>CSV file (required)</label>
@@ -659,6 +729,24 @@ const ADMIN_HTML = `<!doctype html>
     if (m < 60) return m + 'm ' + r + 's';
     const h = Math.floor(m/60); return h + 'h ' + (m%60) + 'm';
   }
+
+  // ---- Import reviews ----
+  async function loadReviewStats(){
+    try { const r = await fetch('/api/admin/review-counts'); const c = await r.json();
+      const n = Object.keys(c).length, total = Object.values(c).reduce((a,b)=>a+b,0);
+      document.getElementById('reviewStats').textContent = n ? ('Currently: '+total+' guest reviews on '+n+' hotels.') : 'No guest reviews imported yet.';
+    } catch(e){}
+  }
+  document.getElementById('reviewForm').onsubmit = async (ev) => {
+    ev.preventDefault(); const msg = document.getElementById('reviewMsg'); msg.textContent = 'Importing…'; msg.style.color='';
+    try {
+      const r = await fetch('/api/admin/import-reviews', { method:'POST', body: new FormData(ev.target) });
+      const d = await r.json(); if (!r.ok) throw new Error(d.error||'Import failed');
+      msg.style.color='#2E7D5B'; msg.textContent = 'Imported '+d.reviews+' reviews for '+d.hotels+' hotels ('+d.rowsInFile+' rows in file, '+d.unmatchedRows+' rows did not match any hotel).';
+      loadReviewStats();
+    } catch(e) { msg.style.color='#B3261E'; msg.textContent = e.message; }
+  };
+  document.querySelector('.tab[data-tab="import"]').addEventListener('click', loadReviewStats);
 
   // ---- Edit hotel text ----
   let textHotels = [], textLoaded = false;

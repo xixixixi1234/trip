@@ -23,7 +23,7 @@ const GRADIENTS = [
 ];
 
 /* ---- tiny RFC-4180-ish CSV parser (handles quotes, commas, newlines) ---- */
-function parseCsv(text) {
+export function parseCsv(text) {
   // strip BOM
   if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
   const rows = [];
@@ -216,8 +216,21 @@ export function parseTravelersChoiceCsv(text, opts = {}) {
       };
     });
 
+    // "About" details from the extended export (optional columns)
+    const numf = v => { const n = parseFloat(String(v ?? "").trim()); return Number.isFinite(n) ? Math.round(n * 10) / 10 : null; };
+    const lstc = v => clean(v).split(",").map(x => x.trim()).filter(Boolean);
+    const realSub = Object.fromEntries([["Location", "位置评分"], ["Rooms", "客房评分"], ["Value", "性价比评分"], ["Cleanliness", "清洁度评分"], ["Service", "服务评分"], ["Sleep quality", "睡眠质量评分"]]
+      .map(([k, c]) => [k, numf(rec[c])]).filter(([, v]) => v != null));
+    const dist = Object.fromEntries([["Excellent", "Excellent数"], ["Good", "Good数"], ["Average", "Average数"], ["Poor", "Poor数"], ["Terrible", "Terrible数"]].map(([k, c]) => [k, parseInt(String(rec[c] ?? "").replace(/,/g, ""), 10) || 0]));
+    const sm = /([\d.]+)\s*of\s*5/.exec(clean(rec["酒店星级"]));
+    const details = {
+      label: clean(rec["评价标签"]), distribution: Object.values(dist).some(x => x > 0) ? dist : {},
+      propertyAmenities: splitList(rec["酒店设施"]), roomFeatures: splitList(rec["客房设施"]), roomTypes: splitList(rec["房型"]),
+      hotelClass: sm && parseFloat(sm[1]) > 0 ? parseFloat(sm[1]) : null, styles: lstc(rec["酒店风格"]), languages: lstc(rec["服务语言"]),
+    };
+
     return {
-      id: hid, type: "Hotel", city: cityKey, cityName, country,
+      id: hid, type: "Hotel", city: cityKey, cityName, country, details,
       name, place: clean(rec["地址"]) || cityName,
       rating, reviewCount,
       rank: clean(rec["排名描述"]) || `Traveller favourite in ${cityName}`,
@@ -228,7 +241,7 @@ export function parseTravelersChoiceCsv(text, opts = {}) {
       seo,
       image, images,
       about: clean(rec["酒店描述"]),   // official hotel description (may be empty)
-      amenities: amenitiesFrom(rec), subRatings: subRatings(rating, seed),
+      amenities: amenitiesFrom(rec), subRatings: realSub,   // real sub-ratings only (empty if the CSV lacks them)
       _reviews: reviews,
     };
   });
