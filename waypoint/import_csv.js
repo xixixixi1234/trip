@@ -87,10 +87,12 @@ function imagesFrom(row) {
   return { image: urls[0] || "", images: urls };
 }
 function priceStr(row) {
-  const lo = num(row["价格区间最低"]), hi = num(row["价格区间最高"]);
-  if (Number.isFinite(lo) && Number.isFinite(hi) && hi > 0) return `$${Math.round(lo)} – $${Math.round(hi)} / night`;
+  // TripAdvisor-style "from $X": lowest available price, else the low end of the range
   const disp = clean(row["显示价格"]) || clean(row["最低价格"]);
-  return disp ? `from ${disp} / night` : "Price on request";
+  const m = /[\d,]+/.exec(disp);
+  if (m) return `from $${parseInt(m[0].replace(/,/g, ""), 10)}`;
+  const lo = num(row["价格区间最低"]);
+  return Number.isFinite(lo) && lo > 0 ? `from $${Math.round(lo)}` : "";
 }
 function subRatings(rating, seed) {
   const base = Number(rating) || 4;

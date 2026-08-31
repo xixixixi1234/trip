@@ -73,7 +73,7 @@ export const CITY_LISTINGS = [
     "rating": 5.0,
     "reviewCount": 5,
     "rank": "#841 of 1,209 hotels in London",
-    "price": "$106 – $293 / night",
+    "price": "from $143",
     "tags": [
       "Centrally Located, City View, Mid-range",
       "Air conditioning",
@@ -172,7 +172,7 @@ export const CITY_LISTINGS = [
     "rating": 3.0,
     "reviewCount": 1336,
     "rank": "#1,042 of 1,209 hotels in London",
-    "price": "$103 – $154 / night",
+    "price": "from $103",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Budget",
       "Free Wifi"
@@ -251,7 +251,7 @@ export const CITY_LISTINGS = [
     "rating": 2.8,
     "reviewCount": 1185,
     "rank": "#1,057 of 1,209 hotels in London",
-    "price": "$114 – $222 / night",
+    "price": "from $114",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Mid-range, Classic",
       "Restaurant",
@@ -341,7 +341,7 @@ export const CITY_LISTINGS = [
     "rating": 2.3,
     "reviewCount": 734,
     "rank": "#1,160 of 1,209 hotels in London",
-    "price": "$120 – $273 / night",
+    "price": "from $120",
     "tags": [
       "Centrally Located, Mid-range",
       "Free Wifi"
@@ -416,7 +416,7 @@ export const CITY_LISTINGS = [
     "rating": 2.3,
     "reviewCount": 21,
     "rank": "#1,144 of 1,209 hotels in London",
-    "price": "$102 – $275 / night",
+    "price": "from $102",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Budget",
       "Family Friendly"
@@ -504,7 +504,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 4295,
     "rank": "#4 of 1,209 hotels in London",
-    "price": "$438 – $1873 / night",
+    "price": "from $438",
     "tags": [
       "Romantic, Business, Value, Boutique, City View",
       "Restaurant",
@@ -629,7 +629,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 3044,
     "rank": "#14 of 1,209 hotels in London",
-    "price": "$542 – $1212 / night",
+    "price": "from $542",
     "tags": [
       "Romantic, Boutique, Residential Neighborhood, Business, Great View",
       "Pool",
@@ -767,7 +767,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 2910,
     "rank": "#8 of 1,516 Speciality lodging in London",
-    "price": "$426 – $835 / night",
+    "price": "from $411",
     "tags": [
       "Family, Trendy, Historic Hotel, Centrally Located, Quaint",
       "Fitness centre",
@@ -864,7 +864,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 2820,
     "rank": "#1 of 1,209 hotels in London",
-    "price": "$298 – $633 / night",
+    "price": "from $355",
     "tags": [
       "Family, Centrally Located, Romantic, Charming, Modern",
       "Air conditioning",
@@ -979,7 +979,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 8750,
     "rank": "#41 of 1,209 hotels in London",
-    "price": "$293 – $615 / night",
+    "price": "from $286",
     "tags": [
       "Romantic, Business, Great View, Modern, Charming",
       "Restaurant",
@@ -1139,7 +1139,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 7897,
     "rank": "#26 of 1,209 hotels in London",
-    "price": "$749 – $1255 / night",
+    "price": "from $903",
     "tags": [
       "Family, Trendy, City View, Centrally Located, Romantic",
       "Pool",
@@ -1308,7 +1308,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 6120,
     "rank": "#19 of 1,209 hotels in London",
-    "price": "$299 – $1011 / night",
+    "price": "from $320",
     "tags": [
       "Romantic, Residential Neighborhood, Business, Value, Boutique",
       "Restaurant",
@@ -1460,7 +1460,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 5966,
     "rank": "#9 of 1,209 hotels in London",
-    "price": "$376 – $956 / night",
+    "price": "from $357",
     "tags": [
       "Romantic, Residential Neighborhood, Business, Boutique, Charming",
       "Restaurant",
@@ -1585,7 +1585,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 8977,
     "rank": "#13 of 1,209 hotels in London",
-    "price": "$376 – $647 / night",
+    "price": "from $389",
     "tags": [
       "Romantic, Business, Quiet, Centrally Located, Historic Hotel",
       "Restaurant",
@@ -1712,7 +1712,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 6566,
     "rank": "#71 of 1,209 hotels in London",
-    "price": "$375 – $1251 / night",
+    "price": "from $375",
     "tags": [
       "Romantic, Business, Trendy, Modern, Charming",
       "Restaurant",
@@ -1860,7 +1860,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 6192,
     "rank": "#62 of 1,209 hotels in London",
-    "price": "$327 – $770 / night",
+    "price": "from $431",
     "tags": [
       "Romantic, Residential Neighborhood, Business, Trendy, Modern",
       "Pool",
@@ -2009,7 +2009,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 5821,
     "rank": "#32 of 1,209 hotels in London",
-    "price": "$339 – $708 / night",
+    "price": "from $396",
     "tags": [
       "Romantic, Boutique, Business, Charming, Quiet",
       "Restaurant",
@@ -2135,7 +2135,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 9591,
     "rank": "#177 of 1,209 hotels in London",
-    "price": "$278 – $710 / night",
+    "price": "from $393",
     "tags": [
       "Family, Trendy, City View, Romantic, Harbour View",
       "Pool",
@@ -2307,7 +2307,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 7485,
     "rank": "#139 of 1,209 hotels in London",
-    "price": "$297 – $662 / night",
+    "price": "from $310",
     "tags": [
       "Family, Trendy, Centrally Located, Romantic, Harbour View",
       "Spa",
@@ -2439,7 +2439,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 6477,
     "rank": "#35 of 1,209 hotels in London",
-    "price": "$273 – $679 / night",
+    "price": "from $273",
     "tags": [
       "Romantic, Business, Great View, Charming, Centrally Located",
       "Restaurant",
@@ -2562,7 +2562,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 6713,
     "rank": "#246 of 1,209 hotels in London",
-    "price": "$225 – $630 / night",
+    "price": "from $225",
     "tags": [
       "Business, Trendy, Modern, Great View, Quiet",
       "Restaurant",
@@ -2713,7 +2713,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 6594,
     "rank": "#345 of 1,209 hotels in London",
-    "price": "$227 – $565 / night",
+    "price": "from $303",
     "tags": [
       "Business, Value, Boutique, Trendy, Modern",
       "Restaurant",
@@ -2830,7 +2830,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 6223,
     "rank": "#359 of 1,209 hotels in London",
-    "price": "$233 – $510 / night",
+    "price": "from $250",
     "tags": [
       "Business, Trendy, Modern, Great View, Quiet",
       "Spa",
@@ -2948,7 +2948,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 5481,
     "rank": "#196 of 1,209 hotels in London",
-    "price": "$329 – $927 / night",
+    "price": "from $329",
     "tags": [
       "Business, Trendy, Modern, Charming, Quiet",
       "Restaurant",
@@ -3109,7 +3109,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 11997,
     "rank": "#410 of 1,209 hotels in London",
-    "price": "$158 – $328 / night",
+    "price": "from $173",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Green",
       "Restaurant",
@@ -3213,7 +3213,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 8943,
     "rank": "#226 of 1,209 hotels in London",
-    "price": "$295 – $597 / night",
+    "price": "from $295",
     "tags": [
       "Romantic, Business, Charming, Great View, Quiet",
       "Restaurant",
@@ -3375,7 +3375,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 6937,
     "rank": "#250 of 1,209 hotels in London",
-    "price": "$124 – $322 / night",
+    "price": "from $139",
     "tags": [
       "Romantic, Trendy, Mid-range",
       "Restaurant",
@@ -3462,7 +3462,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 5285,
     "rank": "#445 of 1,209 hotels in London",
-    "price": "$149 – $440 / night",
+    "price": "from $177",
     "tags": [
       "Trendy, Centrally Located, Modern, Quirky Hotels, Great View",
       "Restaurant",
@@ -3580,7 +3580,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 9511,
     "rank": "#105 of 1,209 hotels in London",
-    "price": "$172 – $505 / night",
+    "price": "from $153",
     "tags": [
       "Business, Trendy, Modern, Great View, Quiet",
       "Restaurant",
@@ -3698,7 +3698,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 7708,
     "rank": "#336 of 1,209 hotels in London",
-    "price": "$201 – $449 / night",
+    "price": "from $233",
     "tags": [
       "Business, Great View, Modern, Harbour View, Quiet",
       "Pool",
@@ -3844,7 +3844,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 7316,
     "rank": "#557 of 1,209 hotels in London",
-    "price": "$180 – $367 / night",
+    "price": "from $180",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Mid-range",
       "Restaurant",
@@ -3944,7 +3944,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 5105,
     "rank": "#116 of 1,209 hotels in London",
-    "price": "$401 – $959 / night",
+    "price": "from $401",
     "tags": [
       "Business, Modern, Great View, Quiet, Centrally Located",
       "Spa",
@@ -4070,7 +4070,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 4455,
     "rank": "#447 of 1,209 hotels in London",
-    "price": "$264 – $611 / night",
+    "price": "from $264",
     "tags": [
       "Business, Trendy, Modern, Charming, Quiet",
       "Restaurant",
@@ -4179,7 +4179,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 7830,
     "rank": "#523 of 1,209 hotels in London",
-    "price": "$115 – $275 / night",
+    "price": "from $115",
     "tags": [
       "Mid-range, Centrally Located, Modern, Residential Neighbourhood",
       "Air conditioning",
@@ -4259,7 +4259,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 7205,
     "rank": "#358 of 1,209 hotels in London",
-    "price": "$423 – $871 / night",
+    "price": "from $423",
     "tags": [
       "Romantic, Business, Trendy, Modern, Quiet",
       "Spa",
@@ -4381,7 +4381,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 4856,
     "rank": "#521 of 1,209 hotels in London",
-    "price": "$102 – $271 / night",
+    "price": "from $102",
     "tags": [
       "Centrally Located, Budget, Modern, Green, Quiet",
       "Air conditioning",
@@ -4475,7 +4475,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 3736,
     "rank": "#146 of 1,209 hotels in London",
-    "price": "$227 – $551 / night",
+    "price": "from $227",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Mid-range",
       "Restaurant",
@@ -4602,7 +4602,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 3528,
     "rank": "#369 of 1,209 hotels in London",
-    "price": "$144 – $243 / night",
+    "price": "from $144",
     "tags": [
       "Residential Neighborhood, Business, Charming, Centrally Located, Park View",
       "Restaurant",
@@ -4696,7 +4696,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 15144,
     "rank": "#542 of 1,209 hotels in London",
-    "price": "$153 – $357 / night",
+    "price": "from $159",
     "tags": [
       "Business, Modern, Harbor View, Great View, Quiet",
       "Restaurant",
@@ -4811,7 +4811,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 7059,
     "rank": "#205 of 1,209 hotels in London",
-    "price": "$343 – $729 / night",
+    "price": "from $343",
     "tags": [
       "Business, Charming, Quiet, Centrally Located, Historic Hotel",
       "Restaurant",
@@ -4955,7 +4955,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 2494,
     "rank": "#405 of 1,209 hotels in London",
-    "price": "$159 – $375 / night",
+    "price": "from $159",
     "tags": [
       "Residential Neighborhood, Business, Modern, Quiet, Centrally Located",
       "Restaurant",
@@ -5083,7 +5083,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 1854,
     "rank": "#621 of 1,209 hotels in London",
-    "price": "$122 – $371 / night",
+    "price": "from $237",
     "tags": [
       "Business, Modern, Quiet, Mid-range, Family",
       "Bar/Lounge",
@@ -5192,7 +5192,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 6892,
     "rank": "#156 of 1,209 hotels in London",
-    "price": "$247 – $573 / night",
+    "price": "from $247",
     "tags": [
       "Business, Trendy, Modern, Quiet, Centrally Located",
       "Restaurant",
@@ -5333,7 +5333,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 26744,
     "rank": "#427 of 1,209 hotels in London",
-    "price": "$266 – $536 / night",
+    "price": "from $266",
     "tags": [
       "Budget, Quaint",
       "Pool",
@@ -5400,7 +5400,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 6973,
     "rank": "#412 of 1,209 hotels in London",
-    "price": "$303 – $639 / night",
+    "price": "from $303",
     "tags": [
       "Romantic, Business, Quiet, Centrally Located, Historic Hotel",
       "Spa",
@@ -5548,7 +5548,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 5782,
     "rank": "#545 of 1,209 hotels in London",
-    "price": "$124 – $285 / night",
+    "price": "from $124",
     "tags": [
       "Residential Neighborhood, Business, Modern, Quiet, Centrally Located",
       "Restaurant",
@@ -5653,7 +5653,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 4859,
     "rank": "#643 of 1,209 hotels in London",
-    "price": "$351 – $751 / night",
+    "price": "from $385",
     "tags": [
       "Luxury, Quaint",
       "Pool",
@@ -5715,7 +5715,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 6770,
     "rank": "#838 of 1,209 hotels in London",
-    "price": "$151 – $324 / night",
+    "price": "from $151",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Mid-range",
       "Restaurant",
@@ -5817,7 +5817,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 4946,
     "rank": "#217 of 1,209 hotels in London",
-    "price": "$144 – $340 / night",
+    "price": "from $208",
     "tags": [
       "Residential Neighborhood, Business, Modern, Quiet, Centrally Located",
       "Pool",
@@ -5966,7 +5966,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 3122,
     "rank": "#562 of 1,209 hotels in London",
-    "price": "$221 – $483 / night",
+    "price": "from $221",
     "tags": [
       "Residential Neighborhood, Business, Modern, Quiet, Green",
       "Pool",
@@ -6084,7 +6084,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 6406,
     "rank": "#594 of 1,209 hotels in London",
-    "price": "$109 – $345 / night",
+    "price": "from $159",
     "tags": [
       "Romantic, Residential Neighborhood, Business, Charming, Quiet",
       "Restaurant",
@@ -6191,7 +6191,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 5678,
     "rank": "#493 of 1,209 hotels in London",
-    "price": "$178 – $417 / night",
+    "price": "from $178",
     "tags": [
       "Residential Neighborhood, Business, Charming, Quiet, Centrally Located",
       "Restaurant",
@@ -6300,7 +6300,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 5640,
     "rank": "#141 of 1,209 hotels in London",
-    "price": "$210 – $494 / night",
+    "price": "from $206",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Green",
       "Restaurant",
@@ -6431,7 +6431,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 2849,
     "rank": "#646 of 1,209 hotels in London",
-    "price": "$327 – $607 / night",
+    "price": "from $366",
     "tags": [
       "Business, Charming, Quiet, Centrally Located, Green",
       "Restaurant",
@@ -6534,7 +6534,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 2797,
     "rank": "#291 of 1,209 hotels in London",
-    "price": "$81 – $278 / night",
+    "price": "from $81",
     "tags": [
       "Family, Modern, Budget",
       "Restaurant",
@@ -6611,7 +6611,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 16387,
     "rank": "#484 of 1,209 hotels in London",
-    "price": "$89 – $251 / night",
+    "price": "from $89",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Budget",
       "Restaurant"
@@ -6694,7 +6694,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 5978,
     "rank": "#414 of 1,209 hotels in London",
-    "price": "$81 – $304 / night",
+    "price": "from $81",
     "tags": [
       "Business, Modern, Residential Neighbourhood, Mid-range",
       "Restaurant",
@@ -6796,7 +6796,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 5564,
     "rank": "#371 of 1,209 hotels in London",
-    "price": "$89 – $874 / night",
+    "price": "from $89",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Budget",
       "Restaurant",
@@ -6881,7 +6881,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 5522,
     "rank": "#318 of 1,209 hotels in London",
-    "price": "$193 – $419 / night",
+    "price": "from $202",
     "tags": [
       "Residential Neighborhood, Business, Modern, Quiet, Mid-range",
       "Restaurant",
@@ -7009,7 +7009,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 4511,
     "rank": "#451 of 1,209 hotels in London",
-    "price": "$83 – $274 / night",
+    "price": "from $83",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Budget",
       "Restaurant"
@@ -7090,7 +7090,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 4366,
     "rank": "#622 of 1,209 hotels in London",
-    "price": "$195 – $514 / night",
+    "price": "from $195",
     "tags": [
       "Business, Quiet, Centrally Located, Green, Mid-range",
       "Restaurant",
@@ -7197,7 +7197,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 3495,
     "rank": "#670 of 1,209 hotels in London",
-    "price": "$85 – $294 / night",
+    "price": "from $85",
     "tags": [
       "Family, Centrally Located, Budget, Modern, Business",
       "Restaurant",
@@ -7282,7 +7282,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 3426,
     "rank": "#452 of 1,209 hotels in London",
-    "price": "$134 – $351 / night",
+    "price": "from $134",
     "tags": [
       "Residential Neighborhood, Business, Modern, Quiet, Centrally Located",
       "Restaurant",
@@ -7401,7 +7401,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 6479,
     "rank": "#225 of 1,209 hotels in London",
-    "price": "$132 – $302 / night",
+    "price": "from $132",
     "tags": [
       "Business, Quiet, Centrally Located, Mid-range, Classic",
       "Restaurant",
@@ -7514,7 +7514,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 5955,
     "rank": "#510 of 1,209 hotels in London",
-    "price": "$133 – $394 / night",
+    "price": "from $133",
     "tags": [
       "Business, Modern, Quiet, Green, Mid-range",
       "Restaurant",
@@ -7656,7 +7656,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 5907,
     "rank": "#630 of 1,209 hotels in London",
-    "price": "$217 – $515 / night",
+    "price": "from $217",
     "tags": [
       "Business, Quiet, Centrally Located, Green, Mid-range",
       "Restaurant",
@@ -7794,7 +7794,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 3368,
     "rank": "#635 of 1,209 hotels in London",
-    "price": "$47 – $150 / night",
+    "price": "from $47",
     "tags": [
       "Residential Neighborhood, Business, Modern, Great View, Harbor View",
       "Restaurant",
@@ -7921,7 +7921,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 2148,
     "rank": "#687 of 1,209 hotels in London",
-    "price": "$309 – $567 / night",
+    "price": "from $309",
     "tags": [
       "Business, Quiet, Centrally Located, Mid-range, Family",
       "Restaurant",
@@ -8030,7 +8030,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 2023,
     "rank": "#667 of 1,209 hotels in London",
-    "price": "$142 – $356 / night",
+    "price": "from $142",
     "tags": [
       "Business, Quiet, Centrally Located, Mid-range, Family",
       "Restaurant",
@@ -8135,7 +8135,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 1204,
     "rank": "#61 of 737 B&Bs / Inns in London",
-    "price": "$150 – $301 / night",
+    "price": "from $150",
     "tags": [
       "Boutique, Family, Mid-range, Centrally Located, Residential Neighborhood",
       "Free Wifi"
@@ -8230,7 +8230,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 1148,
     "rank": "#619 of 1,209 hotels in London",
-    "price": "$159 – $372 / night",
+    "price": "from $206",
     "tags": [
       "Residential Neighborhood, Business, Boutique, Trendy, Modern",
       "Restaurant",
@@ -8324,7 +8324,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 2970,
     "rank": "#688 of 1,209 hotels in London",
-    "price": "$142 – $280 / night",
+    "price": "from $175",
     "tags": [
       "Residential Neighborhood, Business, Quiet, Centrally Located, Mid-range",
       "Restaurant",
@@ -8431,7 +8431,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 2766,
     "rank": "#568 of 1,209 hotels in London",
-    "price": "$158 – $394 / night",
+    "price": "from $158",
     "tags": [
       "Business, Modern, Quiet, Centrally Located, Mid-range",
       "Restaurant",
@@ -8552,7 +8552,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 10405,
     "rank": "#472 of 1,209 hotels in London",
-    "price": "$109 – $280 / night",
+    "price": "from $109",
     "tags": [
       "Residential Neighborhood, Business, Quiet, Centrally Located, Mid-range",
       "Restaurant",
@@ -8667,7 +8667,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 6232,
     "rank": "#607 of 1,209 hotels in London",
-    "price": "$389 – $577 / night",
+    "price": "from $389",
     "tags": [
       "Residential Neighborhood, Business, Quiet, Centrally Located, Park View",
       "Restaurant",
@@ -8773,7 +8773,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 6057,
     "rank": "#736 of 1,209 hotels in London",
-    "price": "$125 – $356 / night",
+    "price": "from $125",
     "tags": [
       "Residential Neighborhood, Business, Modern, Quiet, Centrally Located",
       "Restaurant",
@@ -8911,7 +8911,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1217,
     "rank": "#702 of 1,209 hotels in London",
-    "price": "$113 – $233 / night",
+    "price": "from $113",
     "tags": [
       "Quiet, Centrally Located, Budget",
       "Free Wifi"
@@ -8994,7 +8994,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 933,
     "rank": "#697 of 1,209 hotels in London",
-    "price": "$168 – $378 / night",
+    "price": "from $223",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Mid-range, Family",
       "Bar/Lounge",
@@ -9095,7 +9095,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 844,
     "rank": "#720 of 1,209 hotels in London",
-    "price": "$104 – $267 / night",
+    "price": "from $158",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Mid-range",
       "Bar/Lounge",
@@ -9182,7 +9182,7 @@ export const CITY_LISTINGS = [
     "rating": 3.4,
     "reviewCount": 2660,
     "rank": "#902 of 1,209 hotels in London",
-    "price": "$119 – $271 / night",
+    "price": "from $119",
     "tags": [
       "Family, Centrally Located, Modern, Mid-range",
       "Air conditioning",
@@ -9259,7 +9259,7 @@ export const CITY_LISTINGS = [
     "rating": 3.4,
     "reviewCount": 1649,
     "rank": "#604 of 1,209 hotels in London",
-    "price": "$88 – $216 / night",
+    "price": "from $88",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Park View, Budget"
     ],
@@ -9346,7 +9346,7 @@ export const CITY_LISTINGS = [
     "rating": 3.4,
     "reviewCount": 1523,
     "rank": "#69 of 1,516 Speciality lodging in London",
-    "price": "$43 – $240 / night",
+    "price": "from $43",
     "tags": [
       "Budget",
       "Bar/Lounge",
@@ -9432,7 +9432,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 3946,
     "rank": "#800 of 1,209 hotels in London",
-    "price": "$124 – $357 / night",
+    "price": "from $124",
     "tags": [
       "Business, Quiet, Mid-range, Family, City View",
       "Restaurant",
@@ -9554,7 +9554,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 3012,
     "rank": "#818 of 1,209 hotels in London",
-    "price": "$205 – $492 / night",
+    "price": "from $205",
     "tags": [
       "Quiet, Centrally Located, Mid-range, Family",
       "Restaurant",
@@ -9647,7 +9647,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 1260,
     "rank": "#807 of 1,209 hotels in London",
-    "price": "$73 – $201 / night",
+    "price": "from $73",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Park View, Budget",
       "Free Wifi"
@@ -9725,7 +9725,7 @@ export const CITY_LISTINGS = [
     "rating": 3.2,
     "reviewCount": 1611,
     "rank": "#887 of 1,209 hotels in London",
-    "price": "$95 – $223 / night",
+    "price": "from $95",
     "tags": [
       "Residential Neighbourhood, Modern, Quiet, Mid-range",
       "Restaurant",
@@ -9807,7 +9807,7 @@ export const CITY_LISTINGS = [
     "rating": 3.2,
     "reviewCount": 1347,
     "rank": "#842 of 1,209 hotels in London",
-    "price": "$147 – $330 / night",
+    "price": "from $147",
     "tags": [
       "Quiet, Centrally Located, Mid-range, Family",
       "Air conditioning",
@@ -9892,7 +9892,7 @@ export const CITY_LISTINGS = [
     "rating": 3.2,
     "reviewCount": 550,
     "rank": "#853 of 1,209 hotels in London",
-    "price": "$149 – $291 / night",
+    "price": "from $149",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Mid-range, Family"
     ],
@@ -9988,7 +9988,7 @@ export const CITY_LISTINGS = [
     "rating": 3.1,
     "reviewCount": 128,
     "rank": "#406 of 1,516 Speciality lodging in London",
-    "price": "$38 – $106 / night",
+    "price": "from $38",
     "tags": [
       "Budget",
       "Free Wifi"
@@ -10056,7 +10056,7 @@ export const CITY_LISTINGS = [
     "rating": 3.1,
     "reviewCount": 97,
     "rank": "#799 of 1,516 Speciality lodging in London",
-    "price": "$108 – $250 / night",
+    "price": "from $108",
     "tags": [
       "Mid-range",
       "Free Wifi"
@@ -10123,7 +10123,7 @@ export const CITY_LISTINGS = [
     "rating": 3.0,
     "reviewCount": 2610,
     "rank": "#104 of 1,516 Speciality lodging in London",
-    "price": "$90 – $335 / night",
+    "price": "from $90",
     "tags": [
       "Family, Mid-range, Quiet, Modern, Business",
       "Free Wifi"
@@ -10221,7 +10221,7 @@ export const CITY_LISTINGS = [
     "rating": 3.0,
     "reviewCount": 2508,
     "rank": "#722 of 1,209 hotels in London",
-    "price": "$72 – $243 / night",
+    "price": "from $72",
     "tags": [
       "Business, Centrally Located, Budget"
     ],
@@ -10295,7 +10295,7 @@ export const CITY_LISTINGS = [
     "rating": 2.9,
     "reviewCount": 1317,
     "rank": "#289 of 737 B&Bs / Inns in London",
-    "price": "$172 – $1099 / night",
+    "price": "from $172",
     "tags": [
       "City View, Budget, Centrally Located, Residential Neighborhood",
       "Air conditioning",
@@ -10394,7 +10394,7 @@ export const CITY_LISTINGS = [
     "rating": 2.9,
     "reviewCount": 829,
     "rank": "#964 of 1,209 hotels in London",
-    "price": "$108 – $245 / night",
+    "price": "from $108",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Budget",
       "Free Wifi"
@@ -10473,7 +10473,7 @@ export const CITY_LISTINGS = [
     "rating": 2.9,
     "reviewCount": 761,
     "rank": "#988 of 1,209 hotels in London",
-    "price": "$130 – $449 / night",
+    "price": "from $130",
     "tags": [
       "Quiet, Centrally Located, Mid-range",
       "Air conditioning"
@@ -10557,7 +10557,7 @@ export const CITY_LISTINGS = [
     "rating": 2.8,
     "reviewCount": 5599,
     "rank": "#1,128 of 1,209 hotels in London",
-    "price": "$1322 – $1439 / night",
+    "price": "from $1322",
     "tags": [
       "Harbor View, Budget, River View, Classic",
       "Restaurant",
@@ -10657,7 +10657,7 @@ export const CITY_LISTINGS = [
     "rating": 2.8,
     "reviewCount": 1167,
     "rank": "#1,097 of 1,209 hotels in London",
-    "price": "$105 – $280 / night",
+    "price": "from $105",
     "tags": [
       "Centrally Located, Mid-range",
       "Air conditioning"
@@ -10737,7 +10737,7 @@ export const CITY_LISTINGS = [
     "rating": 2.6,
     "reviewCount": 1829,
     "rank": "#903 of 1,209 hotels in London",
-    "price": "$215 – $459 / night",
+    "price": "from $215",
     "tags": [
       "Quiet, Centrally Located, Mid-range",
       "Restaurant",
@@ -10851,7 +10851,7 @@ export const CITY_LISTINGS = [
     "rating": 2.4,
     "reviewCount": 1412,
     "rank": "#1,152 of 1,209 hotels in London",
-    "price": "$85 – $254 / night",
+    "price": "from $85",
     "tags": [
       "Residential Neighborhood, Quiet, Budget",
       "Restaurant",
@@ -10936,7 +10936,7 @@ export const CITY_LISTINGS = [
     "rating": 2.4,
     "reviewCount": 895,
     "rank": "#1,138 of 1,209 hotels in London",
-    "price": "$74 – $176 / night",
+    "price": "from $74",
     "tags": [
       "Residential Neighborhood, Quiet, Centrally Located, Budget"
     ],
@@ -11009,7 +11009,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 652,
     "rank": "#339 of 525 hotels in New York City",
-    "price": "$172 – $454 / night",
+    "price": "from $172",
     "tags": [
       "Charming, Mid-range, Quiet, Modern, Business",
       "Air conditioning",
@@ -11095,7 +11095,7 @@ export const CITY_LISTINGS = [
     "rating": 3.1,
     "reviewCount": 70,
     "rank": "#443 of 525 hotels in New York City",
-    "price": "$163 – $588 / night",
+    "price": "from $144",
     "tags": [
       "Mid-range, Business, City View",
       "Restaurant",
@@ -11213,7 +11213,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 912,
     "rank": "#4 of 525 hotels in New York City",
-    "price": "$217 – $622 / night",
+    "price": "from $265",
     "tags": [
       "Mid-range, Trendy, Business, Charming, Modern",
       "Fitness centre",
@@ -11341,7 +11341,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 624,
     "rank": "#2 of 525 hotels in New York City",
-    "price": "$248 – $690 / night",
+    "price": "from $170",
     "tags": [
       "Family, Charming, Great View, City View, Mid-range",
       "Air conditioning",
@@ -11469,7 +11469,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 534,
     "rank": "#40 of 525 hotels in New York City",
-    "price": "$734 – $1821 / night",
+    "price": "from $772",
     "tags": [
       "Quaint, Luxury, Modern, Business, Charming",
       "Restaurant",
@@ -11622,7 +11622,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 241,
     "rank": "#1 of 190 Speciality lodging in New York City",
-    "price": "$94 – $228 / night",
+    "price": "from $94",
     "tags": [
       "Quaint, Budget",
       "Free Wifi"
@@ -11694,7 +11694,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 5552,
     "rank": "#1 of 525 hotels in New York City",
-    "price": "$367 – $1145 / night",
+    "price": "from $359",
     "tags": [
       "Family, Park View, Charming, Great View, Historic Hotel",
       "Restaurant",
@@ -11827,7 +11827,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 3738,
     "rank": "#7 of 525 hotels in New York City",
-    "price": "$294 – $773 / night",
+    "price": "from $251",
     "tags": [
       "Mid-range, Trendy, Business, Charming, Modern",
       "Restaurant",
@@ -11957,7 +11957,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 3051,
     "rank": "#8 of 525 hotels in New York City",
-    "price": "$351 – $874 / night",
+    "price": "from $365",
     "tags": [
       "Mid-range, Business, Charming, Great View, Modern",
       "Restaurant",
@@ -12078,7 +12078,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 3039,
     "rank": "#23 of 525 hotels in New York City",
-    "price": "$702 – $2155 / night",
+    "price": "from $1271",
     "tags": [
       "Historic Hotel, Luxury, Modern, Business, Classic",
       "Spa",
@@ -12205,7 +12205,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 5434,
     "rank": "#49 of 525 hotels in New York City",
-    "price": "$238 – $825 / night",
+    "price": "from $271",
     "tags": [
       "Romantic, Trendy, Charming, Classic, Business",
       "Restaurant",
@@ -12306,7 +12306,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 3429,
     "rank": "#86 of 525 hotels in New York City",
-    "price": "$707 – $2170 / night",
+    "price": "from $1024",
     "tags": [
       "Budget, Charming, Business, Romantic, Family",
       "Restaurant",
@@ -12382,7 +12382,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 3152,
     "rank": "#50 of 525 hotels in New York City",
-    "price": "$251 – $693 / night",
+    "price": "from $251",
     "tags": [
       "Mid-range, Trendy, Business, Charming, Great View",
       "Restaurant",
@@ -12520,7 +12520,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 2912,
     "rank": "#35 of 525 hotels in New York City",
-    "price": "$532 – $1469 / night",
+    "price": "from $511",
     "tags": [
       "Luxury, Modern, Trendy, Hidden Gem, Value",
       "Spa",
@@ -12642,7 +12642,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 8915,
     "rank": "#46 of 525 hotels in New York City",
-    "price": "$348 – $1148 / night",
+    "price": "from $286",
     "tags": [
       "Historic Hotel, Luxury, Modern, Trendy, Business",
       "Restaurant",
@@ -12782,7 +12782,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 6774,
     "rank": "#69 of 525 hotels in New York City",
-    "price": "$319 – $975 / night",
+    "price": "from $330",
     "tags": [
       "Mid-range, Trendy, Business, Charming, Value",
       "Restaurant",
@@ -12910,7 +12910,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 5745,
     "rank": "#169 of 525 hotels in New York City",
-    "price": "$199 – $692 / night",
+    "price": "from $168",
     "tags": [
       "Mid-range, Trendy, Charming, Great View, Value",
       "Bar/Lounge",
@@ -13027,7 +13027,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 4891,
     "rank": "#114 of 525 hotels in New York City",
-    "price": "$569 – $1266 / night",
+    "price": "from $612",
     "tags": [
       "Luxury, Family, Great View, Trendy, Green",
       "Restaurant",
@@ -13152,7 +13152,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 6704,
     "rank": "#226 of 525 hotels in New York City",
-    "price": "$205 – $642 / night",
+    "price": "from $206",
     "tags": [
       "Luxury, Charming, Romantic, Trendy, Quaint",
       "Restaurant",
@@ -13256,7 +13256,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 6683,
     "rank": "#100 of 525 hotels in New York City",
-    "price": "$197 – $708 / night",
+    "price": "from $188",
     "tags": [
       "Family, Great View, Green, Mid-range, Quiet",
       "Restaurant",
@@ -13374,7 +13374,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 5519,
     "rank": "#153 of 525 hotels in New York City",
-    "price": "$313 – $807 / night",
+    "price": "from $352",
     "tags": [
       "Family, Charming, Great View, Green, Mid-range",
       "Restaurant",
@@ -13486,7 +13486,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 5233,
     "rank": "#179 of 525 hotels in New York City",
-    "price": "$188 – $612 / night",
+    "price": "from $131",
     "tags": [
       "Quaint, Charming, Trendy, Mid-range, Quiet",
       "Restaurant",
@@ -13609,7 +13609,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 8513,
     "rank": "#52 of 525 hotels in New York City",
-    "price": "$174 – $613 / night",
+    "price": "from $169",
     "tags": [
       "Family, Charming, Trendy, Mid-range, Quiet",
       "Bar/Lounge",
@@ -13742,7 +13742,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 7488,
     "rank": "#155 of 525 hotels in New York City",
-    "price": "$268 – $803 / night",
+    "price": "from $268",
     "tags": [
       "Mid-range, Trendy, Business, Great View, Modern",
       "Bar/Lounge",
@@ -13863,7 +13863,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 7388,
     "rank": "#239 of 525 hotels in New York City",
-    "price": "$417 – $1366 / night",
+    "price": "from $445",
     "tags": [
       "Luxury, Family, Great View, Historic Hotel, Business",
       "Spa",
@@ -13986,7 +13986,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 5421,
     "rank": "#108 of 525 hotels in New York City",
-    "price": "$250 – $783 / night",
+    "price": "from $238",
     "tags": [
       "Family, Charming, Mid-range, Quiet, Green",
       "Restaurant",
@@ -14107,7 +14107,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 5828,
     "rank": "#75 of 525 hotels in New York City",
-    "price": "$162 – $494 / night",
+    "price": "from $162",
     "tags": [
       "Romantic, Trendy, Charming, Modern, Business",
       "Restaurant",
@@ -14203,7 +14203,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 3608,
     "rank": "#128 of 525 hotels in New York City",
-    "price": "$153 – $498 / night",
+    "price": "from $128",
     "tags": [
       "Mid-range, Trendy, Business, Great View, Modern",
       "Restaurant",
@@ -14305,7 +14305,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 9236,
     "rank": "#158 of 525 hotels in New York City",
-    "price": "$318 – $801 / night",
+    "price": "from $327",
     "tags": [
       "Luxury, Family, Great View, Green, Modern",
       "Restaurant",
@@ -14429,7 +14429,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 8159,
     "rank": "#237 of 525 hotels in New York City",
-    "price": "$222 – $681 / night",
+    "price": "from $224",
     "tags": [
       "Family, Charming, Trendy, Green, Mid-range",
       "Restaurant",
@@ -14556,7 +14556,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 6189,
     "rank": "#18 of 525 hotels in New York City",
-    "price": "$246 – $735 / night",
+    "price": "from $287",
     "tags": [
       "Quaint, City View, Family, Charming, Historic Hotel",
       "Fitness centre",
@@ -14686,7 +14686,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 3644,
     "rank": "#255 of 525 hotels in New York City",
-    "price": "$310 – $1144 / night",
+    "price": "from $1046",
     "tags": [
       "Luxury, Family, Historic Hotel, Green, Modern",
       "Restaurant",
@@ -14812,7 +14812,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 13912,
     "rank": "#278 of 525 hotels in New York City",
-    "price": "$345 – $1098 / night",
+    "price": "from $347",
     "tags": [
       "Luxury, Family, Great View, Green, Modern",
       "Restaurant",
@@ -14949,7 +14949,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 6254,
     "rank": "#148 of 525 hotels in New York City",
-    "price": "$295 – $1350 / night",
+    "price": "from $338",
     "tags": [
       "Family, Great View, Mid-range, Quiet, Green",
       "Restaurant",
@@ -15073,7 +15073,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 2334,
     "rank": "#264 of 525 hotels in New York City",
-    "price": "$254 – $808 / night",
+    "price": "from $215",
     "tags": [
       "Family, Green, Mid-range, Quiet, Business",
       "Bar/Lounge",
@@ -15210,7 +15210,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 6614,
     "rank": "#212 of 525 hotels in New York City",
-    "price": "$138 – $467 / night",
+    "price": "from $126",
     "tags": [
       "Family, Budget, Trendy, Modern, Quiet",
       "Restaurant",
@@ -15306,7 +15306,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 2643,
     "rank": "#270 of 525 hotels in New York City",
-    "price": "$182 – $564 / night",
+    "price": "from $183",
     "tags": [
       "Family, Green, Mid-range, Quiet, Modern",
       "Fitness centre",
@@ -15406,7 +15406,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1803,
     "rank": "#133 of 525 hotels in New York City",
-    "price": "$344 – $1067 / night",
+    "price": "from $405",
     "tags": [
       "Business, Quiet, Centrally Located, City View",
       "Restaurant",
@@ -15505,7 +15505,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 668,
     "rank": "#266 of 525 hotels in New York City",
-    "price": "$347 – $1176 / night",
+    "price": "from $357",
     "tags": [
       "Modern, Trendy, Mid-range, Business, Centrally Located",
       "Restaurant",
@@ -15590,7 +15590,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1513,
     "rank": "#386 of 525 hotels in New York City",
-    "price": "$186 – $547 / night",
+    "price": "from $188",
     "tags": [
       "Romantic, Mid-range, Charming, Family, Quaint",
       "Restaurant",
@@ -15682,7 +15682,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 4091,
     "rank": "#17 of 525 hotels in New York City",
-    "price": "$226 – $751 / night",
+    "price": "from $275",
     "tags": [
       "Mid-range, Trendy, Business, Great View, Value",
       "Restaurant",
@@ -15789,7 +15789,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 4826,
     "rank": "#22 of 525 hotels in New York City",
-    "price": "$333 – $1015 / night",
+    "price": "from $285",
     "tags": [
       "Manhattan, Mid-range, Pets Allowed",
       "Spa",
@@ -15846,7 +15846,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 5625,
     "rank": "#33 of 525 hotels in New York City",
-    "price": "$223 – $763 / night",
+    "price": "from $223",
     "tags": [
       "Mid-range, Business, Value, Modern, Centrally Located",
       "Fitness centre",
@@ -15971,7 +15971,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 6947,
     "rank": "#118 of 525 hotels in New York City",
-    "price": "$364 – $1042 / night",
+    "price": "from $364",
     "tags": [
       "Budget, City View, Family, Centrally Located",
       "Restaurant",
@@ -16075,7 +16075,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 9001,
     "rank": "#282 of 525 hotels in New York City",
-    "price": "$226 – $755 / night",
+    "price": "from $226",
     "tags": [
       "Family, Great View, Mid-range, Quiet, City View",
       "Restaurant",
@@ -16183,7 +16183,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 6694,
     "rank": "#308 of 525 hotels in New York City",
-    "price": "$194 – $766 / night",
+    "price": "from $194",
     "tags": [
       "Mid-range, Business, Modern, Centrally Located, Family",
       "Bar/Lounge",
@@ -16295,7 +16295,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 4181,
     "rank": "#332 of 525 hotels in New York City",
-    "price": "$214 – $643 / night",
+    "price": "from $214",
     "tags": [
       "Family, Charming, Great View, Trendy, Green",
       "Restaurant",
@@ -16423,7 +16423,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 5455,
     "rank": "#260 of 525 hotels in New York City",
-    "price": "$301 – $812 / night",
+    "price": "from $301",
     "tags": [
       "Great View, Trendy, Green, Mid-range, Modern",
       "Pool",
@@ -16547,7 +16547,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 15414,
     "rank": "#435 of 525 hotels in New York City",
-    "price": "$167 – $502 / night",
+    "price": "from $167",
     "tags": [
       "Family, Great View, Trendy, Green, Mid-range",
       "Restaurant",
@@ -16659,7 +16659,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 2718,
     "rank": "#283 of 525 hotels in New York City",
-    "price": "$224 – $722 / night",
+    "price": "from $224",
     "tags": [
       "Family, Mid-range, Quiet, Modern, Business",
       "Restaurant",
@@ -16770,7 +16770,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 2280,
     "rank": "#259 of 525 hotels in New York City",
-    "price": "$321 – $1285 / night",
+    "price": "from $321",
     "tags": [
       "Family, Great View, Green, Mid-range, Quiet",
       "Restaurant",
@@ -16894,7 +16894,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1756,
     "rank": "#298 of 525 hotels in New York City",
-    "price": "$236 – $702 / night",
+    "price": "from $236",
     "tags": [
       "Family, Green, Mid-range, Quiet, Modern",
       "Restaurant",
@@ -17009,7 +17009,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1740,
     "rank": "#258 of 525 hotels in New York City",
-    "price": "$534 – $1456 / night",
+    "price": "from $572",
     "tags": [
       "Luxury, Family, Park View, Great View, Trendy",
       "Fitness centre",
@@ -17131,7 +17131,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1649,
     "rank": "#335 of 525 hotels in New York City",
-    "price": "$214 – $671 / night",
+    "price": "from $214",
     "tags": [
       "Family, Trendy, Green, Mid-range, Quiet",
       "Restaurant",
@@ -17249,7 +17249,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 9788,
     "rank": "#306 of 525 hotels in New York City",
-    "price": "$215 – $713 / night",
+    "price": "from $214",
     "tags": [
       "Family, City View, Mid-range, Quiet, Modern",
       "Bar/Lounge",
@@ -17368,7 +17368,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 5456,
     "rank": "#422 of 525 hotels in New York City",
-    "price": "$202 – $665 / night",
+    "price": "from $202",
     "tags": [
       "Family, Trendy, Green, Mid-range, Quiet",
       "Restaurant",
@@ -17477,7 +17477,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 2410,
     "rank": "#323 of 525 hotels in New York City",
-    "price": "$271 – $751 / night",
+    "price": "from $297",
     "tags": [
       "Charming, Great View, City View, Trendy, Mid-range",
       "Restaurant",
@@ -17599,7 +17599,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1418,
     "rank": "#318 of 525 hotels in New York City",
-    "price": "$184 – $700 / night",
+    "price": "from $188",
     "tags": [
       "Mid-range, Business, Modern, Centrally Located, Quiet",
       "Restaurant",
@@ -17714,7 +17714,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 18622,
     "rank": "#168 of 525 hotels in New York City",
-    "price": "$216 – $712 / night",
+    "price": "from $216",
     "tags": [
       "Family, Historic Hotel, Green, Mid-range, Quiet",
       "Bar/Lounge",
@@ -17848,7 +17848,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 5640,
     "rank": "#402 of 525 hotels in New York City",
-    "price": "$175 – $615 / night",
+    "price": "from $175",
     "tags": [
       "Family, Great View, Green, Mid-range, Modern",
       "Fitness centre",
@@ -17956,7 +17956,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 4249,
     "rank": "#363 of 525 hotels in New York City",
-    "price": "$180 – $616 / night",
+    "price": "from $180",
     "tags": [
       "Mid-range, Business, Modern, Centrally Located, Quiet",
       "Pool",
@@ -18068,7 +18068,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 3449,
     "rank": "#401 of 525 hotels in New York City",
-    "price": "$180 – $608 / night",
+    "price": "from $180",
     "tags": [
       "Charming, Mid-range, Boutique, Business, River View",
       "Bar/Lounge",
@@ -18153,7 +18153,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 2791,
     "rank": "#387 of 525 hotels in New York City",
-    "price": "$181 – $686 / night",
+    "price": "from $197",
     "tags": [
       "Family, Mid-range, Quiet, Modern, Business",
       "Restaurant",
@@ -18256,7 +18256,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 2344,
     "rank": "#242 of 525 hotels in New York City",
-    "price": "$194 – $584 / night",
+    "price": "from $194",
     "tags": [
       "Quaint, Family, Charming, Historic Hotel, Trendy",
       "Bar/Lounge",
@@ -18348,7 +18348,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 2037,
     "rank": "#368 of 525 hotels in New York City",
-    "price": "$159 – $550 / night",
+    "price": "from $159",
     "tags": [
       "Mid-range, Quiet, Centrally Located",
       "Fitness centre",
@@ -18429,7 +18429,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1984,
     "rank": "#314 of 525 hotels in New York City",
-    "price": "$234 – $793 / night",
+    "price": "from $234",
     "tags": [
       "Family, Great View, City View, Mid-range, Quiet",
       "Restaurant",
@@ -18573,7 +18573,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1524,
     "rank": "#269 of 525 hotels in New York City",
-    "price": "$198 – $608 / night",
+    "price": "from $198",
     "tags": [
       "Mid-range, Trendy, Business, Great View, Modern",
       "Restaurant",
@@ -18683,7 +18683,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 15672,
     "rank": "#241 of 525 hotels in New York City",
-    "price": "$252 – $791 / night",
+    "price": "from $252",
     "tags": [
       "Family, Great View, Mid-range, Quiet, Green",
       "Restaurant",
@@ -18815,7 +18815,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 3364,
     "rank": "#292 of 525 hotels in New York City",
-    "price": "$165 – $483 / night",
+    "price": "from $165",
     "tags": [
       "Family, Mid-range, Quiet, Centrally Located, Classic",
       "Air conditioning",
@@ -18902,7 +18902,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 3059,
     "rank": "#116 of 525 hotels in New York City",
-    "price": "$185 – $643 / night",
+    "price": "from $185",
     "tags": [
       "Mid-range, Residential Neighbourhood, Business, Charming, Modern",
       "Pool",
@@ -18991,7 +18991,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 2869,
     "rank": "#341 of 525 hotels in New York City",
-    "price": "$180 – $563 / night",
+    "price": "from $180",
     "tags": [
       "Family, City View, Mid-range, Quiet, Modern",
       "Restaurant",
@@ -19094,7 +19094,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 832,
     "rank": "#378 of 525 hotels in New York City",
-    "price": "$191 – $592 / night",
+    "price": "from $191",
     "tags": [
       "Budget, Family, Centrally Located, Business, Charming",
       "Fitness centre",
@@ -19171,7 +19171,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 600,
     "rank": "#354 of 525 hotels in New York City",
-    "price": "$203 – $608 / night",
+    "price": "from $203",
     "tags": [
       "Mid-range, Trendy, Business, Great View, Modern",
       "Restaurant",
@@ -19285,7 +19285,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 505,
     "rank": "#324 of 525 hotels in New York City",
-    "price": "$198 – $685 / night",
+    "price": "from $198",
     "tags": [
       "Mid-range, Business, Modern, Family",
       "Restaurant",
@@ -19406,7 +19406,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 321,
     "rank": "#389 of 525 hotels in New York City",
-    "price": "$148 – $481 / night",
+    "price": "from $148",
     "tags": [
       "Budget, Residential Neighborhood, Centrally Located",
       "Air conditioning",
@@ -19496,7 +19496,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 263,
     "rank": "#342 of 525 hotels in New York City",
-    "price": "$212 – $667 / night",
+    "price": "from $212",
     "tags": [
       "Mid-range, Business, Centrally Located, Family",
       "Restaurant",
@@ -19595,7 +19595,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 31,
     "rank": "#35 of 190 Speciality lodging in New York City",
-    "price": "$175 – $544 / night",
+    "price": "from $175",
     "tags": [
       "Budget",
       "Air conditioning",
@@ -19690,7 +19690,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 12418,
     "rank": "#514 of 525 hotels in New York City",
-    "price": "$238 – $666 / night",
+    "price": "from $238",
     "tags": [
       "Family, Great View, Mid-range, Quiet, Green",
       "Restaurant",
@@ -19809,7 +19809,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 9806,
     "rank": "#207 of 525 hotels in New York City",
-    "price": "$188 – $600 / night",
+    "price": "from $188",
     "tags": [
       "City View, Mid-range, Quiet, Modern, Business",
       "Pool",
@@ -19952,7 +19952,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 8267,
     "rank": "#328 of 525 hotels in New York City",
-    "price": "$210 – $651 / night",
+    "price": "from $210",
     "tags": [
       "Family, Great View, Mid-range, Quiet, Business",
       "Restaurant",
@@ -20054,7 +20054,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 3281,
     "rank": "#364 of 525 hotels in New York City",
-    "price": "$173 – $549 / night",
+    "price": "from $173",
     "tags": [
       "Family, City View, Mid-range, Quiet, Centrally Located",
       "Restaurant",
@@ -20157,7 +20157,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 2014,
     "rank": "#145 of 525 hotels in New York City",
-    "price": "$157 – $542 / night",
+    "price": "from $153",
     "tags": [
       "Family, City View, Mid-range, Quiet, Business",
       "Restaurant",
@@ -20272,7 +20272,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 1706,
     "rank": "#365 of 525 hotels in New York City",
-    "price": "$207 – $671 / night",
+    "price": "from $207",
     "tags": [
       "Mid-range, Business, Modern, Centrally Located, City View",
       "Restaurant",
@@ -20407,7 +20407,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 1259,
     "rank": "#322 of 525 hotels in New York City",
-    "price": "$263 – $608 / night",
+    "price": "from $263",
     "tags": [
       "Family, Great View, Green, Mid-range, Quiet",
       "Fitness centre",
@@ -20514,7 +20514,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 712,
     "rank": "#393 of 525 hotels in New York City",
-    "price": "$182 – $630 / night",
+    "price": "from $182",
     "tags": [
       "Family, Mid-range, Quiet, Modern, Business",
       "Restaurant",
@@ -20617,7 +20617,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 77,
     "rank": "#407 of 525 hotels in New York City",
-    "price": "$204 – $618 / night",
+    "price": "from $204",
     "tags": [
       "Mid-range, Business",
       "Bar/Lounge",
@@ -20699,7 +20699,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 43,
     "rank": "#415 of 525 hotels in New York City",
-    "price": "$2707 – $12410 / night",
+    "price": "from $2707",
     "tags": [
       "Luxury, Business, Charming, Boutique, Romantic",
       "Pool",
@@ -20800,7 +20800,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 13929,
     "rank": "#416 of 525 hotels in New York City",
-    "price": "$173 – $674 / night",
+    "price": "from $162",
     "tags": [
       "Family, Great View, Mid-range, Quiet, City View",
       "Restaurant",
@@ -20917,7 +20917,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 868,
     "rank": "#384 of 525 hotels in New York City",
-    "price": "$163 – $574 / night",
+    "price": "from $163",
     "tags": [
       "Mid-range, Business, Modern, Residential Neighbourhood, Centrally Located",
       "Air conditioning",
@@ -21016,7 +21016,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 14977,
     "rank": "#420 of 525 hotels in New York City",
-    "price": "$233 – $623 / night",
+    "price": "from $233",
     "tags": [
       "Family, Mid-range, Quiet, City View, Modern",
       "Restaurant",
@@ -21125,7 +21125,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 6062,
     "rank": "#496 of 525 hotels in New York City",
-    "price": "$154 – $516 / night",
+    "price": "from $154",
     "tags": [
       "Mid-range, Quiet, Modern, Centrally Located",
       "Restaurant",
@@ -21209,7 +21209,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 4464,
     "rank": "#274 of 525 hotels in New York City",
-    "price": "$157 – $547 / night",
+    "price": "from $157",
     "tags": [
       "Mid-range, Business, Centrally Located, City View, Family",
       "Restaurant",
@@ -21329,7 +21329,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 3447,
     "rank": "#394 of 525 hotels in New York City",
-    "price": "$172 – $529 / night",
+    "price": "from $172",
     "tags": [
       "Mid-range, Charming, Business, Romantic, Modern",
       "Restaurant",
@@ -21419,7 +21419,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 608,
     "rank": "#423 of 525 hotels in New York City",
-    "price": "$169 – $597 / night",
+    "price": "from $169",
     "tags": [
       "Trendy, Mid-range, Quirky Hotels, Modern, Centrally Located",
       "Restaurant",
@@ -21508,7 +21508,7 @@ export const CITY_LISTINGS = [
     "rating": 3.4,
     "reviewCount": 79,
     "rank": "#425 of 525 hotels in New York City",
-    "price": "$182 – $536 / night",
+    "price": "from $182",
     "tags": [
       "Mid-range, Business",
       "Restaurant",
@@ -21597,7 +21597,7 @@ export const CITY_LISTINGS = [
     "rating": 3.4,
     "reviewCount": 36,
     "rank": "#429 of 525 hotels in New York City",
-    "price": "$192 – $588 / night",
+    "price": "from $192",
     "tags": [
       "Quaint, Mid-range, Business, Charming, City View",
       "Restaurant",
@@ -21706,7 +21706,7 @@ export const CITY_LISTINGS = [
     "rating": 3.2,
     "reviewCount": 3612,
     "rank": "#507 of 525 hotels in New York City",
-    "price": "$139 – $469 / night",
+    "price": "from $139",
     "tags": [
       "Family, Mid-range, Modern, Centrally Located",
       "Restaurant",
@@ -21799,7 +21799,7 @@ export const CITY_LISTINGS = [
     "rating": 3.2,
     "reviewCount": 1013,
     "rank": "#487 of 525 hotels in New York City",
-    "price": "$156 – $489 / night",
+    "price": "from $156",
     "tags": [
       "Family, Mid-range, Quiet, Residential Neighborhood, Centrally Located",
       "Air conditioning",
@@ -21886,7 +21886,7 @@ export const CITY_LISTINGS = [
     "rating": 3.0,
     "reviewCount": 70,
     "rank": "#476 of 525 hotels in New York City",
-    "price": "$202 – $699 / night",
+    "price": "from $202",
     "tags": [
       "Mid-range, Business, Family",
       "Fitness centre",
@@ -22010,7 +22010,7 @@ export const CITY_LISTINGS = [
     "rating": 2.0,
     "reviewCount": 350,
     "rank": "#524 of 525 hotels in New York City",
-    "price": "$214 – $526 / night",
+    "price": "from $214",
     "tags": [
       "Mid-range, City View",
       "Air conditioning",
@@ -22098,7 +22098,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 1552,
     "rank": "#8 of 417 Speciality lodging in Paris",
-    "price": "$167 – $594 / night",
+    "price": "from $167",
     "tags": [
       "Business, Family, Charming, Mid-range, Modern",
       "Restaurant",
@@ -22181,7 +22181,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1520,
     "rank": "#25 of 417 Speciality lodging in Paris",
-    "price": "$63 – $193 / night",
+    "price": "from $63",
     "tags": [
       "Mid-range, Centrally Located",
       "Restaurant",
@@ -22265,7 +22265,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 1201,
     "rank": "#821 of 1,885 hotels in Paris",
-    "price": "$106 – $361 / night",
+    "price": "from $106",
     "tags": [
       "Charming, Business, Classic, Centrally Located, Mid-range",
       "Bar/Lounge",
@@ -22372,7 +22372,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1570,
     "rank": "#1,238 of 1,885 hotels in Paris",
-    "price": "$108 – $269 / night",
+    "price": "from $108",
     "tags": [
       "Quiet, Modern, Family, Green, Mid-range",
       "Bar/Lounge",
@@ -22498,7 +22498,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1557,
     "rank": "#1,336 of 1,885 hotels in Paris",
-    "price": "$96 – $227 / night",
+    "price": "from $96",
     "tags": [
       "Quiet, Business, Modern, Mid-range",
       "Bar/Lounge",
@@ -22599,7 +22599,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 797,
     "rank": "#1,435 of 1,885 hotels in Paris",
-    "price": "$130 – $248 / night",
+    "price": "from $130",
     "tags": [
       "Mid-range",
       "Free parking",
@@ -22680,7 +22680,7 @@ export const CITY_LISTINGS = [
     "rating": 3.1,
     "reviewCount": 851,
     "rank": "#1,586 of 1,885 hotels in Paris",
-    "price": "$78 – $300 / night",
+    "price": "from $78",
     "tags": [
       "Quiet, Classic, Mid-range",
       "Restaurant",
@@ -22765,7 +22765,7 @@ export const CITY_LISTINGS = [
     "rating": 2.4,
     "reviewCount": 325,
     "rank": "#1,812 of 1,885 hotels in Paris",
-    "price": "$111 – $245 / night",
+    "price": "from $111",
     "tags": [
       "Romantic, Charming",
       "Free Wifi"
@@ -22828,7 +22828,7 @@ export const CITY_LISTINGS = [
     "rating": 5.0,
     "reviewCount": 1193,
     "rank": "#4 of 1,885 hotels in Paris",
-    "price": "$562 – $1152 / night",
+    "price": "from $562",
     "tags": [
       "City View, Charming, Quiet, Great View, Value",
       "Spa",
@@ -22997,7 +22997,7 @@ export const CITY_LISTINGS = [
     "rating": 5.0,
     "reviewCount": 103,
     "rank": "#57 of 1,885 hotels in Paris",
-    "price": "$436 – $1151 / night",
+    "price": "from $436",
     "tags": [
       "Quaint, Romantic, Business, Luxury, Charming",
       "Pool",
@@ -23102,7 +23102,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 3918,
     "rank": "#1 of 1,885 hotels in Paris",
-    "price": "$246 – $610 / night",
+    "price": "from $322",
     "tags": [
       "Quiet, Charming, Modern, Value, Business",
       "Air conditioning",
@@ -23216,7 +23216,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 2474,
     "rank": "#223 of 1,885 hotels in Paris",
-    "price": "$2004 – $3903 / night",
+    "price": "from $2004",
     "tags": [
       "City View, Charming, Quiet, Great View, Historic Hotel",
       "Pool",
@@ -23420,7 +23420,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 2172,
     "rank": "#11 of 1,885 hotels in Paris",
-    "price": "$210 – $478 / night",
+    "price": "from $186",
     "tags": [
       "Luxury, Quaint",
       "Bar/Lounge",
@@ -23488,7 +23488,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 4072,
     "rank": "#69 of 1,885 hotels in Paris",
-    "price": "$122 – $395 / night",
+    "price": "from $107",
     "tags": [
       "Quiet, Trendy, Mid-range, Family, Value",
       "Air conditioning",
@@ -23600,7 +23600,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 3683,
     "rank": "#10 of 1,885 hotels in Paris",
-    "price": "$194 – $543 / night",
+    "price": "from $197",
     "tags": [
       "Budget",
       "Fitness centre",
@@ -23685,7 +23685,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 2675,
     "rank": "#256 of 1,885 hotels in Paris",
-    "price": "$1565 – $2712 / night",
+    "price": "from $1565",
     "tags": [
       "City View, Charming, Modern, Quiet, Hidden Gem",
       "Pool",
@@ -23840,7 +23840,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 2642,
     "rank": "#20 of 1,885 hotels in Paris",
-    "price": "$241 – $825 / night",
+    "price": "from $218",
     "tags": [
       "Quiet, Charming, Trendy, Business, Classic",
       "Pool",
@@ -23980,7 +23980,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 4075,
     "rank": "#37 of 1,885 hotels in Paris",
-    "price": "$130 – $375 / night",
+    "price": "from $130",
     "tags": [
       "Quiet, Hidden Gem, Trendy, Charming, Modern",
       "Air conditioning",
@@ -24087,7 +24087,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 3609,
     "rank": "#172 of 1,885 hotels in Paris",
-    "price": "$1585 – $3274 / night",
+    "price": "from $1585",
     "tags": [
       "City View, Charming, Modern, Quiet, Great View",
       "Spa",
@@ -24257,7 +24257,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 3296,
     "rank": "#83 of 1,885 hotels in Paris",
-    "price": "$116 – $360 / night",
+    "price": "from $107",
     "tags": [
       "Quiet, Charming, Modern, Trendy, Business",
       "Air conditioning",
@@ -24368,7 +24368,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 2961,
     "rank": "#190 of 1,885 hotels in Paris",
-    "price": "$181 – $475 / night",
+    "price": "from $181",
     "tags": [
       "Quiet, Charming, Modern, Trendy, Business",
       "Bar/Lounge",
@@ -24480,7 +24480,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 4234,
     "rank": "#5 of 1,885 hotels in Paris",
-    "price": "$177 – $430 / night",
+    "price": "from $158",
     "tags": [
       "City View, Charming, Modern, Quiet, Classic",
       "Air conditioning",
@@ -24600,7 +24600,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 3020,
     "rank": "#515 of 1,885 hotels in Paris",
-    "price": "$134 – $468 / night",
+    "price": "from $134",
     "tags": [
       "Quiet, Charming, Family, Residential Neighborhood, Classic",
       "Bar/Lounge",
@@ -24699,7 +24699,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 2667,
     "rank": "#120 of 1,885 hotels in Paris",
-    "price": "$101 – $318 / night",
+    "price": "from $94",
     "tags": [
       "Quiet, Charming, Modern, Business, Family",
       "Bar/Lounge",
@@ -24816,7 +24816,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 2489,
     "rank": "#180 of 1,885 hotels in Paris",
-    "price": "$192 – $557 / night",
+    "price": "from $192",
     "tags": [
       "City View, Charming, Modern, Quiet, Value",
       "Air conditioning",
@@ -24935,7 +24935,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 3264,
     "rank": "#409 of 1,885 hotels in Paris",
-    "price": "$133 – $574 / night",
+    "price": "from $209",
     "tags": [
       "Quiet, Charming, Business, Family, Classic",
       "Restaurant",
@@ -25039,7 +25039,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 3131,
     "rank": "#211 of 1,885 hotels in Paris",
-    "price": "$95 – $343 / night",
+    "price": "from $84",
     "tags": [
       "Quiet, Charming, Family, Classic, Residential Neighborhood",
       "Air conditioning",
@@ -25138,7 +25138,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 2682,
     "rank": "#446 of 1,885 hotels in Paris",
-    "price": "$324 – $816 / night",
+    "price": "from $325",
     "tags": [
       "Quiet, Charming, Great View, Historic Hotel, Park View",
       "Bar/Lounge",
@@ -25271,7 +25271,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 2636,
     "rank": "#89 of 1,885 hotels in Paris",
-    "price": "$126 – $373 / night",
+    "price": "from $107",
     "tags": [
       "Quiet, Charming, Modern, Trendy, Business",
       "Air conditioning",
@@ -25384,7 +25384,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 3027,
     "rank": "#486 of 1,885 hotels in Paris",
-    "price": "$182 – $477 / night",
+    "price": "from $161",
     "tags": [
       "Quiet, Charming, Modern, Business, Classic",
       "Bar/Lounge",
@@ -25490,7 +25490,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 2384,
     "rank": "#221 of 1,885 hotels in Paris",
-    "price": "$192 – $615 / night",
+    "price": "from $243",
     "tags": [
       "City View, Charming, Quiet, Business, Family",
       "Pool",
@@ -25630,7 +25630,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 2089,
     "rank": "#218 of 1,885 hotels in Paris",
-    "price": "$573 – $973 / night",
+    "price": "from $573",
     "tags": [
       "City View, Charming, Modern, Quiet, Great View",
       "Spa",
@@ -25788,7 +25788,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 3451,
     "rank": "#237 of 1,885 hotels in Paris",
-    "price": "$113 – $407 / night",
+    "price": "from $111",
     "tags": [
       "Quiet, Classic, Family, Mid-range, Centrally Located",
       "Air conditioning",
@@ -25896,7 +25896,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 1863,
     "rank": "#348 of 1,885 hotels in Paris",
-    "price": "$189 – $440 / night",
+    "price": "from $194",
     "tags": [
       "City View, Charming, Modern, Quiet, Great View",
       "Air conditioning",
@@ -26004,7 +26004,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 1811,
     "rank": "#357 of 1,885 hotels in Paris",
-    "price": "$145 – $396 / night",
+    "price": "from $161",
     "tags": [
       "City View, Charming, Modern, Quiet, Trendy",
       "Air conditioning",
@@ -26124,7 +26124,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 1801,
     "rank": "#519 of 1,885 hotels in Paris",
-    "price": "$163 – $419 / night",
+    "price": "from $163",
     "tags": [
       "Quiet, Charming, Modern, Great View, Trendy",
       "Restaurant",
@@ -26237,7 +26237,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 3280,
     "rank": "#788 of 1,885 hotels in Paris",
-    "price": "$137 – $336 / night",
+    "price": "from $119",
     "tags": [
       "Quiet, Trendy, Mid-range, Family, Business"
     ],
@@ -26302,7 +26302,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 2849,
     "rank": "#461 of 1,885 hotels in Paris",
-    "price": "$212 – $608 / night",
+    "price": "from $178",
     "tags": [
       "City View, Modern, Quiet, Great View, Park View",
       "Restaurant",
@@ -26425,7 +26425,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1663,
     "rank": "#303 of 1,885 hotels in Paris",
-    "price": "$108 – $278 / night",
+    "price": "from $98",
     "tags": [
       "Quiet, Business, Modern, Residential Neighborhood, Family",
       "Restaurant",
@@ -26534,7 +26534,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1517,
     "rank": "#614 of 1,885 hotels in Paris",
-    "price": "$150 – $438 / night",
+    "price": "from $133",
     "tags": [
       "Quiet, Charming, Modern, Business, Classic",
       "Restaurant",
@@ -26648,7 +26648,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1073,
     "rank": "#762 of 1,885 hotels in Paris",
-    "price": "$121 – $320 / night",
+    "price": "from $121",
     "tags": [
       "Quiet, Charming, Modern, Business, Romantic",
       "Bar/Lounge",
@@ -26748,7 +26748,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1031,
     "rank": "#680 of 1,885 hotels in Paris",
-    "price": "$125 – $357 / night",
+    "price": "from $101",
     "tags": [
       "Quiet, Modern, Family, Residential Neighborhood, Mid-range",
       "Air conditioning",
@@ -26844,7 +26844,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 2573,
     "rank": "#210 of 1,885 hotels in Paris",
-    "price": "$344 – $818 / night",
+    "price": "from $354",
     "tags": [
       "City View, Charming, Quiet, Business, Classic",
       "Restaurant",
@@ -26987,7 +26987,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1748,
     "rank": "#559 of 1,885 hotels in Paris",
-    "price": "$102 – $310 / night",
+    "price": "from $105",
     "tags": [
       "Quiet, Charming, Great View, Park View, Classic",
       "Air conditioning",
@@ -27079,7 +27079,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1397,
     "rank": "#488 of 1,885 hotels in Paris",
-    "price": "$136 – $385 / night",
+    "price": "from $109",
     "tags": [
       "Quiet, Business, Classic, Mid-range, Centrally Located",
       "Air conditioning",
@@ -27170,7 +27170,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1129,
     "rank": "#708 of 1,885 hotels in Paris",
-    "price": "$82 – $259 / night",
+    "price": "from $90",
     "tags": [
       "City View, Modern, Quiet, Business, Family",
       "Air conditioning",
@@ -27276,7 +27276,7 @@ export const CITY_LISTINGS = [
     "rating": 5.0,
     "reviewCount": 235,
     "rank": "#1 of 144 B&Bs / Inns in Paris",
-    "price": "$336 – $375 / night",
+    "price": "from $336",
     "tags": [
       "Charming, Mid-range, Romantic, Business, Quaint",
       "Free Wifi"
@@ -27375,7 +27375,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 2199,
     "rank": "#377 of 1,885 hotels in Paris",
-    "price": "$184 – $413 / night",
+    "price": "from $184",
     "tags": [
       "Quiet, Charming, Modern, Business, Classic",
       "Bar/Lounge",
@@ -27493,7 +27493,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 1699,
     "rank": "#769 of 1,885 hotels in Paris",
-    "price": "Price on request",
+    "price": "",
     "tags": [
       "Quiet, Charming, Modern, Business, Luxury",
       "Air conditioning",
@@ -27615,7 +27615,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1593,
     "rank": "#646 of 1,885 hotels in Paris",
-    "price": "$178 – $628 / night",
+    "price": "from $178",
     "tags": [
       "Quiet, Charming, Great View, Family, Classic",
       "Bar/Lounge",
@@ -27728,7 +27728,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1167,
     "rank": "#651 of 1,885 hotels in Paris",
-    "price": "$126 – $356 / night",
+    "price": "from $126",
     "tags": [
       "Quiet, Charming, Modern, Family, Centrally Located",
       "Air conditioning",
@@ -27836,7 +27836,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1159,
     "rank": "#865 of 1,885 hotels in Paris",
-    "price": "$376 – $807 / night",
+    "price": "from $376",
     "tags": [
       "Quiet, Charming, Modern, Trendy, Business",
       "Restaurant",
@@ -27949,7 +27949,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 996,
     "rank": "#668 of 1,885 hotels in Paris",
-    "price": "$137 – $473 / night",
+    "price": "from $137",
     "tags": [
       "Quiet, Charming, Modern, Business, Family",
       "Air conditioning",
@@ -28068,7 +28068,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 3913,
     "rank": "#826 of 1,885 hotels in Paris",
-    "price": "$208 – $457 / night",
+    "price": "from $208",
     "tags": [
       "City View, Modern, Quiet, Business, Family",
       "Pool",
@@ -28216,7 +28216,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 3497,
     "rank": "#970 of 1,885 hotels in Paris",
-    "price": "$155 – $370 / night",
+    "price": "from $155",
     "tags": [
       "City View, Modern, Quiet, Great View, Trendy",
       "Bar/Lounge",
@@ -28337,7 +28337,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1141,
     "rank": "#743 of 1,885 hotels in Paris",
-    "price": "$170 – $521 / night",
+    "price": "from $170",
     "tags": [
       "Quiet, Modern, Business, Family, Centrally Located",
       "Bar/Lounge",
@@ -28444,7 +28444,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1126,
     "rank": "#728 of 1,885 hotels in Paris",
-    "price": "$120 – $448 / night",
+    "price": "from $120",
     "tags": [
       "Quiet, Charming, Great View, Historic Hotel, Quirky Hotels",
       "Bar/Lounge",
@@ -28541,7 +28541,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 4670,
     "rank": "#1,072 of 1,885 hotels in Paris",
-    "price": "Price on request",
+    "price": "",
     "tags": [
       "Quiet, Great View, Historic Hotel, Luxury, Park View",
       "Restaurant",
@@ -28657,7 +28657,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1941,
     "rank": "#502 of 1,885 hotels in Paris",
-    "price": "$194 – $508 / night",
+    "price": "from $194",
     "tags": [
       "Quiet, Business, Modern, Family, Green",
       "Free Wifi"
@@ -28754,7 +28754,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1764,
     "rank": "#780 of 1,885 hotels in Paris",
-    "price": "$188 – $954 / night",
+    "price": "from $188",
     "tags": [
       "Quiet, Charming, Business, Family, Classic",
       "Air conditioning",
@@ -28863,7 +28863,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1563,
     "rank": "#825 of 1,885 hotels in Paris",
-    "price": "$135 – $420 / night",
+    "price": "from $135",
     "tags": [
       "City View, Modern, Quiet, Business, Residential Neighborhood",
       "Air conditioning",
@@ -28971,7 +28971,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1314,
     "rank": "#778 of 1,885 hotels in Paris",
-    "price": "$79 – $228 / night",
+    "price": "from $79",
     "tags": [
       "City View, Modern, Quiet, Business, Family",
       "Air conditioning",
@@ -29070,7 +29070,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1173,
     "rank": "#914 of 1,885 hotels in Paris",
-    "price": "$118 – $355 / night",
+    "price": "from $118",
     "tags": [
       "Quiet, Charming, Business, Residential Neighborhood, Family",
       "Air conditioning",
@@ -29170,7 +29170,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1031,
     "rank": "#837 of 1,885 hotels in Paris",
-    "price": "$163 – $507 / night",
+    "price": "from $249",
     "tags": [
       "Quiet, Modern, Business, Family, Classic",
       "Air conditioning",
@@ -29281,7 +29281,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 3371,
     "rank": "#1,097 of 1,885 hotels in Paris",
-    "price": "$170 – $523 / night",
+    "price": "from $181",
     "tags": [
       "Quiet, Business, Classic, Residential Neighborhood, Family",
       "Restaurant",
@@ -29390,7 +29390,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 1151,
     "rank": "#921 of 1,885 hotels in Paris",
-    "price": "$147 – $326 / night",
+    "price": "from $147",
     "tags": [
       "Quiet, Modern, Business, Residential Neighbourhood, Family",
       "Bar/Lounge",
@@ -29481,7 +29481,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 876,
     "rank": "#974 of 1,885 hotels in Paris",
-    "price": "$88 – $297 / night",
+    "price": "from $88",
     "tags": [
       "City View, Modern, Quiet, Family, Residential Neighborhood",
       "Air conditioning",
@@ -29589,7 +29589,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 776,
     "rank": "#927 of 1,885 hotels in Paris",
-    "price": "$143 – $315 / night",
+    "price": "from $143",
     "tags": [
       "Quiet, Family, Centrally Located, Mid-range",
       "Pets Allowed",
@@ -29695,7 +29695,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 767,
     "rank": "#1,007 of 1,885 hotels in Paris",
-    "price": "$162 – $336 / night",
+    "price": "from $162",
     "tags": [
       "City View, Modern, Quiet, Business, Family",
       "Restaurant",
@@ -29816,7 +29816,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 668,
     "rank": "#794 of 1,885 hotels in Paris",
-    "price": "$118 – $384 / night",
+    "price": "from $103",
     "tags": [
       "City View, Quiet, Business, Classic, Residential Neighborhood",
       "Air conditioning",
@@ -29950,7 +29950,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 601,
     "rank": "#949 of 1,885 hotels in Paris",
-    "price": "$132 – $351 / night",
+    "price": "from $132",
     "tags": [
       "Quiet, Modern, Family, Centrally Located, Mid-range",
       "Air conditioning",
@@ -30051,7 +30051,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 470,
     "rank": "#834 of 1,885 hotels in Paris",
-    "price": "$110 – $277 / night",
+    "price": "from $110",
     "tags": [
       "City View, Modern, Family, Mid-range",
       "Air conditioning",
@@ -30155,7 +30155,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 2495,
     "rank": "#1,026 of 1,885 hotels in Paris",
-    "price": "$189 – $491 / night",
+    "price": "from $189",
     "tags": [
       "City View, Modern, Quiet, Business, Family",
       "Restaurant",
@@ -30271,7 +30271,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 854,
     "rank": "#850 of 1,885 hotels in Paris",
-    "price": "$134 – $334 / night",
+    "price": "from $134",
     "tags": [
       "City View, Quiet, Residential Neighborhood, Mid-range, Centrally Located",
       "Air conditioning",
@@ -30381,7 +30381,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 713,
     "rank": "#1,002 of 1,885 hotels in Paris",
-    "price": "$170 – $457 / night",
+    "price": "from $170",
     "tags": [
       "Quiet, Great View, Business, Residential Neighborhood, Centrally Located",
       "Bar/Lounge",
@@ -30489,7 +30489,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 640,
     "rank": "#855 of 1,885 hotels in Paris",
-    "price": "$146 – $366 / night",
+    "price": "from $146",
     "tags": [
       "Quiet, Residential Neighborhood, Family, Centrally Located, Mid-range",
       "Air conditioning",
@@ -30582,7 +30582,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 528,
     "rank": "#913 of 1,885 hotels in Paris",
-    "price": "$107 – $339 / night",
+    "price": "from $107",
     "tags": [
       "Business, Family, Classic, Residential Neighborhood, Mid-range",
       "Bar/Lounge",
@@ -30669,7 +30669,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 505,
     "rank": "#1,112 of 1,885 hotels in Paris",
-    "price": "$145 – $638 / night",
+    "price": "from $145",
     "tags": [
       "Quiet, Modern, Business, Centrally Located, Mid-range",
       "Air conditioning",
@@ -30759,7 +30759,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 3645,
     "rank": "#1,425 of 1,885 hotels in Paris",
-    "price": "$114 – $303 / night",
+    "price": "from $114",
     "tags": [
       "Quiet, Business, Modern, Family, Green",
       "Bar/Lounge",
@@ -30868,7 +30868,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 3392,
     "rank": "#1,171 of 1,885 hotels in Paris",
-    "price": "$130 – $331 / night",
+    "price": "from $130",
     "tags": [
       "Quiet, Modern, Business, Residential Neighborhood, Mid-range",
       "Restaurant",
@@ -30967,7 +30967,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 1211,
     "rank": "#1,031 of 1,885 hotels in Paris",
-    "price": "$130 – $300 / night",
+    "price": "from $130",
     "tags": [
       "Quiet, Business, Modern, Mid-range, Green",
       "Bar/Lounge",
@@ -31065,7 +31065,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 993,
     "rank": "#1,004 of 1,885 hotels in Paris",
-    "price": "$122 – $333 / night",
+    "price": "from $122",
     "tags": [
       "Quiet, Business, Family, Residential Neighborhood, Centrally Located",
       "Air conditioning",
@@ -31164,7 +31164,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 704,
     "rank": "#1,207 of 1,885 hotels in Paris",
-    "price": "$97 – $296 / night",
+    "price": "from $97",
     "tags": [
       "Quiet, Modern, Residential Neighbourhood, Centrally Located, Mid-range",
       "Air conditioning"
@@ -31251,7 +31251,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 71,
     "rank": "#1,447 of 1,885 hotels in Paris",
-    "price": "$155 – $378 / night",
+    "price": "from $155",
     "tags": [
       "Quiet, Business, Residential Neighborhood, Classic, Centrally Located",
       "Free Wifi"
@@ -31352,7 +31352,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 45,
     "rank": "#1,463 of 1,885 hotels in Paris",
-    "price": "$68 – $256 / night",
+    "price": "from $68",
     "tags": [
       "Budget, Business",
       "Air conditioning",
@@ -31436,7 +31436,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 6916,
     "rank": "#1,455 of 1,885 hotels in Paris",
-    "price": "$155 – $294 / night",
+    "price": "from $155",
     "tags": [
       "City View, Modern, Quiet, Business, Residential Neighborhood",
       "Restaurant",
@@ -31547,7 +31547,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1790,
     "rank": "#1,300 of 1,885 hotels in Paris",
-    "price": "$87 – $229 / night",
+    "price": "from $87",
     "tags": [
       "Quiet, Modern, Family, Budget",
       "Air conditioning",
@@ -31641,7 +31641,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1622,
     "rank": "#1,371 of 1,885 hotels in Paris",
-    "price": "$183 – $841 / night",
+    "price": "from $183",
     "tags": [
       "City View, Modern, Quiet, Business, Luxury",
       "Restaurant",
@@ -31791,7 +31791,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1570,
     "rank": "#975 of 1,885 hotels in Paris",
-    "price": "$110 – $314 / night",
+    "price": "from $110",
     "tags": [
       "Quiet, Modern, Business, Family, Green",
       "Bar/Lounge",
@@ -31888,7 +31888,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1234,
     "rank": "#1,149 of 1,885 hotels in Paris",
-    "price": "$111 – $319 / night",
+    "price": "from $111",
     "tags": [
       "Quiet, Business, Classic, Centrally Located, Mid-range",
       "Bar/Lounge",
@@ -31983,7 +31983,7 @@ export const CITY_LISTINGS = [
     "rating": 3.4,
     "reviewCount": 1248,
     "rank": "#1,327 of 1,885 hotels in Paris",
-    "price": "$109 – $306 / night",
+    "price": "from $109",
     "tags": [
       "Centrally Located, Mid-range",
       "Bar/Lounge",
@@ -32071,7 +32071,7 @@ export const CITY_LISTINGS = [
     "rating": 3.4,
     "reviewCount": 1027,
     "rank": "#1,138 of 1,885 hotels in Paris",
-    "price": "$143 – $363 / night",
+    "price": "from $143",
     "tags": [
       "Quiet, Family, Centrally Located, Mid-range",
       "Air conditioning",
@@ -32167,7 +32167,7 @@ export const CITY_LISTINGS = [
     "rating": 3.4,
     "reviewCount": 762,
     "rank": "#1,073 of 1,885 hotels in Paris",
-    "price": "$875 – $1168 / night",
+    "price": "from $875",
     "tags": [
       "Quiet, Family, Classic, Budget, Centrally Located",
       "Air conditioning",
@@ -32256,7 +32256,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 1192,
     "rank": "#1,671 of 1,885 hotels in Paris",
-    "price": "$104 – $204 / night",
+    "price": "from $104",
     "tags": [
       "Quiet, Business, Modern, Mid-range, Green",
       "Restaurant",
@@ -32368,7 +32368,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 654,
     "rank": "#1,341 of 1,885 hotels in Paris",
-    "price": "$106 – $288 / night",
+    "price": "from $106",
     "tags": [
       "Quiet, Business, Modern, Centrally Located, Mid-range",
       "Free Wifi"
@@ -32458,7 +32458,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 583,
     "rank": "#1,421 of 1,885 hotels in Paris",
-    "price": "$168 – $440 / night",
+    "price": "from $168",
     "tags": [
       "Budget, Centrally Located",
       "Restaurant",
@@ -32541,7 +32541,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 449,
     "rank": "#1,346 of 1,885 hotels in Paris",
-    "price": "$118 – $314 / night",
+    "price": "from $118",
     "tags": [
       "City View, Business, Family, Classic, Centrally Located",
       "Bar/Lounge",
@@ -32647,7 +32647,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 255,
     "rank": "#1,386 of 1,885 hotels in Paris",
-    "price": "$102 – $277 / night",
+    "price": "from $102",
     "tags": [
       "Centrally Located, Mid-range",
       "Free Wifi"
@@ -32726,7 +32726,7 @@ export const CITY_LISTINGS = [
     "rating": 3.1,
     "reviewCount": 316,
     "rank": "#1,676 of 1,885 hotels in Paris",
-    "price": "$97 – $229 / night",
+    "price": "from $97",
     "tags": [
       "Budget",
       "Air conditioning",
@@ -32820,7 +32820,7 @@ export const CITY_LISTINGS = [
     "rating": 3.0,
     "reviewCount": 306,
     "rank": "#1,686 of 1,885 hotels in Paris",
-    "price": "$149 – $272 / night",
+    "price": "from $149",
     "tags": [
       "Residential Neighborhood, Budget, Centrally Located",
       "Free Wifi"
@@ -32895,7 +32895,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1055,
     "rank": "#270 of 1,168 hotels in Rome",
-    "price": "$172 – $612 / night",
+    "price": "from $189",
     "tags": [
       "Quiet, Centrally Located, Charming, Quaint, Business",
       "Bar/Lounge",
@@ -32999,7 +32999,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 2038,
     "rank": "#325 of 1,168 hotels in Rome",
-    "price": "$157 – $420 / night",
+    "price": "from $157",
     "tags": [
       "Quiet, Modern, Centrally Located, Charming, Trendy",
       "Restaurant",
@@ -33109,7 +33109,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1994,
     "rank": "#79 of 1,720 Speciality lodging in Rome",
-    "price": "$54 – $160 / night",
+    "price": "from $54",
     "tags": [
       "Mid-range, Family",
       "Free parking",
@@ -33239,7 +33239,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 1075,
     "rank": "#516 of 1,168 hotels in Rome",
-    "price": "$91 – $268 / night",
+    "price": "from $91",
     "tags": [
       "Quiet, Centrally Located, Classic, Mid-range",
       "Air conditioning",
@@ -33327,7 +33327,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 524,
     "rank": "#585 of 1,168 hotels in Rome",
-    "price": "$85 – $223 / night",
+    "price": "from $85",
     "tags": [
       "Quiet, Centrally Located, Business, Mid-range, Classic",
       "Air conditioning",
@@ -33418,7 +33418,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1081,
     "rank": "#589 of 1,168 hotels in Rome",
-    "price": "$99 – $308 / night",
+    "price": "from $99",
     "tags": [
       "Quiet, Centrally Located, Business, Mid-range",
       "Bar/Lounge",
@@ -33526,7 +33526,7 @@ export const CITY_LISTINGS = [
     "rating": 2.9,
     "reviewCount": 704,
     "rank": "#1,095 of 1,168 hotels in Rome",
-    "price": "$82 – $216 / night",
+    "price": "from $82",
     "tags": [
       "Centrally Located, Classic, Mid-range",
       "Bar/Lounge"
@@ -33604,7 +33604,7 @@ export const CITY_LISTINGS = [
     "rating": 2.9,
     "reviewCount": 662,
     "rank": "#1,059 of 1,168 hotels in Rome",
-    "price": "$79 – $214 / night",
+    "price": "from $79",
     "tags": [
       "Quiet, Budget, Classic",
       "Restaurant",
@@ -33693,7 +33693,7 @@ export const CITY_LISTINGS = [
     "rating": 2.7,
     "reviewCount": 173,
     "rank": "#1,057 of 1,168 hotels in Rome",
-    "price": "$62 – $156 / night",
+    "price": "from $62",
     "tags": [
       "Budget",
       "Free Wifi"
@@ -33776,7 +33776,7 @@ export const CITY_LISTINGS = [
     "rating": 5.0,
     "reviewCount": 646,
     "rank": "#2 of 4,280 B&Bs / Inns in Rome",
-    "price": "$123 – $340 / night",
+    "price": "from $123",
     "tags": [
       "Mid-range, Residential Neighbourhood, Charming, Family, Centrally Located",
       "Air conditioning",
@@ -33885,7 +33885,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 1044,
     "rank": "#18 of 1,168 hotels in Rome",
-    "price": "$359 – $870 / night",
+    "price": "from $509",
     "tags": [
       "Centrally Located, Business, Quaint, Residential Neighbourhood, Romantic",
       "Bar/Lounge",
@@ -34021,7 +34021,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 722,
     "rank": "#26 of 1,168 hotels in Rome",
-    "price": "$855 – $2073 / night",
+    "price": "from $855",
     "tags": [
       "Luxury, Breakfast included, Centro",
       "Restaurant",
@@ -34074,7 +34074,7 @@ export const CITY_LISTINGS = [
     "rating": 4.9,
     "reviewCount": 719,
     "rank": "#1 of 4,280 B&Bs / Inns in Rome",
-    "price": "$359 – $1976 / night",
+    "price": "from $489",
     "tags": [
       "Boutique, Romantic, Trendy, Charming, Centrally Located",
       "Spa",
@@ -34213,7 +34213,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 9568,
     "rank": "#11 of 1,168 hotels in Rome",
-    "price": "$252 – $854 / night",
+    "price": "from $252",
     "tags": [
       "Quiet, Modern, Centrally Located, Romantic, Charming",
       "Spa",
@@ -34380,7 +34380,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 5079,
     "rank": "#17 of 1,168 hotels in Rome",
-    "price": "$230 – $953 / night",
+    "price": "from $230",
     "tags": [
       "Quiet, Value, City View, Centrally Located, Romantic",
       "Bar/Lounge",
@@ -34514,7 +34514,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 4211,
     "rank": "#12 of 1,168 hotels in Rome",
-    "price": "$292 – $701 / night",
+    "price": "from $329",
     "tags": [
       "Quiet, Centrally Located, Romantic, Charming, Green",
       "Bar/Lounge",
@@ -34640,7 +34640,7 @@ export const CITY_LISTINGS = [
     "rating": 4.8,
     "reviewCount": 4090,
     "rank": "#7 of 1,168 hotels in Rome",
-    "price": "$203 – $531 / night",
+    "price": "from $203",
     "tags": [
       "Quiet, Value, Residential Neighborhood, Charming, Centrally Located",
       "Bar/Lounge",
@@ -34757,7 +34757,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 2285,
     "rank": "#25 of 1,168 hotels in Rome",
-    "price": "$366 – $992 / night",
+    "price": "from $754",
     "tags": [
       "Quiet, Modern, Residential Neighbourhood, Charming, Centrally Located",
       "Spa",
@@ -34895,7 +34895,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 2118,
     "rank": "#129 of 1,168 hotels in Rome",
-    "price": "$202 – $540 / night",
+    "price": "from $202",
     "tags": [
       "Centrally Located, Business, Romantic, Quiet, City View",
       "Bar/Lounge",
@@ -35028,7 +35028,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 1866,
     "rank": "#51 of 1,168 hotels in Rome",
-    "price": "$184 – $694 / night",
+    "price": "from $206",
     "tags": [
       "Centrally Located, Business, Quiet, Trendy, Mid-range",
       "Bar/Lounge",
@@ -35152,7 +35152,7 @@ export const CITY_LISTINGS = [
     "rating": 4.7,
     "reviewCount": 1708,
     "rank": "#61 of 1,168 hotels in Rome",
-    "price": "$225 – $660 / night",
+    "price": "from $195",
     "tags": [
       "Quiet, City View, Residential Neighborhood, Charming, Centrally Located",
       "Restaurant",
@@ -35309,7 +35309,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 4839,
     "rank": "#136 of 1,168 hotels in Rome",
-    "price": "$205 – $513 / night",
+    "price": "from $252",
     "tags": [
       "Business, Residential Neighbourhood, Romantic, Quiet, Trendy",
       "Free parking",
@@ -35447,7 +35447,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 3038,
     "rank": "#60 of 1,168 hotels in Rome",
-    "price": "$139 – $402 / night",
+    "price": "from $139",
     "tags": [
       "Quiet, City View, Modern, Residential Neighborhood, Charming",
       "Pool",
@@ -35622,7 +35622,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 2850,
     "rank": "#77 of 1,168 hotels in Rome",
-    "price": "$155 – $448 / night",
+    "price": "from $210",
     "tags": [
       "Quiet, Value, Centrally Located, Romantic, Green",
       "Bar/Lounge",
@@ -35727,7 +35727,7 @@ export const CITY_LISTINGS = [
     "rating": 4.6,
     "reviewCount": 2737,
     "rank": "#73 of 1,168 hotels in Rome",
-    "price": "$134 – $399 / night",
+    "price": "from $134",
     "tags": [
       "Quiet, City View, Modern, Centrally Located, Charming",
       "Bar/Lounge",
@@ -35860,7 +35860,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 7668,
     "rank": "#175 of 1,168 hotels in Rome",
-    "price": "$468 – $1275 / night",
+    "price": "from $468",
     "tags": [
       "Quiet, Residential Neighborhood, Romantic, Luxury, Park View",
       "Pool",
@@ -36014,7 +36014,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 4122,
     "rank": "#80 of 1,168 hotels in Rome",
-    "price": "$161 – $502 / night",
+    "price": "from $164",
     "tags": [
       "Quiet, City View, Residential Neighborhood, Charming, Centrally Located",
       "Bar/Lounge",
@@ -36144,7 +36144,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 3146,
     "rank": "#120 of 1,168 hotels in Rome",
-    "price": "$186 – $568 / night",
+    "price": "from $201",
     "tags": [
       "Quiet, City View, Centrally Located, Charming, Green",
       "Air conditioning",
@@ -36256,7 +36256,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 3814,
     "rank": "#209 of 1,168 hotels in Rome",
-    "price": "$169 – $620 / night",
+    "price": "from $230",
     "tags": [
       "Charming, Budget, Residential Neighbourhood",
       "Restaurant",
@@ -36332,7 +36332,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 3605,
     "rank": "#64 of 1,168 hotels in Rome",
-    "price": "$246 – $643 / night",
+    "price": "from $246",
     "tags": [
       "Quaint",
       "Restaurant",
@@ -36396,7 +36396,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 3168,
     "rank": "#74 of 1,168 hotels in Rome",
-    "price": "$207 – $682 / night",
+    "price": "from $226",
     "tags": [
       "Quiet, City View, Modern, Residential Neighborhood, Charming",
       "Restaurant",
@@ -36522,7 +36522,7 @@ export const CITY_LISTINGS = [
     "rating": 4.4,
     "reviewCount": 2451,
     "rank": "#187 of 1,168 hotels in Rome",
-    "price": "$174 – $634 / night",
+    "price": "from $222",
     "tags": [
       "Mid-range, Family, Modern, Centrally Located, Charming",
       "Bar/Lounge",
@@ -36622,7 +36622,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 3518,
     "rank": "#83 of 1,168 hotels in Rome",
-    "price": "$193 – $617 / night",
+    "price": "from $188",
     "tags": [
       "Quiet, Modern, Centrally Located, Green, Park View",
       "Restaurant",
@@ -36741,7 +36741,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 2926,
     "rank": "#255 of 1,168 hotels in Rome",
-    "price": "$150 – $311 / night",
+    "price": "from $150",
     "tags": [
       "Mid-range, Pool, Breakfast included, Portuense",
       "Pool",
@@ -36795,7 +36795,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 1891,
     "rank": "#31 of 1,168 hotels in Rome",
-    "price": "$175 – $717 / night",
+    "price": "from $298",
     "tags": [
       "Quiet, Modern, Centrally Located, Charming, Quaint",
       "Air conditioning",
@@ -36906,7 +36906,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 5527,
     "rank": "#126 of 1,168 hotels in Rome",
-    "price": "$205 – $428 / night",
+    "price": "from $231",
     "tags": [
       "Quiet, Modern, Residential Neighborhood, Park View, Green",
       "Free parking",
@@ -37075,7 +37075,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 2291,
     "rank": "#153 of 1,168 hotels in Rome",
-    "price": "$116 – $251 / night",
+    "price": "from $116",
     "tags": [
       "Quiet, Modern, Business, Family, Mid-range",
       "Pool",
@@ -37180,7 +37180,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 3010,
     "rank": "#148 of 1,168 hotels in Rome",
-    "price": "$178 – $514 / night",
+    "price": "from $178",
     "tags": [
       "Quiet, City View, Modern, Centrally Located, Green",
       "Restaurant",
@@ -37308,7 +37308,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 2650,
     "rank": "#224 of 1,168 hotels in Rome",
-    "price": "$111 – $300 / night",
+    "price": "from $144",
     "tags": [
       "Quiet, Modern, Residential Neighborhood, Business, Family",
       "Bar/Lounge",
@@ -37431,7 +37431,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 2220,
     "rank": "#252 of 1,168 hotels in Rome",
-    "price": "$105 – $409 / night",
+    "price": "from $105",
     "tags": [
       "Charming, Romantic, Family, Quaint",
       "Bar/Lounge",
@@ -37499,7 +37499,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1891,
     "rank": "#278 of 1,168 hotels in Rome",
-    "price": "$230 – $594 / night",
+    "price": "from $230",
     "tags": [
       "Quiet, Centrally Located, Romantic, Historic Hotel, Charming",
       "Restaurant",
@@ -37620,7 +37620,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1663,
     "rank": "#205 of 1,168 hotels in Rome",
-    "price": "$187 – $1118 / night",
+    "price": "from $840",
     "tags": [
       "Quiet, Modern, Centrally Located, Charming, Business",
       "Restaurant",
@@ -37727,7 +37727,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1883,
     "rank": "#308 of 1,168 hotels in Rome",
-    "price": "$102 – $384 / night",
+    "price": "from $102",
     "tags": [
       "Quiet, Modern, Residential Neighborhood, Green, Business",
       "Restaurant",
@@ -37842,7 +37842,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1477,
     "rank": "#311 of 1,168 hotels in Rome",
-    "price": "$93 – $285 / night",
+    "price": "from $84",
     "tags": [
       "Quiet, Value, Residential Neighborhood, Green, Business",
       "Air conditioning",
@@ -37946,7 +37946,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1136,
     "rank": "#199 of 1,168 hotels in Rome",
-    "price": "$115 – $287 / night",
+    "price": "from $100",
     "tags": [
       "Quiet, Residential Neighborhood, Romantic, Business, Family",
       "Restaurant",
@@ -38051,7 +38051,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 2411,
     "rank": "#258 of 1,168 hotels in Rome",
-    "price": "$122 – $247 / night",
+    "price": "from $123",
     "tags": [
       "Quiet, Modern, Business, Classic, Family",
       "Pool",
@@ -38175,7 +38175,7 @@ export const CITY_LISTINGS = [
     "rating": 5.0,
     "reviewCount": 1728,
     "rank": "#21 of 4,280 B&Bs / Inns in Rome",
-    "price": "$144 – $432 / night",
+    "price": "from $144",
     "tags": [
       "Mid-range, Residential Neighbourhood, Charming, Business, City View",
       "Air conditioning",
@@ -38285,7 +38285,7 @@ export const CITY_LISTINGS = [
     "rating": 5.0,
     "reviewCount": 1410,
     "rank": "#9 of 4,280 B&Bs / Inns in Rome",
-    "price": "$126 – $290 / night",
+    "price": "from $126",
     "tags": [
       "Mid-range, Residential Neighbourhood, Green, Charming, Trendy",
       "Air conditioning",
@@ -38384,7 +38384,7 @@ export const CITY_LISTINGS = [
     "rating": 4.5,
     "reviewCount": 3214,
     "rank": "#165 of 1,168 hotels in Rome",
-    "price": "$142 – $446 / night",
+    "price": "from $155",
     "tags": [
       "Quiet, Centrally Located, Romantic, Green, Charming",
       "Bar/Lounge",
@@ -38504,7 +38504,7 @@ export const CITY_LISTINGS = [
     "rating": 4.3,
     "reviewCount": 2348,
     "rank": "#220 of 1,168 hotels in Rome",
-    "price": "$225 – $513 / night",
+    "price": "from $225",
     "tags": [
       "Quiet, Value, Centrally Located, Romantic, Green",
       "Restaurant",
@@ -38619,7 +38619,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 3028,
     "rank": "#273 of 1,168 hotels in Rome",
-    "price": "$241 – $528 / night",
+    "price": "from $241",
     "tags": [
       "Quiet, Modern, Centrally Located, Green, Park View",
       "Pool",
@@ -38735,7 +38735,7 @@ export const CITY_LISTINGS = [
     "rating": 4.2,
     "reviewCount": 2228,
     "rank": "#340 of 1,168 hotels in Rome",
-    "price": "$124 – $358 / night",
+    "price": "from $124",
     "tags": [
       "Quiet, Centrally Located, Charming, Business, Classic",
       "Bar/Lounge",
@@ -38842,7 +38842,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 2114,
     "rank": "#251 of 1,168 hotels in Rome",
-    "price": "$133 – $299 / night",
+    "price": "from $133",
     "tags": [
       "Quiet, Modern, Residential Neighborhood, Green, Business",
       "Bar/Lounge",
@@ -38957,7 +38957,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 2026,
     "rank": "#338 of 1,168 hotels in Rome",
-    "price": "$136 – $363 / night",
+    "price": "from $136",
     "tags": [
       "Quiet, Modern, Centrally Located, Business, Family",
       "Bar/Lounge",
@@ -39078,7 +39078,7 @@ export const CITY_LISTINGS = [
     "rating": 4.1,
     "reviewCount": 1658,
     "rank": "#245 of 1,168 hotels in Rome",
-    "price": "$376 – $832 / night",
+    "price": "from $372",
     "tags": [
       "Quiet, Residential Neighborhood, Charming, Historic Hotel, Romantic",
       "Pool",
@@ -39225,7 +39225,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 2319,
     "rank": "#292 of 1,168 hotels in Rome",
-    "price": "$168 – $467 / night",
+    "price": "from $168",
     "tags": [
       "Quiet, Modern, Residential Neighborhood, Centrally Located, Business",
       "Restaurant",
@@ -39348,7 +39348,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1451,
     "rank": "#347 of 1,168 hotels in Rome",
-    "price": "$119 – $324 / night",
+    "price": "from $155",
     "tags": [
       "Quiet, Residential Neighborhood, Centrally Located, Green, Art Deco Style",
       "Restaurant",
@@ -39451,7 +39451,7 @@ export const CITY_LISTINGS = [
     "rating": 4.0,
     "reviewCount": 1221,
     "rank": "#286 of 1,168 hotels in Rome",
-    "price": "$112 – $377 / night",
+    "price": "from $117",
     "tags": [
       "Quiet, Centrally Located, Business, Mid-range, Classic",
       "Air conditioning",
@@ -39544,7 +39544,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 2820,
     "rank": "#122 of 1,168 hotels in Rome",
-    "price": "$214 – $758 / night",
+    "price": "from $214",
     "tags": [
       "Quiet, Modern, Residential Neighborhood, Centrally Located, Green",
       "Restaurant",
@@ -39662,7 +39662,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 2119,
     "rank": "#435 of 1,168 hotels in Rome",
-    "price": "$138 – $452 / night",
+    "price": "from $138",
     "tags": [
       "Quiet, Centrally Located, Business, Classic, Mid-range",
       "Bar/Lounge",
@@ -39776,7 +39776,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1545,
     "rank": "#371 of 1,168 hotels in Rome",
-    "price": "$128 – $530 / night",
+    "price": "from $128",
     "tags": [
       "Quiet, Centrally Located, Green, Business, Classic",
       "Restaurant",
@@ -39878,7 +39878,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1530,
     "rank": "#350 of 1,168 hotels in Rome",
-    "price": "$458 – $1072 / night",
+    "price": "from $458",
     "tags": [
       "Quiet, City View, Modern, Centrally Located, Romantic",
       "Restaurant",
@@ -40043,7 +40043,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1138,
     "rank": "#244 of 1,168 hotels in Rome",
-    "price": "$112 – $425 / night",
+    "price": "from $112",
     "tags": [
       "Quiet, Residential Neighborhood, Centrally Located, Mid-range, Classic",
       "Air conditioning",
@@ -40138,7 +40138,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1102,
     "rank": "#477 of 1,168 hotels in Rome",
-    "price": "$175 – $377 / night",
+    "price": "from $175",
     "tags": [
       "Business, Mid-range, Modern, Family",
       "Pool",
@@ -40260,7 +40260,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 1101,
     "rank": "#266 of 1,168 hotels in Rome",
-    "price": "$183 – $410 / night",
+    "price": "from $183",
     "tags": [
       "Quiet, Modern, Business, Classic, Mid-range",
       "Spa",
@@ -40379,7 +40379,7 @@ export const CITY_LISTINGS = [
     "rating": 3.9,
     "reviewCount": 926,
     "rank": "#317 of 1,168 hotels in Rome",
-    "price": "$110 – $386 / night",
+    "price": "from $110",
     "tags": [
       "Quiet, Centrally Located, Business, Family, Mid-range",
       "Air conditioning",
@@ -40483,7 +40483,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 3114,
     "rank": "#298 of 1,168 hotels in Rome",
-    "price": "$122 – $291 / night",
+    "price": "from $122",
     "tags": [
       "Quiet, City View, Modern, Residential Neighbourhood, Business",
       "Restaurant",
@@ -40599,7 +40599,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 1657,
     "rank": "#405 of 1,168 hotels in Rome",
-    "price": "$101 – $277 / night",
+    "price": "from $101",
     "tags": [
       "Quiet, Centrally Located, Business, Classic, Mid-range",
       "Bar/Lounge",
@@ -40707,7 +40707,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 1572,
     "rank": "#434 of 1,168 hotels in Rome",
-    "price": "$120 – $309 / night",
+    "price": "from $120",
     "tags": [
       "Quiet, Residential Neighborhood, Centrally Located, Business, Classic",
       "Restaurant",
@@ -40821,7 +40821,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 1274,
     "rank": "#354 of 1,168 hotels in Rome",
-    "price": "$179 – $547 / night",
+    "price": "from $179",
     "tags": [
       "Quiet, Centrally Located, Historic Hotel, Business, Classic",
       "Restaurant",
@@ -40941,7 +40941,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 877,
     "rank": "#316 of 1,168 hotels in Rome",
-    "price": "$109 – $295 / night",
+    "price": "from $109",
     "tags": [
       "Quiet, Centrally Located, Business, Family, Mid-range",
       "Air conditioning",
@@ -41039,7 +41039,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 815,
     "rank": "#431 of 1,168 hotels in Rome",
-    "price": "$134 – $334 / night",
+    "price": "from $134",
     "tags": [
       "Quiet, Centrally Located, Business, Classic, Family",
       "Bar/Lounge",
@@ -41148,7 +41148,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 730,
     "rank": "#359 of 1,168 hotels in Rome",
-    "price": "$164 – $491 / night",
+    "price": "from $164",
     "tags": [
       "Quiet, Residential Neighborhood, Charming, Great View, Business",
       "Pool",
@@ -41262,7 +41262,7 @@ export const CITY_LISTINGS = [
     "rating": 3.8,
     "reviewCount": 36,
     "rank": "#732 of 1,168 hotels in Rome",
-    "price": "$171 – $544 / night",
+    "price": "from $171",
     "tags": [
       "Quaint",
       "Spa",
@@ -41352,7 +41352,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 2580,
     "rank": "#465 of 1,168 hotels in Rome",
-    "price": "$129 – $498 / night",
+    "price": "from $129",
     "tags": [
       "Quiet, Centrally Located, Business, Classic, Mid-range",
       "Restaurant",
@@ -41460,7 +41460,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 2191,
     "rank": "#458 of 1,168 hotels in Rome",
-    "price": "$127 – $317 / night",
+    "price": "from $127",
     "tags": [
       "Quiet, Modern, Residential Neighborhood, Centrally Located, Business",
       "Restaurant",
@@ -41579,7 +41579,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 1326,
     "rank": "#497 of 1,168 hotels in Rome",
-    "price": "$89 – $252 / night",
+    "price": "from $89",
     "tags": [
       "Quiet, Residential Neighborhood, Historic Hotel, Budget, Family",
       "Air conditioning"
@@ -41673,7 +41673,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 1029,
     "rank": "#444 of 1,168 hotels in Rome",
-    "price": "$177 – $998 / night",
+    "price": "from $177",
     "tags": [
       "Quiet, Centrally Located, Historic Hotel, Great View, Business",
       "Bar/Lounge",
@@ -41779,7 +41779,7 @@ export const CITY_LISTINGS = [
     "rating": 3.7,
     "reviewCount": 1004,
     "rank": "#542 of 1,168 hotels in Rome",
-    "price": "$76 – $210 / night",
+    "price": "from $76",
     "tags": [
       "Quiet, Centrally Located, Classic, Family, Mid-range",
       "Air conditioning",
@@ -41869,7 +41869,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 2640,
     "rank": "#576 of 1,168 hotels in Rome",
-    "price": "$125 – $443 / night",
+    "price": "from $125",
     "tags": [
       "Quiet, Centrally Located, Business, Classic, Family",
       "Spa",
@@ -41989,7 +41989,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 880,
     "rank": "#414 of 1,168 hotels in Rome",
-    "price": "$103 – $439 / night",
+    "price": "from $103",
     "tags": [
       "Quiet, Centrally Located, Classic, Mid-range, Family",
       "Bar/Lounge",
@@ -42094,7 +42094,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 722,
     "rank": "#621 of 1,168 hotels in Rome",
-    "price": "$86 – $234 / night",
+    "price": "from $86",
     "tags": [
       "Centrally Located, Mid-range, Classic, Family",
       "Bar/Lounge",
@@ -42189,7 +42189,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 575,
     "rank": "#631 of 1,168 hotels in Rome",
-    "price": "$95 – $162 / night",
+    "price": "from $95",
     "tags": [
       "Quiet, Residential Neighborhood, Business, Classic, Mid-range",
       "Restaurant",
@@ -42296,7 +42296,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 569,
     "rank": "#570 of 1,168 hotels in Rome",
-    "price": "$79 – $230 / night",
+    "price": "from $79",
     "tags": [
       "Quiet, Centrally Located, Quaint, Mid-range, Family",
       "Bar/Lounge",
@@ -42390,7 +42390,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 210,
     "rank": "#1,972 of 4,280 B&Bs / Inns in Rome",
-    "price": "$103 – $303 / night",
+    "price": "from $103",
     "tags": [
       "Romantic, Charming",
       "Air conditioning",
@@ -42470,7 +42470,7 @@ export const CITY_LISTINGS = [
     "rating": 3.6,
     "reviewCount": 161,
     "rank": "#762 of 1,168 hotels in Rome",
-    "price": "$78 – $932 / night",
+    "price": "from $78",
     "tags": [
       "Business, Quaint, Romantic, Mid-range, Classic",
       "Bar/Lounge",
@@ -42567,7 +42567,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1240,
     "rank": "#443 of 1,168 hotels in Rome",
-    "price": "$99 – $231 / night",
+    "price": "from $112",
     "tags": [
       "Quiet, City View, Centrally Located, Mid-range",
       "Bar/Lounge",
@@ -42667,7 +42667,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1118,
     "rank": "#594 of 1,168 hotels in Rome",
-    "price": "$134 – $718 / night",
+    "price": "from $222",
     "tags": [
       "Quiet, Centrally Located, Business, Classic, Family",
       "Air conditioning",
@@ -42765,7 +42765,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 1040,
     "rank": "#600 of 1,168 hotels in Rome",
-    "price": "$131 – $389 / night",
+    "price": "from $169",
     "tags": [
       "Quiet, Centrally Located, Charming, Business, Classic",
       "Bar/Lounge",
@@ -42870,7 +42870,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 709,
     "rank": "#728 of 1,168 hotels in Rome",
-    "price": "$98 – $542 / night",
+    "price": "from $153",
     "tags": [
       "Quiet, Mid-range, Classic, Family",
       "Air conditioning",
@@ -42956,7 +42956,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 663,
     "rank": "#694 of 1,168 hotels in Rome",
-    "price": "$142 – $376 / night",
+    "price": "from $142",
     "tags": [
       "Centrally Located, Trendy, Mid-range, Modern",
       "Spa",
@@ -43068,7 +43068,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 661,
     "rank": "#734 of 1,168 hotels in Rome",
-    "price": "$156 – $518 / night",
+    "price": "from $156",
     "tags": [
       "Quiet, City View, Centrally Located, Historic Hotel, Charming",
       "Restaurant",
@@ -43180,7 +43180,7 @@ export const CITY_LISTINGS = [
     "rating": 3.5,
     "reviewCount": 637,
     "rank": "#618 of 1,168 hotels in Rome",
-    "price": "$102 – $262 / night",
+    "price": "from $102",
     "tags": [
       "Quiet, Business, Mid-range, Family",
       "Restaurant",
@@ -43280,7 +43280,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 1596,
     "rank": "#703 of 1,168 hotels in Rome",
-    "price": "$156 – $485 / night",
+    "price": "from $156",
     "tags": [
       "Quiet, Modern, Centrally Located, Mid-range, Family",
       "Air conditioning"
@@ -43374,7 +43374,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 1340,
     "rank": "#661 of 1,168 hotels in Rome",
-    "price": "$130 – $584 / night",
+    "price": "from $130",
     "tags": [
       "Quiet, Residential Neighbourhood, Business, Family, Mid-range",
       "Free parking",
@@ -43479,7 +43479,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 721,
     "rank": "#948 of 1,168 hotels in Rome",
-    "price": "$104 – $310 / night",
+    "price": "from $104",
     "tags": [
       "Quiet, Centrally Located, Historic Hotel, Quaint, Business",
       "Free parking",
@@ -43582,7 +43582,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 541,
     "rank": "#718 of 1,168 hotels in Rome",
-    "price": "$151 – $444 / night",
+    "price": "from $151",
     "tags": [
       "City View, Centrally Located, Classic, Mid-range, Family",
       "Air conditioning",
@@ -43688,7 +43688,7 @@ export const CITY_LISTINGS = [
     "rating": 3.3,
     "reviewCount": 106,
     "rank": "#828 of 1,168 hotels in Rome",
-    "price": "$109 – $226 / night",
+    "price": "from $109",
     "tags": [
       "Quiet, Business, Mid-range",
       "Restaurant",
@@ -43789,7 +43789,7 @@ export const CITY_LISTINGS = [
     "rating": 3.0,
     "reviewCount": 590,
     "rank": "#1,012 of 1,168 hotels in Rome",
-    "price": "$197 – $449 / night",
+    "price": "from $197",
     "tags": [
       "Quiet, Centrally Located, Classic, Family, Mid-range",
       "Air conditioning",
@@ -43870,7 +43870,7 @@ export const CITY_LISTINGS = [
     "rating": 2.9,
     "reviewCount": 560,
     "rank": "#1,063 of 1,168 hotels in Rome",
-    "price": "$86 – $188 / night",
+    "price": "from $86",
     "tags": [
       "Centrally Located, Budget, Classic",
       "Air conditioning",

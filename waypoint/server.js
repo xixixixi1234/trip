@@ -53,9 +53,11 @@ async function withLocalImages(hotels) {
     const coverUp = ups.find(u => u.isCover);
     const gallery = [...(fileSrc ? [{ src: fileSrc, caption: "" }] : []), ...ups.map(({ src, caption }) => ({ src, caption }))];
     const cover = coverUp ? coverUp.src : fileSrc;
+    const pm = /^\$?\s*([\d,]+)/.exec(String(h.price || "").replace(/^from\s*/i, ""));
+    const price = pm ? `from $${parseInt(pm[1].replace(/,/g, ""), 10)}` : (h.price && !/on request/i.test(h.price) ? h.price : "");
     // cover first in the gallery
     gallery.sort((a, b) => (b.src === cover) - (a.src === cover));
-    return { ...h, image: cover, images: gallery.map(g => g.src), gallery, imageRemote: REMOTE_FALLBACK ? remote : "" };
+    return { ...h, price, image: cover, images: gallery.map(g => g.src), gallery, imageRemote: REMOTE_FALLBACK ? remote : "" };
   });
 }
 app.get("/images/uploaded/:id", async (req, res) => {
@@ -169,8 +171,8 @@ app.get("/api/settings/welcome", async (_req, res) => {
 });
 // public study config (what the front end needs to render the condition)
 app.get("/api/config", async (_req, res) => {
-  try { const sw = await db.getAiSwitches(); res.json({ aiSearch: sw.search, aiProduct: sw.product }); }
-  catch (e) { console.error(e); res.json({ aiSearch: true, aiProduct: true }); }
+  try { const sw = await db.getAiSwitches(); res.json({ aiSearch: sw.search, aiProduct: sw.product, elements: await db.getElements() }); }
+  catch (e) { console.error(e); res.json({ aiSearch: true, aiProduct: true, elements: {} }); }
 });
 app.post("/api/track/consent", async (req, res) => {
   const { pid } = req.body || {};
@@ -180,12 +182,14 @@ app.post("/api/track/consent", async (req, res) => {
 });
 app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
   try {
-    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome() });
+    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(),
+               elements: await db.getElements(), elementList: db.ELEMENTS.map(([key, label, def]) => ({ key, label, def })) });
   } catch (e) { console.error(e); res.status(500).json({ error: "failed" }); }
 });
 app.post("/api/admin/settings", requireAdmin, async (req, res) => {
   const { key, value } = req.body || {};
-  if (!key || !["welcome", "ai_search", "ai_product"].includes(key)) return res.status(400).json({ error: "unknown setting" });
+  if (!key || !["welcome", "ai_search", "ai_product", "elements"].includes(key)) return res.status(400).json({ error: "unknown setting" });
+  if (key === "elements") { try { const o = JSON.parse(String(value)); if (!o || typeof o !== "object") throw 0; } catch { return res.status(400).json({ error: "elements must be a JSON object" }); } }
   if (key === "ai_search" || key === "ai_product") {
     const sw = await db.getAiSwitches();
     if ((key === "ai_search" && sw.lockedSearch) || (key === "ai_product" && sw.lockedProduct)) return res.status(400).json({ error: "This switch is fixed by an environment variable on this deployment" });
@@ -368,9 +372,11 @@ app.get("/api/admin/export/participants.csv", requireAdmin, async (_req, res) =>
     const rows = ps.map(p => [
       p.pid,
       p.likes || 0, p.dislikes || 0,
+      p.likesList || 0, p.likesDetail || 0, p.dislikesList || 0, p.dislikesDetail || 0,
       p.hotelsSeen || 0, p.hotelsClicked || 0,
       ((p.avgHotelMs || 0) / 1000).toFixed(1),       // mean seconds per hotel (list + detail)
       Math.round((p.totalMs || 0) / 1000),          // total seconds on site
+      p.totalMs || 0,                                // same in milliseconds
       p.siteFav ? "yes" : "no",
       p.consentedAt ? "yes" : "no",
       p.aiSearch == null ? "" : (p.aiSearch ? "yes" : "no"),
@@ -380,8 +386,8 @@ app.get("/api/admin/export/participants.csv", requireAdmin, async (_req, res) =>
       p.lastSeen || "",
     ]);
     const csv = toCsv(
-      ["participant_id", "hotels_liked", "hotels_disliked", "hotels_viewed", "hotels_clicked",
-       "avg_seconds_per_hotel", "total_seconds_on_site", "bookmarked_site", "consented", "ai_summary_in_search_page", "ai_summary_in_product_page", "consent_time", "first_seen", "last_seen"],
+      ["participant_id", "hotels_liked", "hotels_disliked", "likes_on_search_page", "likes_on_product_page", "dislikes_on_search_page", "dislikes_on_product_page",
+       "hotels_viewed", "hotels_clicked", "avg_seconds_per_hotel", "total_seconds_on_site", "total_ms_on_site", "bookmarked_site", "consented", "ai_summary_in_search_page", "ai_summary_in_product_page", "consent_time", "first_seen", "last_seen"],
       rows
     );
     sendCsv(res, "participants.csv", csv);
@@ -397,11 +403,12 @@ app.get("/api/admin/export/hotel_events.csv", requireAdmin, async (_req, res) =>
       r.vote === "up" ? "like" : r.vote === "down" ? "dislike" : "",
       r.vote ? (r.vote_source || "") : "",
       (r.list_ms / 1000).toFixed(1), (r.detail_ms / 1000).toFixed(1), ((r.list_ms + r.detail_ms) / 1000).toFixed(1),
+      r.list_ms, r.detail_ms, r.list_ms + r.detail_ms,
       r.ai_search == null ? "" : (r.ai_search ? "yes" : "no"), r.ai_product == null ? "" : (r.ai_product ? "yes" : "no"),
     ]);
     const csv = toCsv(
       ["participant_id", "hotel_id", "hotel_name", "city", "hotel_rating", "hotel_review_count",
-       "list_views", "clicks", "vote", "vote_page", "list_dwell_seconds", "detail_dwell_seconds", "total_dwell_seconds", "ai_summary_in_search_page", "ai_summary_in_product_page"],
+       "list_views", "clicks", "vote", "vote_page", "list_dwell_seconds", "detail_dwell_seconds", "total_dwell_seconds", "list_dwell_ms", "detail_dwell_ms", "total_dwell_ms", "ai_summary_in_search_page", "ai_summary_in_product_page"],
       rows
     );
     sendCsv(res, "hotel_events.csv", csv);
@@ -512,6 +519,76 @@ app.post("/api/admin/hotel-cover", requireAdmin, async (req, res) => {
 
 app.get("/api/admin/review-counts", requireAdmin, async (_req, res) => {
   try { res.json(await db.reviewCounts()); } catch (e) { res.status(500).json({ error: "failed" }); }
+});
+
+/* ---- export: every editable text per hotel + character statistics ---- */
+function firstSentenceOf(text) {
+  const t = String(text || "").trim(); if (!t) return "";
+  const ABBR = /(?:\b(?:st|dr|mr|mrs|ms|no|ave|blvd|rd|sq|ste|jr|sr|vs|etc|approx|inc|ltd|co)|\b[A-Z])$/i;
+  const re = /[.!?]+(?=\s|$)/g; let m;
+  while ((m = re.exec(t))) { const before = t.slice(0, m.index); if (m[0] === "." && (ABBR.test(before) || (/\d$/.test(before) && /^\d/.test(t.slice(m.index + 1))))) continue; return t.slice(0, m.index + m[0].length); }
+  return t;
+}
+const chars = v => String(v || "").trim().length;
+const words = v => { const t = String(v || "").trim(); return t ? t.split(/\s+/).length : 0; };
+const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+app.get("/api/admin/export/hotel_content.csv", requireAdmin, async (_req, res) => {
+  try {
+    const hotels = await db.listHotels({});
+    const reviews = await db.allReviewsFlat();
+    const byHotel = {}; for (const r of reviews) (byHotel[r.hotelId] = byHotel[r.hotelId] || []).push(r);
+    const rows = hotels.map(h => {
+      const rs = byHotel[h.id] || []; const d = h.details || {}; const first = firstSentenceOf(h.about);
+      return [h.id, h.sourceId || "", h.name, h.cityName || h.city, h.rating, h.reviewCount, h.price || "",
+        first, chars(first), words(first),
+        h.about || "", chars(h.about), words(h.about),
+        h.seo || "", chars(h.seo), words(h.seo),
+        rs.length, mean(rs.map(r => chars(r.text))).toFixed(1), mean(rs.map(r => words(r.text))).toFixed(1), mean(rs.map(r => chars(r.title))).toFixed(1),
+        rs.length ? mean(rs.filter(r => r.rating).map(r => r.rating)).toFixed(2) : "", rs.reduce((a, r) => a + (r.photos || []).length, 0),
+        d.label || "", d.hotelClass ?? "", (d.propertyAmenities || []).length, (d.roomFeatures || []).length, (d.roomTypes || []).length,
+        ...["Location", "Rooms", "Value", "Cleanliness", "Service", "Sleep quality"].map(k => (h.subRatings || {})[k] ?? ""),
+        ...["Excellent", "Good", "Average", "Poor", "Terrible"].map(k => (d.distribution || {})[k] ?? ""),
+        (h.tags || []).join(" | "), (d.styles || []).join(" | "), (d.languages || []).join(" | ")];
+    });
+    const csv = toCsv(["hotel_id", "tripadvisor_id", "hotel_name", "city", "rating", "review_count_tripadvisor", "price",
+      "first_sentence", "first_sentence_chars", "first_sentence_words",
+      "description", "description_chars", "description_words",
+      "ai_summary", "ai_summary_chars", "ai_summary_words",
+      "reviews_on_site", "avg_review_chars", "avg_review_words", "avg_review_title_chars", "avg_review_rating", "review_photos",
+      "rating_label", "hotel_class", "property_amenities_count", "room_features_count", "room_types_count",
+      "sub_location", "sub_rooms", "sub_value", "sub_cleanliness", "sub_service", "sub_sleep_quality",
+      "dist_excellent", "dist_good", "dist_average", "dist_poor", "dist_terrible", "tags", "styles", "languages"], rows);
+    sendCsv(res, "hotel_content.csv", csv);
+  } catch (e) { console.error(e); res.status(500).json({ error: "export failed" }); }
+});
+app.get("/api/admin/export/reviews.csv", requireAdmin, async (_req, res) => {
+  try {
+    const hotels = Object.fromEntries((await db.listHotels({})).map(h => [h.id, h]));
+    const rows = (await db.allReviewsFlat()).map(r => { const h = hotels[r.hotelId] || {}; return [r.id, r.hotelId, h.sourceId || "", h.name || "", h.cityName || h.city || "",
+      r.author, r.location, r.contributions ?? "", r.rating ?? "", r.month, r.dateVisited, r.tripType, r.title, chars(r.title), r.text, chars(r.text), words(r.text), r.helpful, (r.photos || []).length, r.language]; });
+    sendCsv(res, "reviews.csv", toCsv(["review_id", "hotel_id", "tripadvisor_id", "hotel_name", "city", "author", "author_location", "author_contributions", "rating", "review_date", "date_of_stay", "trip_type", "title", "title_chars", "text", "text_chars", "text_words", "helpful_votes", "photos", "language"], rows));
+  } catch (e) { console.error(e); res.status(500).json({ error: "export failed" }); }
+});
+app.get("/api/admin/export/summary_stats.csv", requireAdmin, async (_req, res) => {
+  try {
+    const hotels = await db.listHotels({}); const reviews = await db.allReviewsFlat();
+    const stat = (label, arr) => [label, arr.length, mean(arr).toFixed(1), arr.length ? Math.min(...arr) : "", arr.length ? Math.max(...arr) : ""];
+    const rows = [
+      stat("first_sentence_chars", hotels.map(h => chars(firstSentenceOf(h.about))).filter(n => n > 0)),
+      stat("description_chars", hotels.map(h => chars(h.about)).filter(n => n > 0)),
+      stat("description_words", hotels.map(h => words(h.about)).filter(n => n > 0)),
+      stat("ai_summary_chars", hotels.map(h => chars(h.seo)).filter(n => n > 0)),
+      stat("ai_summary_words", hotels.map(h => words(h.seo)).filter(n => n > 0)),
+      stat("review_text_chars", reviews.map(r => chars(r.text))),
+      stat("review_text_words", reviews.map(r => words(r.text))),
+      stat("review_title_chars", reviews.map(r => chars(r.title))),
+      stat("review_rating", reviews.filter(r => r.rating).map(r => r.rating)),
+      stat("reviews_per_hotel", Object.values(reviews.reduce((a, r) => (a[r.hotelId] = (a[r.hotelId] || 0) + 1, a), {}))),
+      stat("hotel_rating", hotels.map(h => Number(h.rating)).filter(Number.isFinite)),
+      stat("hotel_review_count_tripadvisor", hotels.map(h => Number(h.reviewCount)).filter(Number.isFinite)),
+    ];
+    sendCsv(res, "summary_stats.csv", toCsv(["metric", "n", "mean", "min", "max"], rows));
+  } catch (e) { console.error(e); res.status(500).json({ error: "export failed" }); }
 });
 
 /* admin: edit a hotel's official description / AI summary */
@@ -677,7 +754,11 @@ const ADMIN_HTML = `<!doctype html>
   <div class="view active" id="view-stats">
     <div class="exports">
       <a class="dl" href="/api/admin/export/participants.csv">Export per-participant CSV</a>
+      <a class="dl" href="/api/admin/export/hotel_events.csv">Export participant × hotel CSV</a>
       <a class="dl" href="/api/admin/export/votes.csv">Export raw votes CSV</a>
+      <a class="dl" href="/api/admin/export/hotel_content.csv">Export hotel content + text stats CSV</a>
+      <a class="dl" href="/api/admin/export/reviews.csv">Export all reviews CSV</a>
+      <a class="dl" href="/api/admin/export/summary_stats.csv">Export summary statistics CSV</a>
     </div>
     <div class="cards">
       <div class="card"><div class="k">Participants</div><div class="v" id="s-parts">–</div></div>
@@ -752,6 +833,13 @@ const ADMIN_HTML = `<!doctype html>
       <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="aiProduct"> AI summary in product page</label>
       <button class="btn" id="aiModeSave">Save</button>
       <span class="muted" id="aiModeMsg"></span>
+    </div>
+
+    <h2>Page elements</h2>
+    <p class="sub">Untick anything you do not want participants to see. Applies to everyone who loads the site after you save. (The AI summary has its own switches above.)</p>
+    <div class="panel">
+      <div id="elemList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px 18px"></div>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px"><button class="btn" id="elemSave">Save</button><span class="muted" id="elemMsg"></span></div>
     </div>
 
     <h2>Welcome / consent text</h2>
@@ -844,9 +932,9 @@ const ADMIN_HTML = `<!doctype html>
     ms = Number(ms)||0; const s = Math.round(ms/1000);
     if (s < 60) return s + 's';
     const m = Math.floor(s/60), r = s%60;
-    if (m < 60) return m + 'm ' + r + 's';
-    const h = Math.floor(m/60); return h + 'h ' + (m%60) + 'm';
+    return m < 60 ? (m + 'm ' + r + 's') : (Math.floor(m/60) + 'h ' + (m%60) + 'm');
   }
+  function fmtSec(ms){ return Math.round((Number(ms)||0)/1000).toLocaleString(); }
 
   // ---- Import reviews ----
   async function loadReviewStats(){
@@ -1049,8 +1137,8 @@ const ADMIN_HTML = `<!doctype html>
       const pp = document.getElementById('perParticipant');
       if (!participants.length) { pp.innerHTML = '<div class="empty">No participants yet.</div>'; }
       else {
-        pp.innerHTML = '<table><thead><tr><th>Participant</th><th class="n">Liked</th><th class="n">Disliked</th><th class="n">Hotels viewed</th><th class="n">Clicked</th><th class="n">Avg / hotel</th><th class="n">Total time</th><th>Bookmarked</th><th>Agreed</th><th>AI in search</th><th>AI in product</th><th>First seen</th><th>Last seen</th></tr></thead><tbody>' +
-          participants.map(function(p){ return '<tr><td><b>'+esc(p.pid)+'</b></td><td class="n up">'+(p.likes||0)+'</td><td class="n down">'+(p.dislikes||0)+'</td><td class="n">'+(p.hotelsSeen||0)+'</td><td class="n">'+(p.hotelsClicked||0)+'</td><td class="n">'+fmtDur(p.avgHotelMs||0)+'</td><td class="n">'+fmtDur(p.totalMs||0)+'</td><td>'+(p.siteFav?'Yes':'No')+'</td><td>'+(p.consentedAt?'Yes':'No')+'</td><td>'+(p.aiSearch==null?'—':p.aiSearch?'On':'Off')+'</td><td>'+(p.aiProduct==null?'—':p.aiProduct?'On':'Off')+'</td><td class="muted">'+(p.firstSeen?new Date(p.firstSeen).toLocaleString():'—')+'</td><td class="muted">'+(p.lastSeen?new Date(p.lastSeen).toLocaleString():'—')+'</td></tr>'; }).join('') +
+        pp.innerHTML = '<table><thead><tr><th>Participant</th><th class="n">Liked<br><span class="muted" style="font-weight:400">search / product</span></th><th class="n">Disliked<br><span class="muted" style="font-weight:400">search / product</span></th><th class="n">Hotels viewed</th><th class="n">Clicked</th><th class="n">Avg / hotel</th><th class="n">Avg s</th><th class="n">Total time</th><th class="n">Total s</th><th>Bookmarked</th><th>Agreed</th><th>AI in search</th><th>AI in product</th><th>First seen</th><th>Last seen</th></tr></thead><tbody>' +
+          participants.map(function(p){ return '<tr><td><b>'+esc(p.pid)+'</b></td><td class="n up">'+(p.likes||0)+' <span class="muted">('+(p.likesList||0)+' / '+(p.likesDetail||0)+')</span></td><td class="n down">'+(p.dislikes||0)+' <span class="muted">('+(p.dislikesList||0)+' / '+(p.dislikesDetail||0)+')</span></td><td class="n">'+(p.hotelsSeen||0)+'</td><td class="n">'+(p.hotelsClicked||0)+'</td><td class="n">'+fmtDur(p.avgHotelMs||0)+'</td><td class="n muted">'+fmtSec(p.avgHotelMs)+'</td><td class="n">'+fmtDur(p.totalMs||0)+'</td><td class="n muted">'+fmtSec(p.totalMs)+'</td><td>'+(p.siteFav?'Yes':'No')+'</td><td>'+(p.consentedAt?'Yes':'No')+'</td><td>'+(p.aiSearch==null?'—':p.aiSearch?'On':'Off')+'</td><td>'+(p.aiProduct==null?'—':p.aiProduct?'On':'Off')+'</td><td class="muted">'+(p.firstSeen?new Date(p.firstSeen).toLocaleString():'—')+'</td><td class="muted">'+(p.lastSeen?new Date(p.lastSeen).toLocaleString():'—')+'</td></tr>'; }).join('') +
           '</tbody></table>';
       }
 
@@ -1078,11 +1166,22 @@ const ADMIN_HTML = `<!doctype html>
   async function loadWelcome(){
     const r = await fetch('/api/admin/settings'); const d = await r.json();
     document.getElementById('welcomeText').value = d.welcome || d.welcomeDefault || '';
+    elemDefs = d.elementList || []; renderElems(d.elements || {});
     const a = d.ai || {}; const cs = document.getElementById('aiSearch'), cp = document.getElementById('aiProduct');
     cs.checked = !!a.search; cp.checked = !!a.product; cs.disabled = !!a.lockedSearch; cp.disabled = !!a.lockedProduct;
     document.getElementById('aiModeSave').disabled = !!(a.lockedSearch && a.lockedProduct);
     document.getElementById('aiModeMsg').textContent = (a.lockedSearch||a.lockedProduct) ? 'Locked by environment variables on this deployment.' : '';
   }
+  let elemDefs = [];
+  function renderElems(elements){
+    document.getElementById('elemList').innerHTML = elemDefs.map(e => '<label style="display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" class="elem" data-key="'+esc(e.key)+'"'+(elements[e.key]!==false?' checked':'')+'> '+esc(e.label)+'</label>').join('');
+  }
+  document.getElementById('elemSave').onclick = async () => {
+    const msg = document.getElementById('elemMsg'); msg.textContent = 'Saving…'; msg.style.color='';
+    const value = {}; document.querySelectorAll('#elemList .elem').forEach(x => value[x.dataset.key] = x.checked);
+    try { const r = await fetch('/api/admin/settings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ key:'elements', value: JSON.stringify(value) }) }); const d = await r.json(); if (!r.ok) throw new Error(d.error||'Save failed'); msg.style.color='#2E7D5B'; msg.textContent='Saved'; }
+    catch(e) { msg.style.color='#B3261E'; msg.textContent=e.message; }
+  };
   document.getElementById('aiModeSave').onclick = async () => {
     const msg = document.getElementById('aiModeMsg'); msg.textContent = 'Saving…'; msg.style.color = '';
     try {
@@ -1112,7 +1211,7 @@ const ADMIN_HTML = `<!doctype html>
         const hotelsRows = (p.hotels||[]).map(function(h){
           const where = h.vote && h.voteSource ? ' <span class="muted">('+esc(h.voteSource)+')</span>' : '';
           const vote = h.vote==='up' ? '<span style="color:#2E7D5B;font-weight:600">Like</span>'+where : h.vote==='down' ? '<span style="color:#E8542F;font-weight:600">Dislike</span>'+where : '<span class="muted">—</span>';
-          return '<tr><td>'+esc(h.name)+'</td><td class="n">'+(h.rating!=null?Number(h.rating).toFixed(1):'—')+'</td><td class="n">'+(h.reviewCount!=null?Number(h.reviewCount).toLocaleString():'—')+'</td><td class="n">'+h.seen+'</td><td class="n">'+h.clicks+'</td><td>'+vote+'</td><td class="n">'+fmtDur(h.listMs||0)+'</td><td class="n">'+fmtDur(h.detailMs||0)+'</td></tr>';
+          return '<tr><td>'+esc(h.name)+'</td><td class="n">'+(h.rating!=null?Number(h.rating).toFixed(1):'—')+'</td><td class="n">'+(h.reviewCount!=null?Number(h.reviewCount).toLocaleString():'—')+'</td><td class="n">'+h.seen+'</td><td class="n">'+h.clicks+'</td><td>'+vote+'</td><td class="n">'+fmtDur(h.listMs||0)+'</td><td class="n muted">'+fmtSec(h.listMs)+'</td><td class="n">'+fmtDur(h.detailMs||0)+'</td><td class="n muted">'+fmtSec(h.detailMs)+'</td></tr>';
         }).join('');
         const favList = (p.favHotels||[]).map(f=>esc(f.name)).join(', ') || '<span class="muted">None</span>';
         return '<div class="panel" style="margin-bottom:14px">'+
@@ -1127,7 +1226,7 @@ const ADMIN_HTML = `<!doctype html>
           '</div>'+
           '<div style="font-size:13.5px;margin-bottom:8px">Saved hotels: '+favList+'</div>'+
           (hotelsRows
-            ? '<table><thead><tr><th>Hotel</th><th class="n">Rating</th><th class="n">Reviews</th><th class="n">List views</th><th class="n">Clicks</th><th>Vote</th><th class="n">In list</th><th class="n">On detail</th></tr></thead><tbody>'+hotelsRows+'</tbody></table>'
+            ? '<table><thead><tr><th>Hotel</th><th class="n">Rating</th><th class="n">Reviews</th><th class="n">List views</th><th class="n">Clicks</th><th>Vote</th><th class="n">In list</th><th class="n">List s</th><th class="n">On detail</th><th class="n">Detail s</th></tr></thead><tbody>'+hotelsRows+'</tbody></table>'
             : '<div class="muted">No hotel browsing records yet</div>')+
         '</div>';
       }).join('');

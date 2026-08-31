@@ -32,16 +32,18 @@ def clean(v):
     return str(v).strip()
 
 def price_str(row):
+    """TripAdvisor-style 'from $X' — lowest available price, else the low end of the range."""
     disp = clean(row.get("显示价格")) or clean(row.get("最低价格"))
-    lo, hi = row.get("价格区间最低"), row.get("价格区间最高")
+    m = re.search(r"[\d,]+", disp)
+    if m:
+        return f"from ${int(m.group().replace(',', ''))}"
+    lo = row.get("价格区间最低")
     try:
-        if not math.isnan(lo) and not math.isnan(hi) and hi > 0:
-            return f"${int(lo)} – ${int(hi)} / night"
+        if not math.isnan(lo) and lo > 0:
+            return f"from ${int(lo)}"
     except Exception:
         pass
-    if disp:
-        return f"from {disp} / night"
-    return "Price on request"
+    return ""
 
 def tags_from(row):
     out = []

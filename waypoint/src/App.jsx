@@ -132,7 +132,7 @@ h1, h2, h3, h4 { font-style: normal; overflow-wrap: anywhere; }
 
 .wp-primary:not(:disabled):hover { background: #1F4450 !important; box-shadow: 0 4px 12px rgba(18,43,51,.18); }
 .wp-ghost:not(:disabled):hover { background: #EEF4F2 !important; border-color: ${C.seaDeep} !important; }
-.wp-accent:not(:disabled):hover { background: #D0451F !important; box-shadow: 0 4px 12px rgba(232,84,47,.25); }
+.wp-accent:not(:disabled):hover { filter: brightness(0.92); box-shadow: 0 4px 12px rgba(18,43,51,.2); }
 .wp-vote:not(:disabled):hover { border-color: ${C.seaDeep} !important; background: #EEF4F2 !important; }
 .wp-vote.is-up:not(:disabled):hover { background: #256A4D !important; border-color: #256A4D !important; }
 .wp-vote.is-down:not(:disabled):hover { background: #D0451F !important; border-color: #D0451F !important; }
@@ -183,6 +183,10 @@ h1, h2, h3, h4 { font-style: normal; overflow-wrap: anywhere; }
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
 `;
+
+/* Page-element switches from admin (Study settings → Page elements). Missing key = shown. */
+const UiContext = React.createContext({});
+function useShow() { const ui = React.useContext(UiContext); return (key) => ui[key] !== false; }
 
 /* ----------------------- atoms ----------------------- */
 
@@ -367,6 +371,7 @@ function BookmarkButton({ favs, size = "md" }) {
 /* ----------------------- detail page ----------------------- */
 
 function DetailPage({ listing, onBack, votes, showAi = true }) {
+  const show = useShow();
   useEffect(() => { Track.openDetail(listing.id); return () => Track.closeDetail(listing.id); }, [listing.id]);
   const gallery = (listing.gallery && listing.gallery.length ? listing.gallery : (listing.image ? [{ src: listing.image, caption: "" }] : []));
   const [lb, setLb] = useState(null);
@@ -379,7 +384,7 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
 
       <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, overflow: "hidden", marginBottom: 20 }}>
         <CityArt gradient={listing.gradient} image={listing.image} imageFallback={listing.imageRemote} big flat />
-        {gallery.length > 1 && (
+        {gallery.length > 1 && show("detail.gallery") && (
           <div style={{ display: "flex", gap: 8, padding: "10px 12px 0", overflowX: "auto" }} aria-label="Hotel photos">
             {gallery.map((g, i) => (
               <button key={g.src} type="button" onClick={() => setLb(i)} className="wp-btn" aria-label={g.caption ? `Open photo: ${g.caption}` : `Open photo ${i + 1} of ${gallery.length}`}
@@ -397,13 +402,13 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
           <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: "clamp(23px, 5vw, 34px)", fontWeight: 700, margin: "0 0 6px", color: C.ink, lineHeight: 1.15 }}>
             {listing.name}
           </h1>
-          <div className="wp-text" style={{ fontSize: 14.5, color: C.inkSoft, marginBottom: 12, lineHeight: 1.5 }}>{listing.place} · {listing.price}</div>
+          <div className="wp-text" style={{ fontSize: 14.5, color: C.inkSoft, marginBottom: 12, lineHeight: 1.5 }}>{listing.place}{show("detail.price") && listing.price ? ` · ${listing.price}` : ""}</div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
             <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 26, fontWeight: 700, color: C.ink }}>{listing.rating.toFixed(1)}</span>
             <Buoys value={listing.rating} size={16} />
             <span style={{ fontSize: 14, color: C.inkSoft }}>{(listing.reviewCount || 0).toLocaleString()} traveller reviews</span>
           </div>
-          {listing.tags.length > 0 && (
+          {listing.tags.length > 0 && show("detail.tags") && (
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
               {listing.tags.map(t => <Tag key={t}>{t}</Tag>)}
             </div>
@@ -412,7 +417,7 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
             const desc = listing.about && listing.about.trim() && listing.about.trim() !== (listing.seo || "").trim() ? listing.about.trim() : "";
             return (
               <>
-                {desc && <p className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.ink, margin: "0 0 14px", maxWidth: 720 }}>{desc}</p>}
+                {desc && show("detail.description") && <p className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.ink, margin: "0 0 14px", maxWidth: 720 }}>{desc}</p>}
                 {listing.seo && showAi && (
                   <div style={{ display: "flex", gap: 10, alignItems: "flex-start", margin: "0 0 18px", maxWidth: 720 }}>
                     <AiBadge />
@@ -422,7 +427,7 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
               </>
             );
           })()}
-          {votes && (
+          {votes && show("detail.vote") && (
             <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap", paddingTop: 16, borderTop: `1px solid ${C.line}` }}>
               <span style={{ fontSize: 13.5, color: C.ink, fontWeight: 600, paddingTop: 8 }}>Would you stay here?</span>
               <LikeDislike hotelId={listing.id} {...votes} size="lg" stop={false} source="detail" />
@@ -431,9 +436,9 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
         </div>
       </div>
 
-      <AboutSection listing={listing} />
+      {show("about.section") && <AboutSection listing={listing} />}
 
-      <GuestReviews hotelId={listing.id} />
+      {show("reviews.section") && <GuestReviews hotelId={listing.id} />}
     </div>
   );
 }
@@ -487,18 +492,19 @@ function Stars({ value }) {
    overall rating + label, sub-rating bars, review distribution,
    property amenities / room features / room types, hotel class / style / languages. */
 function AboutSection({ listing }) {
+  const show = useShow();
   const d = listing.details || {};
   const sub = listing.subRatings || {};
-  const subKeys = ["Location", "Rooms", "Value", "Cleanliness", "Service", "Sleep quality"].filter(k => typeof sub[k] === "number");
-  const dist = d.distribution || {};
+  const subKeys = show("about.subRatings") ? ["Location", "Rooms", "Value", "Cleanliness", "Service", "Sleep quality"].filter(k => typeof sub[k] === "number") : [];
+  const dist = show("about.distribution") ? (d.distribution || {}) : {};
   const distTotal = Object.values(dist).reduce((a, b) => a + b, 0);
   const hasLeft = subKeys.length > 0 || distTotal > 0;
-  const hasRight = (d.propertyAmenities || []).length || (d.roomFeatures || []).length || (d.roomTypes || []).length || (listing.amenities || []).length;
-  const goodToKnow = [
+  const hasRight = show("about.amenities") && ((d.propertyAmenities || []).length || (d.roomFeatures || []).length || (d.roomTypes || []).length || (listing.amenities || []).length);
+  const goodToKnow = show("about.goodToKnow") ? [
     d.hotelClass ? ["Hotel class", <Stars key="s" value={d.hotelClass} />] : null,
     (d.styles || []).length ? ["Hotel style", d.styles.join(", ")] : null,
     (d.languages || []).length ? ["Languages spoken", d.languages.join(", ")] : null,
-  ].filter(Boolean);
+  ].filter(Boolean) : [];
   if (!hasLeft && !hasRight && !goodToKnow.length) return null;
 
   return (
@@ -615,6 +621,7 @@ function Lightbox({ photos, index, onClose, onIndex }) {
 }
 
 function GuestReviews({ hotelId }) {
+  const show = useShow();
   const [state, setState] = useState({ status: "loading", items: [] });
   const [shown, setShown] = useState(5);
   const [lightbox, setLightbox] = useState(null);
@@ -639,18 +646,19 @@ function GuestReviews({ hotelId }) {
       {state.status === "error" && <Status kind="error" onRetry={load}>Couldn't load reviews.</Status>}
       {state.status === "ok" && items.length === 0 && <div style={{ fontSize: 14, color: C.inkSoft }}>No guest reviews are available for this hotel.</div>}
       {state.status === "ok" && items.slice(0, shown).map((r, i) => {
-        const when = fmtMonth(r.month);
-        const stayed = fmtMonth(r.dateVisited, true);
+        const when = show("reviews.date") ? fmtMonth(r.month) : "";
+        const stayed = show("reviews.stay") ? fmtMonth(r.dateVisited, true) : "";
+        const tripType = show("reviews.tripType") ? r.tripType : "";
         const meta = [
-          r.location,
-          r.contributions ? `${r.contributions.toLocaleString()} contribution${r.contributions === 1 ? "" : "s"}` : null,
-          r.helpful > 0 ? `${r.helpful.toLocaleString()} helpful vote${r.helpful === 1 ? "" : "s"}` : null,
+          show("reviews.location") ? r.location : null,
+          show("reviews.contributions") && r.contributions ? `${r.contributions.toLocaleString()} contribution${r.contributions === 1 ? "" : "s"}` : null,
+          show("reviews.helpful") && r.helpful > 0 ? `${r.helpful.toLocaleString()} helpful vote${r.helpful === 1 ? "" : "s"}` : null,
         ].filter(Boolean);
         return (
           <article key={r.id || i} style={{ padding: "18px 0", borderTop: i === 0 ? "none" : `1px solid ${C.line}` }}>
             {/* reviewer row: avatar · name "wrote a review Mon YYYY" · location • contributions • helpful votes */}
             <div style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 12 }}>
-              <Avatar src={r.avatar} name={r.author} />
+              {show("reviews.avatar") && <Avatar src={r.avatar} name={r.author} />}
               <div style={{ minWidth: 0 }}>
                 <div className="wp-text" style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.4 }}>
                   <span style={{ color: C.ink, fontWeight: 700 }}>{r.author || "Guest"}</span>{when ? ` wrote a review ${when}` : ""}
@@ -661,7 +669,7 @@ function GuestReviews({ hotelId }) {
             {r.rating ? <div style={{ marginBottom: 6 }}><Buoys value={r.rating} size={14} /></div> : null}
             {r.title ? <div className="wp-text" style={{ fontWeight: 700, fontSize: 16, color: C.ink, marginBottom: 6 }}>{r.title}</div> : null}
             <p className="wp-text" style={{ fontSize: 14.5, lineHeight: 1.65, color: C.ink, margin: "0 0 10px", whiteSpace: "pre-line" }}>{r.text}</p>
-            {(r.photos || []).length > 0 && (
+            {(r.photos || []).length > 0 && show("reviews.photos") && (
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "4px 0 12px" }}>
                 {r.photos.map((p, j) => (
                   <button key={j} type="button" onClick={() => setLightbox({ photos: r.photos, index: j })} className="wp-btn"
@@ -672,10 +680,10 @@ function GuestReviews({ hotelId }) {
                 ))}
               </div>
             )}
-            {(stayed || r.tripType) && (
+            {(stayed || tripType) && (
               <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.7 }}>
                 {stayed && <div>Date of stay: <span style={{ color: C.ink, fontWeight: 600 }}>{stayed}</span></div>}
-                {r.tripType && <div>Trip type: <span style={{ color: C.ink, fontWeight: 600 }}>{r.tripType}</span></div>}
+                {tripType && <div>Trip type: <span style={{ color: C.ink, fontWeight: 600 }}>{tripType}</span></div>}
               </div>
             )}
           </article>
@@ -932,6 +940,7 @@ function Pagination({ page, totalPages, onGo }) {
    otherwise falls back to the first real guest quote (fetched on demand,
    with loading / error / empty states). */
 function CityHotelRow({ l, onOpen, votes, showAi = true }) {
+  const show = useShow();
   // when the AI summary is hidden in the list (condition), nothing replaces it — no guest-quote fallback
   const [quote, setQuote] = useState({ status: l.seo || !showAi ? "skip" : "loading", data: null });
   const rowRef = useRef(null);
@@ -1013,16 +1022,31 @@ function CityHotelRow({ l, onOpen, votes, showAi = true }) {
         <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "6px 0 10px", flexWrap: "wrap" }}>
           <Buoys value={l.rating} size={12} />
           <span style={{ fontWeight: 700, fontSize: 13.5, color: C.ink }}>{l.rating.toFixed(1)}</span>
-          <span style={{ fontSize: 12.5, color: C.inkSoft }}>({(l.reviewCount || 0).toLocaleString()})</span>
-          <span className="wp-text" style={{ fontSize: 12, color: C.inkSoft }}>· {l.price}</span>
+          {show("list.reviewCount") && <span style={{ fontSize: 12.5, color: C.inkSoft }}>({(l.reviewCount || 0).toLocaleString()})</span>}
         </div>
-        {desc && <p className="wp-text" style={{ fontSize: 13, lineHeight: 1.6, color: C.ink, margin: "0 0 10px" }}>{firstSentence(desc)}</p>}
+        {desc && show("list.description") && <p className="wp-text" style={{ fontSize: 13, lineHeight: 1.6, color: C.ink, margin: "0 0 10px" }}>{firstSentence(desc)}</p>}
         {body && <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>{body}</div>}
-        {votes && (
+        {(votes && show("list.vote")) && (
           <div style={{ marginTop: 12 }}>
             <LikeDislike hotelId={l.id} {...votes} source="list" />
           </div>
         )}
+        {(show("list.price") && l.price) || show("list.check") ? (
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12, marginTop: 14, paddingTop: 12, borderTop: `1px solid ${C.line}` }}>
+            {show("list.price") && l.price ? (
+              <div>
+                <div style={{ fontSize: 12, color: C.inkSoft }}>from</div>
+                <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 20, fontWeight: 700, color: C.ink, lineHeight: 1.1 }}>{l.price.replace(/^from\s*/i, "")}</div>
+              </div>
+            ) : <span />}
+            {show("list.check") && (
+              <button type="button" onClick={(e) => { e.stopPropagation(); onOpen(); }} onKeyDown={e => e.stopPropagation()} className="wp-btn wp-accent"
+                style={{ background: C.green, color: "#fff", border: "none", borderRadius: 99, padding: "10px 20px", fontSize: 14, fontWeight: 700, minHeight: 42, flex: "0 0 auto" }}>
+                Check this hotel
+              </button>
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -1212,9 +1236,10 @@ export default function App() {
   // images from a third-party host (the server decides what `image` is)
   const [hotels, setHotels] = useState(() => SEED_LISTINGS.map(h => ({ ...h, image: "", images: [], imageRemote: "" })));
   const [dataState, setDataState] = useState({ status: "loading", retrying: false });
-  // experimental condition: AI summary switches for the search (list) page and the product (detail) page
+  // experimental condition: AI summary switches + page-element switches (admin → Study settings)
   const [ai, setAi] = useState({ search: true, product: true });
-  useEffect(() => { fetchJson("/api/config").then(c => { if (c && typeof c.aiSearch === "boolean") setAi({ search: c.aiSearch, product: c.aiProduct }); }).catch(() => {}); }, []);
+  const [ui, setUi] = useState({});
+  useEffect(() => { fetchJson("/api/config").then(c => { if (c && typeof c.aiSearch === "boolean") setAi({ search: c.aiSearch, product: c.aiProduct }); if (c && c.elements) setUi(c.elements); }).catch(() => {}); }, []);
 
   const loadData = async (isRetry = false) => {
     setDataState(s => ({ status: isRetry ? "error" : "loading", retrying: isRetry }));
@@ -1243,7 +1268,10 @@ export default function App() {
     else setPage(prev => prev.name === "detail" && prev.from === "city" ? { name: "city", cityKey: prev.cityKey } : { name: "home" });
   };
   useEffect(() => {
-    window.history.replaceState({ page: { name: "home" }, depth: 0 }, "");
+    // keep the current view across a page refresh (history.state survives reloads)
+    const st = window.history.state;
+    if (st && st.page && st.page.name) { depthRef.current = st.depth || 0; setPage(st.page); }
+    else window.history.replaceState({ page: { name: "home" }, depth: 0 }, "");
     const onPop = (e) => {
       const st = e.state || { page: { name: "home" }, depth: 0 };
       depthRef.current = st.depth || 0;
@@ -1297,6 +1325,7 @@ export default function App() {
   });
 
   return (
+    <UiContext.Provider value={ui}>
     <div style={{ minHeight: "100vh", background: C.paper, fontFamily: "'Roboto', sans-serif", color: C.ink }}>
       <style>{GLOBAL_CSS}</style>
       {!pid && <ParticipantModal onSubmit={startSession} />}
@@ -1353,5 +1382,6 @@ export default function App() {
         )}
       </main>
     </div>
+    </UiContext.Provider>
   );
 }

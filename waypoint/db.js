@@ -527,6 +527,18 @@ export async function setHotelCover(hotelId, imageId) {
   return { ok: true };
 }
 
+/* all guest reviews, flat, for exports and statistics */
+export async function allReviewsFlat() {
+  if (!HAS_DB) {
+    const out = [];
+    for (const [hid, list] of Object.entries(mem.reviews)) for (const r of list) if (r.source === "quote") out.push({ hotelId: hid, ...r });
+    return out;
+  }
+  const { rows } = await pool.query("SELECT * FROM reviews WHERE source='quote' ORDER BY hotel_id, id");
+  return rows.map(r => ({ hotelId: r.hotel_id, id: r.id, author: r.author, location: r.location || "", rating: r.rating, month: r.month, dateVisited: r.date_visited || "",
+    tripType: r.trip_type || "", title: r.title || "", text: r.body || "", helpful: r.helpful || 0, contributions: r.contributions ?? null, photos: r.photos || [], language: r.language || "" }));
+}
+
 /* how many guest reviews each hotel currently has (admin) */
 export async function reviewCounts() {
   if (!HAS_DB) return Object.fromEntries(Object.entries(mem.reviews).map(([k, v]) => [k, v.filter(r => r.source === "quote").length]).filter(([, n]) => n > 0));
@@ -718,6 +730,40 @@ export async function getAiSwitches() {
   return { search, product, lockedSearch: eS != null, lockedProduct: eP != null };
 }
 export function conditionLabel({ search, product }) { return `ai_search=${search ? "on" : "off"};ai_product=${product ? "on" : "off"}`; }
+
+/* Page elements the admin can switch on/off (Study settings → Page elements).
+   Keys are what the front end checks; defaults = shown unless noted. */
+export const ELEMENTS = [
+  ["list.price",        "Search page: price (from $X)", true],
+  ["list.check",        "Search page: \"Check this hotel\" button", true],
+  ["list.description",  "Search page: first sentence of the description", true],
+  ["list.vote",         "Search page: Like / Dislike buttons", true],
+  ["list.reviewCount",  "Search page: number of reviews", true],
+  ["detail.price",      "Product page: price", true],
+  ["detail.description","Product page: full description", true],
+  ["detail.tags",       "Product page: style / amenity tags under the name", true],
+  ["detail.vote",       "Product page: Like / Dislike buttons", true],
+  ["detail.gallery",    "Product page: photo thumbnails / gallery", true],
+  ["about.section",     "About block (whole section)", true],
+  ["about.subRatings",  "About: sub-rating bars (Location, Rooms …)", true],
+  ["about.distribution","About: Traveller rating distribution", true],
+  ["about.amenities",   "About: property amenities / room features / room types", true],
+  ["about.goodToKnow",  "About: Good to know (class, style, languages)", true],
+  ["reviews.section",   "Guest reviews (whole section)", true],
+  ["reviews.avatar",    "Reviews: reviewer avatar", true],
+  ["reviews.location",  "Reviews: reviewer location", true],
+  ["reviews.contributions", "Reviews: contributions count", true],
+  ["reviews.helpful",   "Reviews: helpful votes", true],
+  ["reviews.date",      "Reviews: review date (\"wrote a review Jul 2026\")", true],
+  ["reviews.photos",    "Reviews: review photos", true],
+  ["reviews.stay",      "Reviews: Date of stay", true],
+  ["reviews.tripType",  "Reviews: Trip type", false],
+];
+export async function getElements() {
+  const defaults = Object.fromEntries(ELEMENTS.map(([k, , d]) => [k, d]));
+  try { const v = await getSetting("elements", ""); if (v) return { ...defaults, ...JSON.parse(v) }; } catch {}
+  return defaults;
+}
 
 export const DEFAULT_WELCOME_NO_AI = `Welcome, and thank you for taking part in this study.
 
@@ -941,8 +987,9 @@ export async function participantSummaries() {
     const votesByPid = {};
     for (const v of Object.values(mem.votes)) {
       for (const [voter, choice] of Object.entries(v.voters || {})) {
-        const o = votesByPid[voter] || (votesByPid[voter] = { up: 0, down: 0 });
-        if (choice === "up") o.up++; else if (choice === "down") o.down++;
+        const o = votesByPid[voter] || (votesByPid[voter] = { up: 0, down: 0, upList: 0, upDetail: 0, downList: 0, downDetail: 0 });
+        const src = (v.sources || {})[voter] === "detail" ? "Detail" : "List";
+        if (choice === "up") { o.up++; o["up" + src]++; } else if (choice === "down") { o.down++; o["down" + src]++; }
       }
     }
     for (const k of Object.keys(votesByPid)) pids.add(k);
@@ -963,6 +1010,8 @@ export async function participantSummaries() {
         aiSearch: p.aiSearch ?? null, aiProduct: p.aiProduct ?? null,
         likes: (votesByPid[pid] || {}).up || 0,
         dislikes: (votesByPid[pid] || {}).down || 0,
+        likesList: (votesByPid[pid] || {}).upList || 0, likesDetail: (votesByPid[pid] || {}).upDetail || 0,
+        dislikesList: (votesByPid[pid] || {}).downList || 0, dislikesDetail: (votesByPid[pid] || {}).downDetail || 0,
         hotelsSeen: hotelList.filter(e => (e.seen || 0) > 0 || (e.click || 0) > 0).length,
         hotelsClicked: hotelList.filter(e => (e.click || 0) > 0).length,
         avgHotelMs: dwelled.length ? Math.round(hotelMs / dwelled.length) : 0,
@@ -981,11 +1030,12 @@ export async function participantSummaries() {
                                      FROM hotel_events e LEFT JOIN hotels h ON h.id=e.hotel_id
                                      LEFT JOIN votes v ON v.voter_id=e.pid AND v.hotel_id=e.hotel_id`);
   const votes = await pool.query(`SELECT voter_id AS pid,
-      COUNT(*) FILTER (WHERE choice='up')::int AS up, COUNT(*) FILTER (WHERE choice='down')::int AS down
+      COUNT(*) FILTER (WHERE choice='up')::int AS up, COUNT(*) FILTER (WHERE choice='down')::int AS down,
+      COUNT(*) FILTER (WHERE choice='up' AND source='detail')::int AS up_detail, COUNT(*) FILTER (WHERE choice='down' AND source='detail')::int AS down_detail
       FROM votes GROUP BY voter_id`);
 
   const byPid = {};
-  const ensure = pid => (byPid[pid] || (byPid[pid] = { pid, totalMs: 0, siteFav: false, consentedAt: null, condition: "", aiSearch: null, aiProduct: null, likes: 0, dislikes: 0, hotelsSeen: 0, hotelsClicked: 0, avgHotelMs: 0, upvotes: 0, favHotels: [], hotels: [], firstSeen: null, lastSeen: null }));
+  const ensure = pid => (byPid[pid] || (byPid[pid] = { pid, totalMs: 0, siteFav: false, consentedAt: null, condition: "", aiSearch: null, aiProduct: null, likes: 0, likesList: 0, likesDetail: 0, dislikesList: 0, dislikesDetail: 0, dislikes: 0, hotelsSeen: 0, hotelsClicked: 0, avgHotelMs: 0, upvotes: 0, favHotels: [], hotels: [], firstSeen: null, lastSeen: null }));
   for (const p of parts.rows) {
     const o = ensure(p.pid);
     o.totalMs = Number(p.total_ms) || 0; o.siteFav = Boolean(p.site_fav);
@@ -993,7 +1043,7 @@ export async function participantSummaries() {
   }
   for (const f of favs.rows) ensure(f.pid).favHotels.push({ id: f.hotel_id, name: f.name || f.hotel_id });
   for (const e of events.rows) ensure(e.pid).hotels.push({ id: e.hotel_id, name: e.name || e.hotel_id, rating: e.rating ?? null, reviewCount: e.review_count ?? null, seen: e.seen || 0, clicks: e.clicks || 0, listMs: Number(e.list_ms) || 0, detailMs: Number(e.detail_ms) || 0, vote: e.choice || "", voteSource: e.source || "" });
-  for (const v of votes.rows) { const o = ensure(v.pid); o.likes = v.up; o.dislikes = v.down; o.upvotes = v.up; }
+  for (const v of votes.rows) { const o = ensure(v.pid); o.likes = v.up; o.dislikes = v.down; o.upvotes = v.up; o.likesDetail = v.up_detail; o.likesList = v.up - v.up_detail; o.dislikesDetail = v.down_detail; o.dislikesList = v.down - v.down_detail; }
   for (const o of Object.values(byPid)) {
     o.hotels.sort((a, b) => (b.clicks - a.clicks) || (b.seen - a.seen));
     o.hotelsSeen = o.hotels.filter(h => h.seen > 0 || h.clicks > 0).length;

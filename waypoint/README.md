@@ -29,6 +29,18 @@
 
 仿 TripAdvisor 的 About 区，全部来自新版 CSV 的真实字段：总分 + 评价标签（Excellent / Very Good / Good / Average / Poor）+ 评论数；六项子评分条（Location / Rooms / Value / Cleanliness / Service / Sleep quality，来自 位置评分…睡眠质量评分）；Traveller rating 五档分布（Excellent数…Terrible数）；Property amenities（酒店设施）、Room features（客房设施）、Room types（房型），各显示 8 条 + Show more；Good to know：Hotel class（酒店星级）、Hotel style（酒店风格）、Languages spoken（服务语言）。没有排名、没有 AI 问答框、没有酒店外链。某字段 CSV 里没有就整块不显示，不会补假数据。之前派生的示意子评分已彻底删除。
 
+## v4.0：价格 / Check 按钮 / 页面元素开关 / 内容导出
+
+- **价格**改为 TripAdvisor 式 `from $186`（取最低可订价，没有就取价格区间下限）。列表卡片底部左侧大字价格，右侧绿色 **Check this hotel** 按钮（= 打开详情页，计一次点击）。
+- **页面元素开关**：后台 Study settings → Page elements，24 个勾选项，不勾就不显示：列表页的价格 / Check 按钮 / 描述第一句 / 点赞按钮 / 评论数；详情页的价格 / 全文描述 / 标签 / 点赞 / 照片缩略图；About 整块及其子评分 / 评分分布 / 设施 / Good to know；评论整块及头像 / 所在地 / 贡献数 / 有用票 / 日期 / 照片 / Date of stay / **Trip type（默认关）**。保存后对之后打开网站的人生效。
+- **点赞按页面拆开**：后台 Participants 表 Liked / Disliked 列显示 `总数 (搜索页 / 详情页)`；`participants.csv` 新增 `likes_on_search_page, likes_on_product_page, dislikes_on_search_page, dislikes_on_product_page`。
+- **时间**：后台所有时长显示 `1m 17s (77s)`；CSV 里秒数列之外再加毫秒列（`total_ms_on_site`, `list_dwell_ms`, `detail_dwell_ms`, `total_dwell_ms`）。
+- **内容导出**（Participation 页顶部三个新链接）：
+  - `hotel_content.csv`：每家酒店的所有可改文本（第一句、全文描述、AI 摘要）+ 各自字符数 / 词数，+ 该酒店评论数、评论平均字符 / 词数 / 标题长度 / 平均评分、照片数，+ 子评分、评分分布、星级、设施数量、标签。
+  - `reviews.csv`：全部评论逐条，含字符数 / 词数。
+  - `summary_stats.csv`：全站汇总（各项文本的 n / 平均 / 最小 / 最大）。
+- 刷新页面不再跳回首页，停在当前页。
+
 ## 后台管理酒店照片（v3.9）
 
 后台「Hotel photos」页：选城市 → 选酒店 → 看到这家所有照片（下载的原图 + 后台上传的），可以一次上传多张（JPG / PNG / WebP，每张 ≤ 8 MB）、给上传的照片写说明、删除上传的照片、把任意一张设为 **封面**（封面用于列表卡片、城市页和详情页顶部）。详情页顶部大图下面显示全部照片的缩略图，点开看大图。
