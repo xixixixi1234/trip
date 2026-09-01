@@ -186,6 +186,7 @@ export async function init() {
     await pool.query("DELETE FROM reviews");
     await pool.query("DELETE FROM hotels");
     await pool.query("DELETE FROM cities");
+    await pool.query("DELETE FROM settings WHERE key='reviews_file_hash'");   // so data/reviews.csv is re-imported after the reseed
   }
   const { rows } = await pool.query("SELECT COUNT(*)::int AS n FROM hotels");
   if (rows[0].n === 0) {
