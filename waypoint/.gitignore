@@ -1,7 +1,0 @@
-node_modules/
-dist/
-.env
-nohup.out
-votes.json
-public/images/hotels/failed.tsv
-public/images/reviews/failed.tsv
