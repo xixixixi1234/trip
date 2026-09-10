@@ -488,7 +488,7 @@ app.get("/api/admin/export/hotel_events.csv", requireAdmin, async (_req, res) =>
       (r.list_ms / 1000).toFixed(1), (r.detail_ms / 1000).toFixed(1), ((r.list_ms + r.detail_ms) / 1000).toFixed(1),
       r.list_ms, r.detail_ms, r.list_ms + r.detail_ms,
       (savesState[r.pid] || {})[r.hotel_id] !== undefined ? "yes" : "",
-      (savesState[r.pid] || {})[r.hotel_id] === "detail" ? "product_page" : (savesState[r.pid] || {})[r.hotel_id] ? "search_page" : "",
+      { detail: "product_page", exit: "exit_review", list: "search_page" }[(savesState[r.pid] || {})[r.hotel_id]] || "",
       (r.review_ms / 1000).toFixed(1), r.review_ms, r.review_seen || 0, r.review_total || 0,
       r.ai_search == null ? "" : (r.ai_search ? "yes" : "no"), r.ai_product == null ? "" : (r.ai_product ? "yes" : "no"),
     ]);
@@ -662,7 +662,8 @@ app.get("/api/admin/export/saves.csv", requireAdmin, async (_req, res) => {
     const state = await db.allSavesState();
     const rows = (await db.allSaveEvents()).map(e => { const h = hotels[e.hotelId] || {};
       const still = (state[e.pid] || {})[e.hotelId] !== undefined;
-      return [e.pid, e.hotelId, h.name || "", h.cityName || h.city || "", e.action, e.source === "detail" ? "product_page" : "search_page", still ? "yes" : "no", e.created]; });
+      const page = e.source === "detail" ? "product_page" : e.source === "exit" ? "exit_review" : "search_page";
+      return [e.pid, e.hotelId, h.name || "", h.cityName || h.city || "", e.action, page, still ? "yes" : "no", e.created]; });
     sendCsv(res, "saves.csv", toCsv(["participant_id", "hotel_id", "hotel_name", "city", "action", "page", "still_saved", "at"], rows));
   } catch (e) { console.error(e); res.status(500).json({ error: "export failed" }); }
 });
