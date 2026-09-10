@@ -622,16 +622,8 @@ function ExitReview({ pid, saves, onCancel, onFinish }) {
     onFinish();
   };
   const Row = ({ h, right }) => (
-    <div style={{ display: "flex", gap: 10, alignItems: "center", border: `1px solid ${C.line}`, background: C.card, borderRadius: 10, padding: 10, marginBottom: 8 }}>
-      <span style={{ width: 56, height: 46, borderRadius: 8, overflow: "hidden", flex: "0 0 auto", background: C.sea }}>
-        {h.image ? <img src={h.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : null}
-      </span>
-      <span style={{ minWidth: 0, flex: 1 }}>
-        <span className="wp-text" style={{ display: "block", fontWeight: 700, fontSize: 13.5, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.name}</span>
-        <span style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: C.inkSoft }}>
-          <Buoys value={h.rating} size={9} /> {Number(h.rating).toFixed(1)} · {h.city}{h.price ? ` · ${h.price.replace(/^from\s*/i, "")}` : ""}
-        </span>
-      </span>
+    <div style={{ display: "flex", gap: 10, alignItems: "center", border: `1px solid ${C.line}`, background: C.card, borderRadius: 10, padding: "12px 14px", marginBottom: 8 }}>
+      <span className="wp-text" style={{ minWidth: 0, flex: 1, fontWeight: 700, fontSize: 14, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.name}</span>
       {right}
     </div>
   );
@@ -1521,6 +1513,9 @@ function ParticipantModal({ onSubmit }) {
   const [val, setVal] = useState("");
   const [assigned, setAssigned] = useState("");
   useEffect(() => {
+    // 1) ?pid=P0007 in the link (e.g. from Qualtrics) wins; 2) then the number this browser already holds; 3) else ask the server for the next one
+    const fromUrl = new URLSearchParams(window.location.search).get("pid");
+    if (fromUrl) { const v = fromUrl.trim().slice(0, 64); localStorage.setItem("fah_assigned", v); setAssigned(v); setVal(cur => cur || v); return; }
     const kept = localStorage.getItem("fah_assigned");
     if (kept) { setAssigned(kept); setVal(v => v || kept); return; }
     fetchJson("/api/assign-id").then(d => { if (d && d.pid) { localStorage.setItem("fah_assigned", d.pid); setAssigned(d.pid); setVal(v => v || d.pid); } }).catch(() => {});
@@ -1795,7 +1790,7 @@ export default function App() {
                 ID {pid}
               </span>
             )}
-            <button type="button" onClick={() => page.name !== "home" && go({ name: "home" })} className="wp-btn wp-ghost" style={navBtn(page.name === "home")}>Destinations</button>
+
 
 
           </nav>
