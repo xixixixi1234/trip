@@ -41,6 +41,8 @@ const mem = {
   hotelFavs: {},         // pid -> Set(hotelId)
   hotelEvents: {},       // pid -> { hotelId -> { seen, click, listMs, detailMs, reviewMs, reviewSeen, reviewTotal } }
   reviewVotes: {},       // pid -> { reviewId -> { hotelId, choice, updated } }
+  saves: {},             // pid -> { hotelId -> { source, created } }
+  saveEvents: [],        // { pid, hotelId, action: 'save'|'unsave', source, created }
 };
 
 /* ---------------- schema ---------------- */
@@ -172,6 +174,21 @@ export async function init() {
   await pool.query("ALTER TABLE hotel_events ADD COLUMN IF NOT EXISTS review_ms BIGINT DEFAULT 0");
   await pool.query("ALTER TABLE hotel_events ADD COLUMN IF NOT EXISTS review_seen INTEGER DEFAULT 0");
   await pool.query("ALTER TABLE hotel_events ADD COLUMN IF NOT EXISTS review_total INTEGER DEFAULT 0");
+  await pool.query(`CREATE TABLE IF NOT EXISTS saves (
+    pid      TEXT,
+    hotel_id TEXT,
+    source   TEXT,
+    created  TIMESTAMPTZ DEFAULT now(),
+    PRIMARY KEY (pid, hotel_id)
+  )`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS save_events (
+    id       BIGSERIAL PRIMARY KEY,
+    pid      TEXT,
+    hotel_id TEXT,
+    action   TEXT,
+    source   TEXT,
+    created  TIMESTAMPTZ DEFAULT now()
+  )`);
   await pool.query(`CREATE TABLE IF NOT EXISTS review_votes (
     pid       TEXT,
     review_id TEXT,
@@ -541,6 +558,76 @@ export async function setHotelCover(hotelId, imageId) {
   return { ok: true };
 }
 
+/* ---------------- admin resets ---------------- */
+/* Wipe ALL participant data (votes, tracking, saves, review likes, participants).
+   Hotels, reviews, photos and settings are untouched. */
+export async function resetStudyData() {
+  if (!HAS_DB) {
+    mem.votes = {}; mem.voteLog = []; mem.participants = {}; mem.hotelFavs = {};
+    mem.hotelEvents = {}; mem.reviewVotes = {}; mem.saves = {}; mem.saveEvents = [];
+    return { ok: true };
+  }
+  for (const t of ["votes", "vote_events", "participants", "hotel_favorites", "hotel_events", "review_votes", "saves", "save_events"]) await pool.query(`DELETE FROM ${t}`);
+  return { ok: true };
+}
+/* Restore all CONTENT to the shipped defaults: hotel texts/prices from src/cities.js,
+   uploaded photos & covers removed, reviews re-imported from data/reviews.csv (caller does that),
+   welcome / page-element / layout / display settings cleared. Participant data is untouched. */
+export async function resetContent() {
+  if (!HAS_DB) {
+    mem.hotels = [...CITY_LISTINGS]; mem.cities = [...CITIES]; mem.reviews = { ...CITY_REVIEWS };
+    mem.hotelImages = []; memImgSeq = 0;
+    for (const k of Object.keys(mem.settings)) delete mem.settings[k];
+    return { ok: true };
+  }
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    for (const c of CITIES) await client.query(
+      `INSERT INTO cities(key,name,country,blurb,image) VALUES($1,$2,$3,$4,$5)
+       ON CONFLICT (key) DO UPDATE SET name=EXCLUDED.name, country=EXCLUDED.country, blurb=EXCLUDED.blurb`, [c.key, c.name, c.country, c.blurb || "", ""]);
+    for (const h of CITY_LISTINGS) await upsertHotelClient(client, h);
+    await client.query("DELETE FROM hotel_images");
+    await client.query("DELETE FROM reviews");
+    await client.query("DELETE FROM settings");
+    await client.query("COMMIT");
+  } catch (e) { await client.query("ROLLBACK"); throw e; } finally { client.release(); }
+  return { ok: true };
+}
+
+/* ---------------- saved hotels (the "Saves" list) ---------------- */
+export async function setSave(pid, hotelId, on, source) {
+  source = source === "detail" ? "detail" : "list";
+  if (!HAS_DB) {
+    const m = mem.saves[pid] || (mem.saves[pid] = {});
+    if (on) m[hotelId] = { source, created: Date.now() }; else delete m[hotelId];
+    mem.saveEvents.push({ pid, hotelId, action: on ? "save" : "unsave", source, created: new Date().toISOString() });
+    return { ok: true, saved: Boolean(on) };
+  }
+  if (on) await pool.query(`INSERT INTO saves(pid,hotel_id,source) VALUES($1,$2,$3) ON CONFLICT (pid,hotel_id) DO NOTHING`, [pid, hotelId, source]);
+  else await pool.query("DELETE FROM saves WHERE pid=$1 AND hotel_id=$2", [pid, hotelId]);
+  await pool.query("INSERT INTO save_events(pid,hotel_id,action,source) VALUES($1,$2,$3,$4)", [pid, hotelId, on ? "save" : "unsave", source]);
+  return { ok: true, saved: Boolean(on) };
+}
+export async function getSaves(pid) {
+  if (!pid) return [];
+  if (!HAS_DB) return Object.keys(mem.saves[pid] || {});
+  const { rows } = await pool.query("SELECT hotel_id FROM saves WHERE pid=$1 ORDER BY created", [pid]);
+  return rows.map(r => r.hotel_id);
+}
+export async function allSaveEvents() {
+  if (!HAS_DB) return mem.saveEvents.slice();
+  const { rows } = await pool.query("SELECT pid, hotel_id, action, source, created FROM save_events ORDER BY id");
+  return rows.map(r => ({ pid: r.pid, hotelId: r.hotel_id, action: r.action, source: r.source, created: new Date(r.created).toISOString() }));
+}
+export async function allSavesState() {   // { pid: { hotelId: source } }
+  const out = {};
+  if (!HAS_DB) { for (const [pid, m] of Object.entries(mem.saves)) { out[pid] = {}; for (const [h, v] of Object.entries(m)) out[pid][h] = v.source; } return out; }
+  const { rows } = await pool.query("SELECT pid, hotel_id, source FROM saves");
+  for (const r of rows) (out[r.pid] = out[r.pid] || {})[r.hotel_id] = r.source || "";
+  return out;
+}
+
 /* ---------------- per-review likes (participants) ---------------- */
 export async function setReviewVote(pid, hotelId, reviewId, choice) {
   if (!pid || !reviewId) return { ok: false };
@@ -810,6 +897,9 @@ export const ELEMENTS = [
   ["reviews.stay",      "Reviews: Date of stay", true],
   ["reviews.tripType",  "Reviews: Trip type", false],
   ["reviews.vote",      "Reviews: Helpful / Not helpful buttons", true],
+  ["list.save",         "Search page: Save (heart) button", true],
+  ["detail.save",       "Product page: Save (heart) button", true],
+  ["saves.fab",         "Floating Saved-list button (bottom right)", true],
 ];
 export async function getElements() {
   const defaults = Object.fromEntries(ELEMENTS.map(([k, , d]) => [k, d]));

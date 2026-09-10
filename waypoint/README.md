@@ -29,6 +29,22 @@
 
 仿 TripAdvisor 的 About 区，全部来自新版 CSV 的真实字段：总分 + 评价标签（Excellent / Very Good / Good / Average / Poor）+ 评论数；六项子评分条（Location / Rooms / Value / Cleanliness / Service / Sleep quality，来自 位置评分…睡眠质量评分）；Traveller rating 五档分布（Excellent数…Terrible数）；Property amenities（酒店设施）、Room features（客房设施）、Room types（房型），各显示 8 条 + Show more；Good to know：Hotel class（酒店星级）、Hotel style（酒店风格）、Languages spoken（服务语言）。没有排名、没有 AI 问答框、没有酒店外链。某字段 CSV 里没有就整块不显示，不会补假数据。之前派生的示意子评分已彻底删除。
 
+## 评论者匿名化（v4.5.2）
+
+```bash
+python3 scripts/anonymize_reviews.py            # 把 data/reviews.csv 里的评论者名字换成假名，头像清空
+```
+- 假名确定性生成（同一原名 → 同一假名），风格 "Emma R"；想要 "Traveler_4821" 风格加 `--style traveler`；想保留头像加 `--keep-avatars`（默认清空，前台显示彩色首字母圆盘）。
+- 只改 author 和 avatar 两列，正文/评分/日期/照片不动；原文件备份为 `data/reviews.csv.bak`（已加入 .gitignore，不会被提交）。
+- 跑完提交推送即可，服务器检测到文件变化会自动重新导入。评论照片如含人脸需自行斟酌。
+
+## v4.5：Save 收藏 + 右下角 Saves 列表
+
+仿 TripAdvisor 的 Save：列表卡片和详情页大图右上角各一个 ❤ 圆钮，点了实心、再点取消；右下角悬浮 **Saves (N)** 按钮，点开右侧抽屉列表（缩略图、名称、评分、城市、价格），点条目进详情页，✕ 移除。收藏存数据库，刷新/换设备（同一 ID）都保留。
+
+- Page elements 新增三个开关：Search page: Save button / Product page: Save button / Floating Saved-list button。要把 Like/Dislike 换成 Save，只需在 Page elements 里取消 "Like / Dislike buttons" 两项。
+- 数据：`saves.csv`（每次 save/unsave：被试、酒店、在搜索页还是详情页、时间、目前是否仍收藏）；`participants.csv` 新增 `hotels_saved`；`hotel_events.csv` 新增 `saved`、`saved_on_page`。
+
 ## v4.4：酒店列表展示方式 + 后台 Dashboard
 
 **酒店列表展示方式**（Study settings → Hotel list display，自动保存）：每页/每批几条（默认 20）；模式 Pages（数字翻页，现状）或 Scrolling（滑到底自动加载下一批）。浏览/停留追踪两种模式都照常记录。

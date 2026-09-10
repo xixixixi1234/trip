@@ -189,6 +189,9 @@ h1, h2, h3, h4 { font-style: normal; overflow-wrap: anywhere; }
 }
 `;
 
+/* Saved hotels (the participant's Saves list). has/toggle via context; server-persisted. */
+const SavesContext = React.createContext({ ids: [], has: () => false, toggle: () => {} });
+
 /* /api/config, fetched once and shared (elements, AI switches, reviews display settings) */
 let CONFIG_PROMISE = null;
 function loadConfig() { if (!CONFIG_PROMISE) CONFIG_PROMISE = fetchJson("/api/config").catch(() => ({})); return CONFIG_PROMISE; }
@@ -388,6 +391,9 @@ function BookmarkButton({ favs, size = "md" }) {
 
 function DetailPage({ listing, onBack, votes, showAi = true }) {
   const show = useShow();
+  const layout = useLayout();
+  const headerOrder = layout.detail.filter(k => ["description", "ai", "vote"].includes(k));
+  const sectionOrder = layout.detail.filter(k => ["about", "reviews"].includes(k));
   useEffect(() => { Track.openDetail(listing.id); return () => Track.closeDetail(listing.id); }, [listing.id]);
   const gallery = (listing.gallery && listing.gallery.length ? listing.gallery : (listing.image ? [{ src: listing.image, caption: "" }] : []));
   const [lb, setLb] = useState(null);
@@ -399,7 +405,14 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
       </button>
 
       <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, overflow: "hidden", marginBottom: 20 }}>
-        <CityArt gradient={listing.gradient} image={listing.image} imageFallback={listing.imageRemote} big flat />
+        <div style={{ position: "relative" }}>
+          <CityArt gradient={listing.gradient} image={listing.image} imageFallback={listing.imageRemote} big flat />
+          {show("detail.save") && (
+            <span style={{ position: "absolute", top: 14, right: 14, zIndex: 2 }}>
+              <SaveButton hotelId={listing.id} source="detail" size={42} />
+            </span>
+          )}
+        </div>
         {gallery.length > 1 && show("detail.gallery") && (
           <div style={{ display: "flex", gap: 8, padding: "10px 12px 0", overflowX: "auto" }} aria-label="Hotel photos">
             {gallery.map((g, i) => (
@@ -429,32 +442,33 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
               {listing.tags.map(t => <Tag key={t}>{t}</Tag>)}
             </div>
           )}
-          {(() => {
-            const desc = listing.about && listing.about.trim() && listing.about.trim() !== (listing.seo || "").trim() ? listing.about.trim() : "";
-            return (
-              <>
-                {desc && show("detail.description") && <p className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.ink, margin: "0 0 14px", maxWidth: 720 }}>{desc}</p>}
-                {listing.seo && showAi && (
-                  <div style={{ display: "flex", gap: 10, alignItems: "flex-start", margin: "0 0 18px", maxWidth: 720 }}>
-                    <AiBadge />
-                    <p className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.inkSoft, margin: 0 }}>{listing.seo}</p>
-                  </div>
-                )}
-              </>
-            );
-          })()}
-          {votes && show("detail.vote") && (
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap", paddingTop: 16, borderTop: `1px solid ${C.line}` }}>
-              <span style={{ fontSize: 13.5, color: C.ink, fontWeight: 600, paddingTop: 8 }}>Would you stay here?</span>
-              <LikeDislike hotelId={listing.id} {...votes} size="lg" stop={false} source="detail" />
-            </div>
-          )}
+          {headerOrder.map(k => {
+            if (k === "description") {
+              const desc = listing.about && listing.about.trim() && listing.about.trim() !== (listing.seo || "").trim() ? listing.about.trim() : "";
+              return desc && show("detail.description") ? <p key={k} className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.ink, margin: "0 0 14px", maxWidth: 720 }}>{desc}</p> : null;
+            }
+            if (k === "ai") return listing.seo && showAi ? (
+              <div key={k} style={{ display: "flex", gap: 10, alignItems: "flex-start", margin: "0 0 18px", maxWidth: 720 }}>
+                <AiBadge />
+                <p className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.inkSoft, margin: 0 }}>{listing.seo}</p>
+              </div>
+            ) : null;
+            if (k === "vote") return votes && show("detail.vote") ? (
+              <div key={k} style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap", paddingTop: 16, borderTop: `1px solid ${C.line}`, marginBottom: 14 }}>
+                <span style={{ fontSize: 13.5, color: C.ink, fontWeight: 600, paddingTop: 8 }}>Would you stay here?</span>
+                <LikeDislike hotelId={listing.id} {...votes} size="lg" stop={false} source="detail" />
+              </div>
+            ) : null;
+            return null;
+          })}
         </div>
       </div>
 
-      {show("about.section") && <AboutSection listing={listing} />}
-
-      {show("reviews.section") && <GuestReviews hotelId={listing.id} />}
+      {sectionOrder.map(k => {
+        if (k === "about") return show("about.section") ? <AboutSection key={k} listing={listing} /> : null;
+        if (k === "reviews") return show("reviews.section") ? <GuestReviews key={k} hotelId={listing.id} /> : null;
+        return null;
+      })}
     </div>
   );
 }
@@ -585,6 +599,92 @@ function AboutSection({ listing }) {
         </div>
       )}
     </div>
+  );
+}
+
+/* ----------------------- Saves (heart button + floating list) ----------------------- */
+
+function HeartIcon({ filled, size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"
+      fill={filled ? C.buoy : "none"} stroke={filled ? C.buoy : C.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+  );
+}
+
+/* Round heart button (top-right of cards / detail hero), TripAdvisor-style */
+function SaveButton({ hotelId, source, size = 38 }) {
+  const saves = React.useContext(SavesContext);
+  const on = saves.has(hotelId);
+  return (
+    <button type="button"
+      onClick={e => { e.stopPropagation(); saves.toggle(hotelId, source); }}
+      onKeyDown={e => e.stopPropagation()}
+      aria-label={on ? "Remove from saves" : "Save this hotel"} aria-pressed={on} title={on ? "Saved" : "Save"}
+      className="wp-btn"
+      style={{ width: size, height: size, borderRadius: "50%", background: "#fff", border: `1px solid ${C.line}`,
+               display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(18,43,51,.18)", flex: "0 0 auto", padding: 0 }}>
+      <HeartIcon filled={on} size={Math.round(size * 0.52)} />
+    </button>
+  );
+}
+
+/* Floating "Saves" button (bottom right) + slide-in list, like a cart */
+function SavesFab({ allHotels, onOpen }) {
+  const show = useShow();
+  const saves = React.useContext(SavesContext);
+  const [open, setOpen] = useState(false);
+  if (!show("saves.fab") || !Track.pid) return null;
+  const items = saves.ids.map(id => allHotels.find(h => h.id === id)).filter(Boolean);
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(o => !o)} aria-label={`Open saved hotels (${items.length})`}
+        className="wp-btn"
+        style={{ position: "fixed", right: 18, bottom: 18, zIndex: 900, display: "inline-flex", alignItems: "center", gap: 8,
+                 background: C.ink, color: "#fff", border: "none", borderRadius: 99, padding: "12px 18px", fontWeight: 700, fontSize: 14.5,
+                 boxShadow: "0 6px 20px rgba(18,43,51,.35)", minHeight: 46 }}>
+        <HeartIcon filled={items.length > 0} size={18} /> Saves
+        <span style={{ background: C.buoy, borderRadius: 99, minWidth: 22, height: 22, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12.5, padding: "0 6px" }}>{items.length}</span>
+      </button>
+      {open && (
+        <div role="dialog" aria-modal="true" aria-label="Saved hotels" onClick={() => setOpen(false)}
+          style={{ position: "fixed", inset: 0, zIndex: 950, background: "rgba(18,43,51,0.45)", display: "flex", justifyContent: "flex-end" }}>
+          <div onClick={e => e.stopPropagation()} className="wp-drawer"
+            style={{ width: "min(400px, 100%)", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(18,43,51,.25)", display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px", borderBottom: `1px solid ${C.line}`, background: C.card }}>
+              <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 18, fontWeight: 700, margin: 0, color: C.ink }}>Saved hotels ({items.length})</h2>
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="wp-btn wp-ghost" style={{ border: `1px solid ${C.line}`, background: C.card, color: C.ink, borderRadius: 99, width: 34, height: 34, fontSize: 16, fontWeight: 700 }}>✕</button>
+            </div>
+            <div style={{ overflowY: "auto", padding: 14, flex: 1 }}>
+              {items.length === 0 && (
+                <div style={{ color: C.inkSoft, fontSize: 14, padding: 20, textAlign: "center" }}>
+                  Nothing saved yet. Tap the <HeartIcon filled={false} size={14} /> on any hotel to add it here.
+                </div>
+              )}
+              {items.map(l => (
+                <div key={l.id} style={{ display: "flex", gap: 10, alignItems: "center", background: C.card, border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, marginBottom: 10 }}>
+                  <button type="button" onClick={() => { setOpen(false); onOpen(l); }} aria-label={`Open ${l.name}`} className="wp-btn"
+                    style={{ display: "flex", gap: 10, alignItems: "center", flex: 1, minWidth: 0, textAlign: "left", padding: 0, background: "none", border: "none" }}>
+                    <span style={{ width: 62, height: 50, borderRadius: 8, overflow: "hidden", flex: "0 0 auto", background: C.sea }}>
+                      {l.image ? <img src={l.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : null}
+                    </span>
+                    <span style={{ minWidth: 0 }}>
+                      <span className="wp-text" style={{ display: "block", fontWeight: 700, fontSize: 14, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.name}</span>
+                      <span style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: C.inkSoft }}>
+                        <Buoys value={l.rating} size={10} /> {l.rating.toFixed(1)} · {l.cityName}{l.price ? ` · ${l.price}` : ""}
+                      </span>
+                    </span>
+                  </button>
+                  <button type="button" onClick={() => saves.toggle(l.id, "list")} aria-label={`Remove ${l.name} from saves`} className="wp-btn wp-ghost"
+                    style={{ border: "none", background: "none", color: C.inkSoft, fontSize: 15, padding: 6, minHeight: 32 }}>✕</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -940,6 +1040,20 @@ function CityPage({ cityKey, onBack, onOpen, votes, favs, cities, hotels: allHot
   const [page, setPage] = useState(1);
   const [listUi, setListUi] = useState({ first: 20, nav: "pages" });
   const [shownCount, setShownCount] = useState(20);
+  const [saveIds, setSaveIds] = useState([]);
+  useEffect(() => { if (pid) fetchJson(`/api/saves?pid=${encodeURIComponent(pid)}`).then(a => setSaveIds(Array.isArray(a) ? a : [])).catch(() => {}); }, [pid]);
+  const savesApi = useMemo(() => ({
+    ids: saveIds,
+    has: id => saveIds.includes(id),
+    toggle: (id, source) => {
+      if (!pid) return;
+      setSaveIds(cur => {
+        const on = !cur.includes(id);
+        postJson("/api/save", { pid, hotelId: id, on, source });
+        return on ? [...cur, id] : cur.filter(x => x !== id);
+      });
+    },
+  }), [saveIds, pid]);
   useEffect(() => { loadConfig().then(c => { const u = (c && c.listUi) || {}; const cfg = { first: Math.max(1, u.first || 20), nav: u.nav === "scroll" ? "scroll" : "pages" }; setListUi(cfg); setShownCount(cfg.first); }); }, []);
   const PER_PAGE = listUi.first;
 
@@ -1039,8 +1153,21 @@ function Pagination({ page, totalPages, onGo }) {
    Shows the platform AI summary if the hotel has one (full text);
    otherwise falls back to the first real guest quote (fetched on demand,
    with loading / error / empty states). */
+const DEFAULT_LAYOUT = { list: ["description", "ai", "vote", "priceCheck"], detail: ["description", "ai", "vote", "about", "reviews"] };
+function useLayout() {
+  const [lay, setLay] = useState(DEFAULT_LAYOUT);
+  useEffect(() => { loadConfig().then(c => { if (c && c.layout) setLay({ list: c.layout.list || DEFAULT_LAYOUT.list, detail: c.layout.detail || DEFAULT_LAYOUT.detail }); }); }, []);
+  return lay;
+}
+
 function CityHotelRow({ l, onOpen, votes, showAi = true }) {
   const show = useShow();
+  const layout = useLayout();
+  const heart = show("list.save") ? (
+    <span style={{ position: "absolute", top: 10, right: 10, zIndex: 2 }}>
+      <SaveButton hotelId={l.id} source="list" size={36} />
+    </span>
+  ) : null;
   // when the AI summary is hidden in the list (condition), nothing replaces it — no guest-quote fallback
   const [quote, setQuote] = useState({ status: l.seo || !showAi ? "skip" : "loading", data: null });
   const rowRef = useRef(null);
@@ -1112,8 +1239,9 @@ function CityHotelRow({ l, onOpen, votes, showAi = true }) {
 
   return (
     <div ref={rowRef} className="wp-card wp-row" {...cardProps(onOpen, `Open ${l.name}`)} style={{
-      background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, overflow: "hidden",
+      background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, overflow: "hidden", position: "relative",
     }}>
+      {heart}
       <div style={{ position: "relative" }}>
         <CityArt className="wp-art" gradient={l.gradient} image={l.image} imageFallback={l.imageRemote} />
       </div>
@@ -1124,29 +1252,28 @@ function CityHotelRow({ l, onOpen, votes, showAi = true }) {
           <span style={{ fontWeight: 700, fontSize: 13.5, color: C.ink }}>{l.rating.toFixed(1)}</span>
           {show("list.reviewCount") && <span style={{ fontSize: 12.5, color: C.inkSoft }}>({(l.reviewCount || 0).toLocaleString()})</span>}
         </div>
-        {desc && show("list.description") && <p className="wp-text" style={{ fontSize: 13, lineHeight: 1.6, color: C.ink, margin: "0 0 10px" }}>{firstSentence(desc)}</p>}
-        {body && <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>{body}</div>}
-        {(votes && show("list.vote")) && (
-          <div style={{ marginTop: 12 }}>
-            <LikeDislike hotelId={l.id} {...votes} source="list" />
-          </div>
-        )}
-        {(show("list.price") && l.price) || show("list.check") ? (
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12, marginTop: 14, paddingTop: 12, borderTop: `1px solid ${C.line}` }}>
-            {show("list.price") && l.price ? (
-              <div>
-                <div style={{ fontSize: 12, color: C.inkSoft }}>from</div>
-                <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 20, fontWeight: 700, color: C.ink, lineHeight: 1.1 }}>{l.price.replace(/^from\s*/i, "")}</div>
-              </div>
-            ) : <span />}
-            {show("list.check") && (
-              <button type="button" onClick={(e) => { e.stopPropagation(); onOpen(); }} onKeyDown={e => e.stopPropagation()} className="wp-btn wp-accent"
-                style={{ background: C.green, color: "#fff", border: "none", borderRadius: 99, padding: "10px 20px", fontSize: 14, fontWeight: 700, minHeight: 42, flex: "0 0 auto" }}>
-                Check this hotel
-              </button>
-            )}
-          </div>
-        ) : null}
+        {layout.list.map(k => {
+          if (k === "description") return desc && show("list.description") ? <p key={k} className="wp-text" style={{ fontSize: 13, lineHeight: 1.6, color: C.ink, margin: "0 0 10px" }}>{firstSentence(desc)}</p> : null;
+          if (k === "ai") return body ? <div key={k} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 10 }}>{body}</div> : null;
+          if (k === "vote") return votes && show("list.vote") ? <div key={k} style={{ margin: "2px 0 10px" }}><LikeDislike hotelId={l.id} {...votes} source="list" /></div> : null;
+          if (k === "priceCheck") return (show("list.price") && l.price) || show("list.check") ? (
+            <div key={k} style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12, marginTop: 4, paddingTop: 12, borderTop: `1px solid ${C.line}` }}>
+              {show("list.price") && l.price ? (
+                <div>
+                  <div style={{ fontSize: 12, color: C.inkSoft }}>from</div>
+                  <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 20, fontWeight: 700, color: C.ink, lineHeight: 1.1 }}>{l.price.replace(/^from\s*/i, "")}</div>
+                </div>
+              ) : <span />}
+              {show("list.check") && (
+                <button type="button" onClick={(e) => { e.stopPropagation(); onOpen(); }} onKeyDown={e => e.stopPropagation()} className="wp-btn wp-accent"
+                  style={{ background: C.green, color: "#fff", border: "none", borderRadius: 99, padding: "10px 20px", fontSize: 14, fontWeight: 700, minHeight: 42, flex: "0 0 auto" }}>
+                  Check this hotel
+                </button>
+              )}
+            </div>
+          ) : null;
+          return null;
+        })}
       </div>
     </div>
   );
@@ -1339,6 +1466,20 @@ export default function App() {
   // experimental condition: AI summary switches + page-element switches (admin → Study settings)
   const [ai, setAi] = useState({ search: true, product: true });
   const [ui, setUi] = useState({});
+  const [saveIds, setSaveIds] = useState([]);
+  useEffect(() => { if (pid) fetchJson(`/api/saves?pid=${encodeURIComponent(pid)}`).then(a => setSaveIds(Array.isArray(a) ? a : [])).catch(() => {}); }, [pid]);
+  const savesApi = useMemo(() => ({
+    ids: saveIds,
+    has: id => saveIds.includes(id),
+    toggle: (id, source) => {
+      if (!pid) return;
+      setSaveIds(cur => {
+        const on = !cur.includes(id);
+        postJson("/api/save", { pid, hotelId: id, on, source });
+        return on ? [...cur, id] : cur.filter(x => x !== id);
+      });
+    },
+  }), [saveIds, pid]);
   useEffect(() => { loadConfig().then(c => { if (c && typeof c.aiSearch === "boolean") setAi({ search: c.aiSearch, product: c.aiProduct }); if (c && c.elements) setUi(c.elements); }).catch(() => {}); }, []);
 
   const loadData = async (isRetry = false) => {
@@ -1426,6 +1567,7 @@ export default function App() {
 
   return (
     <UiContext.Provider value={ui}>
+    <SavesContext.Provider value={savesApi}>
     <div style={{ minHeight: "100vh", background: C.paper, fontFamily: "'Roboto', sans-serif", color: C.ink }}>
       <style>{GLOBAL_CSS}</style>
       {!pid && <ParticipantModal onSubmit={startSession} />}
@@ -1481,7 +1623,9 @@ export default function App() {
           />
         )}
       </main>
+      <SavesFab allHotels={hotels} onOpen={l => { Track.click(l.id); go({ name: "detail", listing: l, from: "saves", cityKey: l.city }); }} />
     </div>
+    </SavesContext.Provider>
     </UiContext.Provider>
   );
 }
