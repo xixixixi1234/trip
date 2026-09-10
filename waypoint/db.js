@@ -559,6 +559,16 @@ export async function setHotelCover(hotelId, imageId) {
   return { ok: true };
 }
 
+/* next sequential participant number (P0001, P0002, …) — no IP or fingerprint involved */
+export async function nextPid() {
+  if (!HAS_DB) { const n = (parseInt(mem.settings.pid_counter || "0", 10) || 0) + 1; mem.settings.pid_counter = String(n); return n; }
+  const { rows } = await pool.query(
+    `INSERT INTO settings(key,value) VALUES('pid_counter','1')
+     ON CONFLICT (key) DO UPDATE SET value=((settings.value)::int + 1)::text
+     RETURNING value`);
+  return parseInt(rows[0].value, 10);
+}
+
 /* participant pressed "Finish study" — records the exit moment (kept once; later presses ignored) */
 export async function setExited(pid) {
   if (!pid) return { ok: false };

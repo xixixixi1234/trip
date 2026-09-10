@@ -392,8 +392,8 @@ function BookmarkButton({ favs, size = "md" }) {
 function DetailPage({ listing, onBack, votes, showAi = true }) {
   const show = useShow();
   const layout = useLayout();
-  const headerOrder = layout.detail.filter(k => ["description", "ai", "vote", "save"].includes(k));
-  const sectionOrder = layout.detail.filter(k => ["about", "reviews"].includes(k));
+  const headerOrder = layout.detail.filter(k => ["description", "vote", "save"].includes(k));
+  const sectionOrder = layout.detail.filter(k => ["about", "ai", "reviews"].includes(k));
   useEffect(() => { Track.openDetail(listing.id); return () => Track.closeDetail(listing.id); }, [listing.id]);
   const gallery = (listing.gallery && listing.gallery.length ? listing.gallery : (listing.image ? [{ src: listing.image, caption: "" }] : []));
   const [lb, setLb] = useState(null);
@@ -443,12 +443,6 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
               const desc = listing.about && listing.about.trim() && listing.about.trim() !== (listing.seo || "").trim() ? listing.about.trim() : "";
               return desc && show("detail.description") ? <p key={k} className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.ink, margin: "0 0 14px", maxWidth: 720 }}>{desc}</p> : null;
             }
-            if (k === "ai") return listing.seo && showAi ? (
-              <div key={k} style={{ display: "flex", gap: 10, alignItems: "flex-start", margin: "0 0 18px", maxWidth: 720 }}>
-                <AiBadge />
-                <p className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.inkSoft, margin: 0 }}>{listing.seo}</p>
-              </div>
-            ) : null;
             if (k === "save") return show("detail.save") && Track.pid ? (
               <div key={k} style={{ paddingTop: 14, borderTop: `1px solid ${C.line}`, marginBottom: 14, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                 <SavePill hotelId={listing.id} source="detail" size="lg" />
@@ -468,6 +462,12 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
 
       {sectionOrder.map(k => {
         if (k === "about") return show("about.section") ? <AboutSection key={k} listing={listing} /> : null;
+        if (k === "ai") return listing.seo && showAi ? (
+          <div key={k} style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 20, marginBottom: 20, display: "flex", gap: 10, alignItems: "flex-start" }}>
+            <AiBadge />
+            <p className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.inkSoft, margin: 0 }}>{listing.seo}</p>
+          </div>
+        ) : null;
         if (k === "reviews") return show("reviews.section") ? <GuestReviews key={k} hotelId={listing.id} /> : null;
         return null;
       })}
@@ -614,9 +614,14 @@ function Coachmark({ steps, onDone }) {
   const targetFor = (i) => {
     const row = document.querySelector(".wp-row");
     if (!row) return null;
-    if (i === 0) return row;
-    if (i === 1) return [...row.querySelectorAll("button")].find(b => /Save this hotel|Saved/.test(b.textContent)) || row;
-    return row.querySelector(".wp-accent") || row;
+    const key = (steps[i] || {}).target || "card";
+    if (key === "save") return [...row.querySelectorAll("button")].find(b => /Save this hotel|Saved/.test(b.textContent)) || row;
+    if (key === "dislike") return [...row.querySelectorAll("button")].find(b => /Dislike/.test(b.textContent)) || row;
+    if (key === "check") return row.querySelector(".wp-accent") || row;
+    if (key === "ai") return row.querySelector(".wp-tip")?.parentElement || row;
+    if (key === "saves") return document.querySelector('[aria-label^="Open saved hotels"]') || row;
+    if (key === "finish") return document.getElementById("wp-finish") || row;
+    return row;
   };
   useEffect(() => {
     const el = targetFor(step);
@@ -1430,6 +1435,12 @@ function ParticipantModal({ onSubmit }) {
   const [welcome, setWelcome] = useState({ status: "loading", text: "" });
   const [agree, setAgree] = useState(false);
   const [val, setVal] = useState("");
+  const [assigned, setAssigned] = useState("");
+  useEffect(() => {
+    const kept = localStorage.getItem("fah_assigned");
+    if (kept) { setAssigned(kept); setVal(v => v || kept); return; }
+    fetchJson("/api/assign-id").then(d => { if (d && d.pid) { localStorage.setItem("fah_assigned", d.pid); setAssigned(d.pid); setVal(v => v || d.pid); } }).catch(() => {});
+  }, []);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
   const [serverFail, setServerFail] = useState(false);
@@ -1494,9 +1505,15 @@ function ParticipantModal({ onSubmit }) {
             <h2 id="wp-modal-title" style={{ fontFamily: "'Poppins', sans-serif", fontSize: 22, fontWeight: 700, color: C.ink, margin: "0 0 8px" }}>
               Enter your participant ID
             </h2>
-            <p style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.6, margin: "0 0 18px" }}>
+            <p style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.6, margin: "0 0 12px" }}>
               Your browsing and actions on this site are recorded under this ID for research analysis.
             </p>
+            {assigned && (
+              <div style={{ background: "#F2F7F5", border: `1px solid ${C.line}`, borderRadius: 10, padding: "10px 14px", margin: "0 0 14px", fontSize: 14, color: C.ink, lineHeight: 1.6 }}>
+                Your participant number is <b style={{ fontFamily: "'Roboto Mono', monospace" }}>{assigned}</b>.
+                Please enter this same number in your Qualtrics survey and on Prolific.
+              </div>
+            )}
             <label htmlFor="wp-pid" style={{ display: "block", fontSize: 13, fontWeight: 600, color: C.ink, marginBottom: 6 }}>Participant ID</label>
             <input id="wp-pid" autoFocus value={val} disabled={busy}
               onChange={e => { setVal(e.target.value); if (error) setError(null); }}
@@ -1695,12 +1712,7 @@ export default function App() {
               </span>
             )}
             <button type="button" onClick={() => page.name !== "home" && go({ name: "home" })} className="wp-btn wp-ghost" style={navBtn(page.name === "home")}>Destinations</button>
-            {pid && ui["exit.button"] !== false && (
-              <button type="button" onClick={() => setConfirmExit(true)} className="wp-btn wp-ghost"
-                style={{ ...navBtn(false), border: `1px solid ${C.line}`, borderRadius: 99, padding: "6px 14px" }}>
-                Finish study
-              </button>
-            )}
+
           </nav>
         </div>
       </header>
@@ -1762,6 +1774,15 @@ export default function App() {
             {pid && <div style={{ marginTop: 14, fontFamily: "'Roboto Mono', monospace", fontSize: 13, color: C.inkSoft }}>Participant ID: {pid}</div>}
           </div>
         </div>
+      )}
+      {pid && !finished && ui["exit.button"] !== false && (
+        <button id="wp-finish" type="button" onClick={() => setConfirmExit(true)} aria-label="Finish study"
+          className="wp-btn"
+          style={{ position: "fixed", right: 148, bottom: 18, zIndex: 900, display: "inline-flex", alignItems: "center", gap: 8,
+                   background: "#B3261E", color: "#fff", border: "none", borderRadius: 99, padding: "12px 20px", fontWeight: 700, fontSize: 14.5,
+                   boxShadow: "0 6px 20px rgba(179,38,30,.35)", minHeight: 46 }}>
+          Finish study
+        </button>
       )}
       <SavesFab allHotels={hotels} onOpen={l => { Track.click(l.id); go({ name: "detail", listing: l, from: "saves", cityKey: l.city }); }} />
     </div>

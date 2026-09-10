@@ -1,4 +1,5 @@
 import express from "express";
+import crypto from "node:crypto";
 import fs from "fs";
 import { CITIES as SEED_CITIES, CITY_LISTINGS as SEED_LISTINGS } from "./src/cities.js";
 import path from "path";
@@ -157,6 +158,13 @@ app.get("/api/hotels/:id/reviews", async (req, res) => {
 app.get("/api/votes", async (_req, res) => {
   try { res.json(await db.tallies()); }
   catch (e) { console.error(e); res.status(500).json({ error: "failed to load votes" }); }
+});
+
+/* next free participant number (P0001, P0002, …). Nothing about the visitor is read or stored —
+   the browser remembers its number locally, so a refresh does not consume a new one. */
+app.get("/api/assign-id", async (_req, res) => {
+  try { const n = await db.nextPid(); res.json({ pid: "P" + String(n).padStart(4, "0") }); }
+  catch (e) { console.error(e); res.status(500).json({ error: "failed" }); }
 });
 
 /* participant clicks "Finish study" — the exit moment ends their usage time */
@@ -518,19 +526,23 @@ app.post("/api/admin/import-reviews", requireAdmin, uploadBig.single("file"), as
     res.json({ ok: true, rowsInFile: rows.length, ...result });
   } catch (e) { console.error("Review import failed:", e); res.status(400).json({ error: e.message || "Import failed" }); }
 });
+const TUT_TARGETS = [["card","Hotel card"],["save","Save button"],["dislike","Dislike button"],["check","Green Check button"],["ai","AI summary"],["saves","Saves list (bottom right)"],["finish","Finish study button"]];
 const DEFAULT_TUTORIAL = [
-  { title: "Browse hotel information", text: "Open any hotel card to see its photos, description, ratings and guest reviews." },
-  { title: "Save hotels you like", text: "Tap \u201cSave this hotel\u201d to keep a shortlist. Your saved hotels live under the Saves button at the bottom right." },
-  { title: "Check availability", text: "The green \u201cCheck this hotel\u201d button opens the full hotel page." },
+  { target: "card", title: "Browse hotel information", text: "Open any hotel card to see its photos, description, ratings and guest reviews." },
+  { target: "save", title: "Save hotels you like", text: "Tap \u201cSave this hotel\u201d to keep a shortlist. Your saved hotels live under the Saves button at the bottom right." },
+  { target: "check", title: "Check availability", text: "The green \u201cCheck this hotel\u201d button opens the full hotel page." },
+  { target: "finish", title: "Finished? Exit here", text: "When you are done browsing, press \u201cFinish study\u201d to end the session and get back to the questionnaire." },
 ];
 async function getTutorialSteps() {
   try { const v = await db.getSetting("tutorial_steps", ""); if (v) { const a = JSON.parse(v);
-    if (Array.isArray(a) && a.length === 3) return a.map((x, i) => ({ title: String(x.title || DEFAULT_TUTORIAL[i].title), text: String(x.text || DEFAULT_TUTORIAL[i].text) })); } } catch {}
+    if (Array.isArray(a) && a.length) return a.slice(0, 8).map(x => ({
+      target: TUT_TARGETS.some(t => t[0] === x.target) ? x.target : "card",
+      title: String(x.title || ""), text: String(x.text || "") })).filter(x => x.title || x.text); } } catch {}
   return DEFAULT_TUTORIAL;
 }
 
 /* participant-facing page layout (order of blocks); edited in admin → Page layout */
-const DEFAULT_LAYOUT = { list: ["description", "ai", "vote", "save", "priceCheck"], detail: ["description", "ai", "vote", "save", "about", "reviews"] };
+const DEFAULT_LAYOUT = { list: ["description", "ai", "vote", "save", "priceCheck"], detail: ["description", "vote", "save", "about", "ai", "reviews"] };
 function mergeLayout(stored, defaults) {
   if (!Array.isArray(stored) || !stored.length) return defaults;
   const out = stored.filter(k => defaults.includes(k));
@@ -978,7 +990,7 @@ const ADMIN_HTML = `<!doctype html>
 
     <h2>Tutorial steps (arrow tips on the hotel list)</h2>
     <div class="panel" id="tutPanel">
-      <p class="sub">Shown once per device, the first time a participant opens a city's hotel list. Step 1 points at the first hotel card, step 2 at the Save button, step 3 at the green Check button. Edit the wording below (auto-saves). The whole tutorial can be turned off in Page elements.</p>
+      <p class="sub">Shown once per device, the first time a participant opens a city's hotel list. Each step points an arrow at the element you pick. Reorder with ↑↓, remove with ✕, add up to 8 steps. Auto-saves. Edit the wording below (auto-saves). The whole tutorial can be turned off in Page elements.</p>
       <div id="tutFields"></div>
       <div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn" id="tutSave">Save now</button><span class="muted" id="tutMsg"></span></div>
     </div>
@@ -1456,8 +1468,8 @@ You can now close this window and return to the questionnaire."></textarea>
     elemDefs = d.elementList || []; renderElems(d.elements || {});
     const lu = d.listUi || {}; document.getElementById('listFirst').value = lu.first ?? '20'; document.getElementById('listNav').value = (lu.nav === 'scroll') ? 'scroll' : 'pages';
     document.getElementById('goodbyeText').value = d.goodbye || '';
-    const ts = d.tutorialSteps || [];
-    document.getElementById('tutFields').innerHTML = [0,1,2].map(i => '<div style="margin-bottom:12px"><label style="font-size:12.5px;color:var(--soft)">Step '+(i+1)+' title<input id="tutT'+i+'" value="'+esc((ts[i]||{}).title||'')+'" style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px"></label><label style="font-size:12.5px;color:var(--soft);display:block;margin-top:6px">Step '+(i+1)+' text<textarea id="tutX'+i+'" rows="2" style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;resize:vertical">'+esc((ts[i]||{}).text||'')+'</textarea></label></div>').join('');
+    tutSteps = (d.tutorialSteps || []).map(x => ({ target: x.target || 'card', title: x.title || '', text: x.text || '' }));
+    tutRender();
     autosave(document.getElementById('tutPanel'), saveTut, document.getElementById('tutMsg'));
     document.getElementById('tutSave').onclick=async()=>{ const m=document.getElementById('tutMsg'); try{ m.textContent='Saving…'; await saveTut(); m.style.color='#2E7D5B'; m.textContent='Saved'; }catch(e){ m.style.color='#B3261E'; m.textContent=e.message; } };
     const ru = d.reviewsUi || {}; document.getElementById('rvTotal').value = ru.total ?? '0'; document.getElementById('rvFirst').value = ru.first ?? '20'; document.getElementById('rvNav').value = (ru.nav === 'pages') ? 'pages' : 'scroll';
@@ -1475,17 +1487,27 @@ You can now close this window and return to the questionnaire."></textarea>
   function layoutRender(){
     for (const pageKey of ['list','detail']) {
       const host = document.getElementById(pageKey==='list'?'layoutList':'layoutDetail');
+      const MOCK = {
+        description: '<div style="height:8px;background:#D9E2E5;border-radius:4px;width:92%;margin:2px 0"></div><div style="height:8px;background:#D9E2E5;border-radius:4px;width:70%"></div>',
+        ai: '<span style="display:inline-flex;gap:8px;align-items:flex-start"><span style="border:1px solid #D4593B;color:#D4593B;font-family:monospace;font-size:10px;border-radius:6px;padding:1px 6px;white-space:nowrap">AI summary</span><span><span style="display:block;height:7px;background:#EAD9D3;border-radius:4px;width:150px;margin:2px 0"></span><span style="display:block;height:7px;background:#EAD9D3;border-radius:4px;width:100px"></span></span></span>',
+        vote: '<span style="display:inline-flex;gap:6px"><span style="border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:11.5px">Like this hotel</span><span style="border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:11.5px">Dislike this hotel</span></span>',
+        save: '<span style="display:inline-flex;gap:6px"><span style="border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700">♡ Save this hotel</span><span style="border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:11.5px">Dislike this hotel</span></span>',
+        priceCheck: '<span style="display:flex;justify-content:space-between;align-items:center;width:100%"><span style="font-weight:700;font-size:14px">from $120</span><span style="background:#2E7D5B;color:#fff;border-radius:99px;padding:5px 12px;font-size:11.5px;font-weight:700">Check this hotel</span></span>',
+        about: '<div style="border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--soft)">About block — amenities · room types · nearby</div>',
+        reviews: '<div style="border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--soft)">Guest reviews — review cards · photos · Helpful buttons</div>',
+      };
       host.innerHTML = layoutState[pageKey].map(k => {
         const def = LAYOUT_BLOCKS[pageKey].find(b=>b[0]===k); if (!def) return '';
         const [key,label,elemKey] = def;
         const toggable = !elemKey.startsWith('__');
         const on = toggable ? layoutElems[elemKey] !== false : true;
-        return '<div class="lay-block" draggable="true" data-k="'+key+'" data-page="'+pageKey+'" style="display:flex;align-items:center;gap:10px;border:1px dashed var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:var(--paper);cursor:grab'+(on?'':';opacity:.5')+'">'+
-          '<span style="color:var(--soft)">⠿</span>'+
-          (toggable?'<input type="checkbox" class="lay-tg" data-elem="'+elemKey+'"'+(on?' checked':'')+'>':'<span title="Visibility follows the AI switches / price element" style="width:13px"></span>')+
-          '<span style="font-size:13.5px;flex:1">'+esc(label)+'</span>'+
+        return '<div class="lay-block" draggable="true" data-k="'+key+'" data-page="'+pageKey+'" style="border:1px dashed var(--line);border-radius:10px;padding:8px 12px 10px;margin-bottom:8px;background:var(--paper);cursor:grab'+(on?'':';opacity:.45')+'">'+
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="color:var(--soft)">⠿</span>'+
+          (toggable?'<input type="checkbox" class="lay-tg" data-elem="'+elemKey+'"'+(on?' checked':'')+'>':'<span title="Visibility follows the AI switches" style="width:13px"></span>')+
+          '<span style="font-size:12px;color:var(--soft);flex:1">'+esc(label)+'</span>'+
           '<button class="lay-mv" data-d="-1" style="border:1px solid var(--line);background:var(--card);border-radius:6px;cursor:pointer;padding:1px 7px">‹</button>'+
-          '<button class="lay-mv" data-d="1" style="border:1px solid var(--line);background:var(--card);border-radius:6px;cursor:pointer;padding:1px 7px">›</button></div>';
+          '<button class="lay-mv" data-d="1" style="border:1px solid var(--line);background:var(--card);border-radius:6px;cursor:pointer;padding:1px 7px">›</button></div>'+
+          '<div style="pointer-events:none">'+(MOCK[key]||'')+'</div></div>';
       }).join('');
     }
     let dragK=null, dragPage=null;
@@ -1511,9 +1533,9 @@ You can now close this window and return to the questionnaire."></textarea>
   document.querySelector('.tab[data-tab="layout"]').addEventListener('click', async ()=>{
     if (layoutLoaded) return; layoutLoaded=true;
     const d=await (await fetch('/api/admin/settings')).json();
-    layoutState=d.layout||{list:['description','ai','vote','save','priceCheck'],detail:['description','ai','vote','save','about','reviews']};
+    layoutState=d.layout||{list:['description','ai','vote','save','priceCheck'],detail:['description','vote','save','about','ai','reviews']};
     layoutElems=d.elements||{};
-    document.getElementById('layoutReset').onclick=()=>{ layoutState={list:['description','ai','vote','save','priceCheck'],detail:['description','ai','vote','save','about','reviews']}; layoutSave(); layoutRender(); };
+    document.getElementById('layoutReset').onclick=()=>{ layoutState={list:['description','ai','vote','save','priceCheck'],detail:['description','vote','save','about','ai','reviews']}; layoutSave(); layoutRender(); };
     layoutRender();
   });
 
@@ -1532,7 +1554,28 @@ You can now close this window and return to the questionnaire."></textarea>
     dangerMsg.style.color = r.ok?'#2E7D5B':'#B3261E'; dangerMsg.textContent = r.ok?'Content restored to defaults. Reload the tabs to see it.':(d.error||'Failed');
   };
 
-  function tutRead(){ return [0,1,2].map(i => ({ title: document.getElementById('tutT'+i).value, text: document.getElementById('tutX'+i).value })); }
+  let tutSteps = [];
+  const TUT_TARGETS = [["card","Hotel card"],["save","Save button"],["dislike","Dislike button"],["check","Green Check button"],["ai","AI summary"],["saves","Saves list (bottom right)"],["finish","Finish study button"]];
+  function tutRender(){
+    document.getElementById('tutFields').innerHTML = tutSteps.map((st,i) =>
+      '<div class="panel" style="margin:0 0 10px;padding:12px 14px">'+
+      '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><b style="font-size:13px">Step '+(i+1)+'</b>'+
+      '<select class="tut-target" data-i="'+i+'" style="font:inherit;font-size:13px;padding:4px 6px;border:1px solid var(--line);border-radius:6px">'+TUT_TARGETS.map(t=>'<option value="'+t[0]+'"'+(st.target===t[0]?' selected':'')+'>points at: '+t[1]+'</option>').join('')+'</select>'+
+      '<span style="flex:1"></span>'+
+      '<button class="tut-mv" data-i="'+i+'" data-d="-1" style="border:1px solid var(--line);background:var(--card);border-radius:6px;cursor:pointer;padding:1px 8px">↑</button>'+
+      '<button class="tut-mv" data-i="'+i+'" data-d="1" style="border:1px solid var(--line);background:var(--card);border-radius:6px;cursor:pointer;padding:1px 8px">↓</button>'+
+      '<button class="tut-del" data-i="'+i+'" style="border:1px solid #E8B4B0;background:var(--card);color:#B3261E;border-radius:6px;cursor:pointer;padding:1px 8px">✕</button></div>'+
+      '<input class="tut-title" data-i="'+i+'" value="'+esc(st.title)+'" placeholder="Title" style="display:block;width:100%;font:inherit;font-size:13.5px;font-weight:600;padding:6px 8px;border:1px solid var(--line);border-radius:6px;margin-bottom:6px">'+
+      '<textarea class="tut-text" data-i="'+i+'" rows="2" placeholder="Text" style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;resize:vertical">'+esc(st.text)+'</textarea></div>'
+    ).join('') + '<button class="btn" id="tutAdd" style="background:var(--card);color:var(--ink);border:1px solid var(--line)">+ Add step</button>';
+    document.querySelectorAll('.tut-target').forEach(x=>x.onchange=()=>{ tutSteps[+x.dataset.i].target=x.value; });
+    document.querySelectorAll('.tut-title').forEach(x=>x.oninput=()=>{ tutSteps[+x.dataset.i].title=x.value; });
+    document.querySelectorAll('.tut-text').forEach(x=>x.oninput=()=>{ tutSteps[+x.dataset.i].text=x.value; });
+    document.querySelectorAll('.tut-mv').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i,j=i+Number(b.dataset.d); if(j<0||j>=tutSteps.length)return; [tutSteps[i],tutSteps[j]]=[tutSteps[j],tutSteps[i]]; tutRender(); saveTut().catch(()=>{}); });
+    document.querySelectorAll('.tut-del').forEach(b=>b.onclick=()=>{ tutSteps.splice(+b.dataset.i,1); tutRender(); saveTut().catch(()=>{}); });
+    document.getElementById('tutAdd').onclick=()=>{ if(tutSteps.length<8) tutSteps.push({target:'card',title:'',text:''}); tutRender(); };
+  }
+  function tutRead(){ return tutSteps.filter(x=>x.title||x.text); }
   async function saveTut(){
     const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'tutorial_steps',value:JSON.stringify(tutRead())})});
     const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
