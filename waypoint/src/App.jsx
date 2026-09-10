@@ -1685,7 +1685,7 @@ export default function App() {
       });
     },
   }), [saveIds, pid]);
-  useEffect(() => { loadConfig().then(c => { if (c && typeof c.aiSearch === "boolean") setAi({ search: c.aiSearch, product: c.aiProduct }); if (c && c.elements) setUi({ ...c.elements, __goodbye: (c.goodbye || "").trim() }); }).catch(() => {}); }, []);
+  useEffect(() => { loadConfig().then(c => { if (c && typeof c.aiSearch === "boolean") setAi({ search: c.aiSearch, product: c.aiProduct }); if (c && c.elements) setUi({ ...c.elements, __goodbye: (c.goodbye || "").trim(), __return: (c.returnUrl || "").trim() }); }).catch(() => {}); }, []);
 
   const loadData = async (isRetry = false) => {
     setDataState(s => ({ status: isRetry ? "error" : "loading", retrying: isRetry }));
@@ -1855,6 +1855,12 @@ export default function App() {
               {ui.__goodbye || "You have finished this part of the study. Your session has been recorded.\nYou can now close this window and return to the questionnaire."}
             </p>
             {pid && <div style={{ marginTop: 14, fontFamily: "'Roboto Mono', monospace", fontSize: 13, color: C.inkSoft }}>Participant ID: {pid}</div>}
+            {ui.__return && (
+              <a href={`${ui.__return}${ui.__return.includes("?") ? "&" : "?"}pid=${encodeURIComponent(pid || "")}`}
+                 style={{ display: "inline-block", marginTop: 22, background: C.green, color: "#fff", borderRadius: 99, padding: "13px 26px", fontWeight: 700, fontSize: 15.5, textDecoration: "none" }}>
+                Continue to the questionnaire →
+              </a>
+            )}
           </div>
         </div>
       )}

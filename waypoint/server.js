@@ -163,7 +163,7 @@ app.get("/api/votes", async (_req, res) => {
 /* next free participant number (P0001, P0002, …). Nothing about the visitor is read or stored —
    the browser remembers its number locally, so a refresh does not consume a new one. */
 app.get("/api/assign-id", async (_req, res) => {
-  try { const n = await db.nextPid(); res.json({ pid: "P" + String(n).padStart(4, "0") }); }
+  try { const n = await db.nextPid(); res.json({ pid: (process.env.PID_PREFIX || "A") + String(n).padStart(4, "0") }); }
   catch (e) { console.error(e); res.status(500).json({ error: "failed" }); }
 });
 
@@ -236,6 +236,7 @@ app.get("/api/settings/welcome", async (_req, res) => {
 app.get("/api/config", async (_req, res) => {
   try { const sw = await db.getAiSwitches(); res.json({ aiSearch: sw.search, aiProduct: sw.product, elements: await db.getElements(),
                goodbye: await db.getSetting("goodbye", ""),
+               returnUrl: await db.getSetting("return_url", ""),
                tutorialSteps: await getTutorialSteps(),
                tutorialSkip: (await db.getSetting("tutorial_skip", "on")) !== "off",
                exitTexts: JSON.parse(await db.getSetting("exit_texts", "null") || "null") || {},
@@ -255,7 +256,7 @@ app.post("/api/track/consent", async (req, res) => {
 });
 app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
   try {
-    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(), goodbye: await db.getSetting("goodbye", ""), tutorialSteps: await getTutorialSteps(), tutorialSkip: await db.getSetting("tutorial_skip", "on"), exitTexts: JSON.parse(await db.getSetting("exit_texts", "null") || "null") || {},
+    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(), goodbye: await db.getSetting("goodbye", ""), returnUrl: await db.getSetting("return_url", ""), tutorialSteps: await getTutorialSteps(), tutorialSkip: await db.getSetting("tutorial_skip", "on"), exitTexts: JSON.parse(await db.getSetting("exit_texts", "null") || "null") || {},
                elements: await db.getElements(), elementList: db.ELEMENTS.map(([key, label, def]) => ({ key, label, def })),
                reviewsUi: { total: await db.getSetting("reviews_total", "0"), first: await db.getSetting("reviews_first", "20"), nav: await db.getSetting("reviews_nav", "scroll") },
                listUi: { first: await db.getSetting("list_first", "20"), nav: await db.getSetting("list_nav", "pages") },
@@ -264,7 +265,7 @@ app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
 });
 app.post("/api/admin/settings", requireAdmin, async (req, res) => {
   const { key, value } = req.body || {};
-  if (!key || !["welcome", "goodbye", "tutorial_steps", "tutorial_skip", "exit_texts", "ai_search", "ai_product", "elements", "layout", "reviews_total", "reviews_first", "reviews_nav", "list_first", "list_nav"].includes(key)) return res.status(400).json({ error: "unknown setting" });
+  if (!key || !["welcome", "goodbye", "return_url", "tutorial_steps", "tutorial_skip", "exit_texts", "ai_search", "ai_product", "elements", "layout", "reviews_total", "reviews_first", "reviews_nav", "list_first", "list_nav"].includes(key)) return res.status(400).json({ error: "unknown setting" });
   if (key === "elements") { try { const o = JSON.parse(String(value)); if (!o || typeof o !== "object") throw 0; } catch { return res.status(400).json({ error: "elements must be a JSON object" }); } }
   if (key === "ai_search" || key === "ai_product") {
     const sw = await db.getAiSwitches();
@@ -1034,6 +1035,7 @@ const ADMIN_HTML = `<!doctype html>
     <h2>Thank-you text (after "Finish study")</h2>
     <div class="panel">
       <p class="sub">Shown full-screen after a participant clicks "Finish study". Leave empty for the default. The participant's ID is always appended.</p>
+      <label style="font-size:12.5px;color:var(--soft);display:block;margin-bottom:10px">Return link (optional) — if filled, the thank-you page shows a "Continue to the questionnaire" button opening this URL with ?pid=&lt;number&gt; appended. Leave empty if participants should just switch back to the survey tab.<input id="returnUrl" placeholder="https://yourdc.qualtrics.com/jfe/form/SV_xxxx" style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;margin-top:4px"></label>
       <textarea id="goodbyeText" rows="4" style="width:100%;font:inherit;font-size:14px;padding:10px;border:1px solid var(--line);border-radius:8px;resize:vertical" placeholder="You have finished this part of the study. Your session has been recorded.
 You can now close this window and return to the questionnaire."></textarea>
       <div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn" id="goodbyeSave">Save now</button><span class="muted" id="goodbyeMsg"></span></div>
@@ -1503,7 +1505,7 @@ You can now close this window and return to the questionnaire."></textarea>
     document.getElementById('welcomeText').value = d.welcome || d.welcomeDefault || '';
     elemDefs = d.elementList || []; renderElems(d.elements || {});
     const lu = d.listUi || {}; document.getElementById('listFirst').value = lu.first ?? '20'; document.getElementById('listNav').value = (lu.nav === 'scroll') ? 'scroll' : 'pages';
-    document.getElementById('goodbyeText').value = d.goodbye || '';
+    document.getElementById('goodbyeText').value = d.goodbye || ''; document.getElementById('returnUrl').value = d.returnUrl || '';
     const ex=d.exitTexts||{}; ex1T.value=ex.s1Title||''; ex1X.value=ex.s1Text||''; ex2T.value=ex.s2Title||''; ex2X.value=ex.s2Text||'';
     tutSteps = (d.tutorialSteps || []).map(x => ({ target: x.target || 'card', title: x.title || '', text: x.text || '' }));
     document.getElementById('tutSkip').checked = d.tutorialSkip !== 'off';
@@ -1628,8 +1630,10 @@ You can now close this window and return to the questionnaire."></textarea>
   autosave(document.getElementById('exitPanel'), saveExit, document.getElementById('exitMsg'));
   document.getElementById('exitSave').onclick=async()=>{ const m=document.getElementById('exitMsg'); try{ m.textContent='Saving…'; await saveExit(); m.style.color='#2E7D5B'; m.textContent='Saved'; }catch(e){ m.style.color='#B3261E'; m.textContent=e.message; } };
   async function saveGoodbye(){
-    const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'goodbye',value:document.getElementById('goodbyeText').value})});
-    const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
+    for (const [key,id] of [['goodbye','goodbyeText'],['return_url','returnUrl']]){
+      const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,value:document.getElementById(id).value})});
+      const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
+    }
   }
   autosave(document.getElementById('goodbyeText'), saveGoodbye, document.getElementById('goodbyeMsg'));
   document.getElementById('goodbyeSave').onclick=async()=>{ const m=document.getElementById('goodbyeMsg'); try{ m.textContent='Saving…'; await saveGoodbye(); m.style.color='#2E7D5B'; m.textContent='Saved'; }catch(e){ m.style.color='#B3261E'; m.textContent=e.message; } };
