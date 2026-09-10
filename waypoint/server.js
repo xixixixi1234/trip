@@ -237,6 +237,7 @@ app.get("/api/config", async (_req, res) => {
   try { const sw = await db.getAiSwitches(); res.json({ aiSearch: sw.search, aiProduct: sw.product, elements: await db.getElements(),
                goodbye: await db.getSetting("goodbye", ""),
                tutorialSteps: await getTutorialSteps(),
+               tutorialSkip: (await db.getSetting("tutorial_skip", "on")) !== "off",
                exitTexts: JSON.parse(await db.getSetting("exit_texts", "null") || "null") || {},
                reviewsUi: { total: parseInt(await db.getSetting("reviews_total", "0"), 10) || 0,
                             first: Math.max(1, parseInt(await db.getSetting("reviews_first", "20"), 10) || 20),
@@ -254,7 +255,7 @@ app.post("/api/track/consent", async (req, res) => {
 });
 app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
   try {
-    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(), goodbye: await db.getSetting("goodbye", ""), tutorialSteps: await getTutorialSteps(), exitTexts: JSON.parse(await db.getSetting("exit_texts", "null") || "null") || {},
+    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(), goodbye: await db.getSetting("goodbye", ""), tutorialSteps: await getTutorialSteps(), tutorialSkip: await db.getSetting("tutorial_skip", "on"), exitTexts: JSON.parse(await db.getSetting("exit_texts", "null") || "null") || {},
                elements: await db.getElements(), elementList: db.ELEMENTS.map(([key, label, def]) => ({ key, label, def })),
                reviewsUi: { total: await db.getSetting("reviews_total", "0"), first: await db.getSetting("reviews_first", "20"), nav: await db.getSetting("reviews_nav", "scroll") },
                listUi: { first: await db.getSetting("list_first", "20"), nav: await db.getSetting("list_nav", "pages") },
@@ -263,7 +264,7 @@ app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
 });
 app.post("/api/admin/settings", requireAdmin, async (req, res) => {
   const { key, value } = req.body || {};
-  if (!key || !["welcome", "goodbye", "tutorial_steps", "exit_texts", "ai_search", "ai_product", "elements", "layout", "reviews_total", "reviews_first", "reviews_nav", "list_first", "list_nav"].includes(key)) return res.status(400).json({ error: "unknown setting" });
+  if (!key || !["welcome", "goodbye", "tutorial_steps", "tutorial_skip", "exit_texts", "ai_search", "ai_product", "elements", "layout", "reviews_total", "reviews_first", "reviews_nav", "list_first", "list_nav"].includes(key)) return res.status(400).json({ error: "unknown setting" });
   if (key === "elements") { try { const o = JSON.parse(String(value)); if (!o || typeof o !== "object") throw 0; } catch { return res.status(400).json({ error: "elements must be a JSON object" }); } }
   if (key === "ai_search" || key === "ai_product") {
     const sw = await db.getAiSwitches();
@@ -1012,6 +1013,7 @@ const ADMIN_HTML = `<!doctype html>
     <h2>Tutorial steps (arrow tips on the hotel list)</h2>
     <div class="panel" id="tutPanel">
       <p class="sub">Shown once per device, the first time a participant opens a city's hotel list. Each step points an arrow at the element you pick. Reorder with ↑↓, remove with ✕, add up to 8 steps. Auto-saves. Edit the wording below (auto-saves). The whole tutorial can be turned off in Page elements.</p>
+      <label style="display:flex;gap:8px;align-items:center;font-size:13.5px;margin-bottom:10px"><input type="checkbox" id="tutSkip"> Participants can skip the tutorial (unticked = they must click through every step)</label>
       <div id="tutFields"></div>
       <div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn" id="tutSave">Save now</button><span class="muted" id="tutMsg"></span></div>
     </div>
@@ -1503,6 +1505,7 @@ You can now close this window and return to the questionnaire."></textarea>
     document.getElementById('goodbyeText').value = d.goodbye || '';
     const ex=d.exitTexts||{}; ex1T.value=ex.s1Title||''; ex1X.value=ex.s1Text||''; ex2T.value=ex.s2Title||''; ex2X.value=ex.s2Text||'';
     tutSteps = (d.tutorialSteps || []).map(x => ({ target: x.target || 'card', title: x.title || '', text: x.text || '' }));
+    document.getElementById('tutSkip').checked = d.tutorialSkip !== 'off';
     tutRender();
     autosave(document.getElementById('tutPanel'), saveTut, document.getElementById('tutMsg'));
     document.getElementById('tutSave').onclick=async()=>{ const m=document.getElementById('tutMsg'); try{ m.textContent='Saving…'; await saveTut(); m.style.color='#2E7D5B'; m.textContent='Saved'; }catch(e){ m.style.color='#B3261E'; m.textContent=e.message; } };
@@ -1611,8 +1614,10 @@ You can now close this window and return to the questionnaire."></textarea>
   }
   function tutRead(){ return tutSteps.filter(x=>x.title||x.text); }
   async function saveTut(){
-    const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'tutorial_steps',value:JSON.stringify(tutRead())})});
-    const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
+    for (const [key,value] of [['tutorial_steps',JSON.stringify(tutRead())],['tutorial_skip',document.getElementById('tutSkip').checked?'on':'off']]){
+      const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,value})});
+      const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
+    }
   }
   async function saveExit(){
     const v={s1Title:ex1T.value,s1Text:ex1X.value,s2Title:ex2T.value,s2Text:ex2X.value};

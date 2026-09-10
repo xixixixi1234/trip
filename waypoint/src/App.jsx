@@ -690,7 +690,7 @@ function ExitReview({ pid, saves, onCancel, onFinish }) {
    Shown once per device, the first time a hotel list is opened. Each step highlights a real element
    (hotel card → Save button → Check button) with a spotlight ring and an arrow tooltip.
    Wording is editable in admin → Study settings → Tutorial steps. */
-function Coachmark({ steps, onDone }) {
+function Coachmark({ steps, onDone, skippable = true }) {
   const [step, setStep] = useState(0);
   const [box, setBox] = useState(null);
   const targetFor = (i) => {
@@ -743,7 +743,7 @@ function Coachmark({ steps, onDone }) {
           {step < steps.length - 1
             ? <button type="button" onClick={() => setStep(sn => sn + 1)} className="wp-btn" style={{ background: C.ink, color: "#fff", border: "none", borderRadius: 99, padding: "7px 16px", fontWeight: 700, fontSize: 13, minHeight: 36 }}>Next</button>
             : <button type="button" onClick={onDone} className="wp-btn" style={{ background: C.green, color: "#fff", border: "none", borderRadius: 99, padding: "7px 16px", fontWeight: 700, fontSize: 13, minHeight: 36 }}>Got it</button>}
-          <button type="button" onClick={onDone} className="wp-btn wp-link" style={{ fontSize: 12, color: C.inkSoft, minHeight: 30 }}>Skip</button>
+          {skippable && <button type="button" onClick={onDone} className="wp-btn wp-link" style={{ fontSize: 12, color: C.inkSoft, minHeight: 30 }}>Skip</button>}
         </div>
       </div>
     </div>
@@ -1209,11 +1209,13 @@ function CityPage({ cityKey, onBack, onOpen, votes, favs, cities, hotels: allHot
   const [listUi, setListUi] = useState({ first: 20, nav: "pages" });
   const show = useShow();
   const [tut, setTut] = useState(null);   // steps array while the coachmark is active
+  const [tutSkip, setTutSkip] = useState(true);
   useEffect(() => {
     if (!pid || localStorage.getItem("fah_tut") === "1") return;
     loadConfig().then(c => {
       if ((c.elements || {})["tutorial"] === false) return;
       const steps = Array.isArray(c.tutorialSteps) && c.tutorialSteps.length ? c.tutorialSteps : null;
+      setTutSkip(c.tutorialSkip !== false);
       if (steps) setTimeout(() => setTut(steps), 400);   // wait for the first cards to render
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1296,7 +1298,7 @@ function CityPage({ cityKey, onBack, onOpen, votes, favs, cities, hotels: allHot
         </div>
       )}
 
-      {tut && <Coachmark steps={tut} onDone={() => { setTut(null); localStorage.setItem("fah_tut", "1"); }} />}
+      {tut && <Coachmark steps={tut} skippable={tutSkip} onDone={() => { setTut(null); localStorage.setItem("fah_tut", "1"); }} />}
       {listUi.nav === "pages" && totalPages > 1 && (
         <Pagination page={curPage} totalPages={totalPages} onGo={setPage} />
       )}
@@ -1794,13 +1796,7 @@ export default function App() {
               </span>
             )}
             <button type="button" onClick={() => page.name !== "home" && go({ name: "home" })} className="wp-btn wp-ghost" style={navBtn(page.name === "home")}>Destinations</button>
-            {pid && !finished && ui["exit.button"] !== false && (
-              <button id="wp-finish" type="button" onClick={() => setConfirmExit(true)} aria-label="Finish study"
-                className="wp-btn"
-                style={{ background: "#B3261E", color: "#fff", border: "none", borderRadius: 99, padding: "9px 18px", fontWeight: 700, fontSize: 14, minHeight: 40 }}>
-                Finish study
-              </button>
-            )}
+
 
           </nav>
         </div>
@@ -1866,6 +1862,15 @@ export default function App() {
             {pid && <div style={{ marginTop: 14, fontFamily: "'Roboto Mono', monospace", fontSize: 13, color: C.inkSoft }}>Participant ID: {pid}</div>}
           </div>
         </div>
+      )}
+      {pid && !finished && ui["exit.button"] !== false && (
+        <button id="wp-finish" type="button" onClick={() => setConfirmExit(true)} aria-label="Finish study"
+          className="wp-btn"
+          style={{ position: "fixed", right: 18, bottom: 74, zIndex: 900, display: "inline-flex", alignItems: "center", justifyContent: "center",
+                   background: "#B3261E", color: "#fff", border: "none", borderRadius: 99, padding: "12px 18px", fontWeight: 700, fontSize: 14.5,
+                   boxShadow: "0 6px 20px rgba(179,38,30,.35)", minHeight: 46, minWidth: 132 }}>
+          Finish study
+        </button>
       )}
       <SavesFab allHotels={hotels} onOpen={l => { Track.click(l.id); go({ name: "detail", listing: l, from: "saves", cityKey: l.city }); }} />
     </div>
