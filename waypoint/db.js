@@ -202,6 +202,7 @@ export async function init() {
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS condition TEXT");
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS ai_search BOOLEAN");
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS ai_product BOOLEAN");
+  await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS exited_at TIMESTAMPTZ");
   await pool.query("ALTER TABLE hotels ADD COLUMN IF NOT EXISTS source_id TEXT");
   await pool.query("ALTER TABLE hotels ADD COLUMN IF NOT EXISTS details JSONB");
   for (const c of ["location TEXT", "date_visited TEXT", "photos JSONB", "language TEXT", "contributions INTEGER", "avatar TEXT"]) await pool.query(`ALTER TABLE reviews ADD COLUMN IF NOT EXISTS ${c}`);
@@ -558,6 +559,14 @@ export async function setHotelCover(hotelId, imageId) {
   return { ok: true };
 }
 
+/* participant pressed "Finish study" — records the exit moment (kept once; later presses ignored) */
+export async function setExited(pid) {
+  if (!pid) return { ok: false };
+  if (!HAS_DB) { const p = mem.participants[pid]; if (p && !p.exitedAt) p.exitedAt = Date.now(); return { ok: true }; }
+  await pool.query("UPDATE participants SET exited_at=COALESCE(exited_at, now()) WHERE pid=$1", [pid]);
+  return { ok: true };
+}
+
 /* ---------------- admin resets ---------------- */
 /* Wipe ALL participant data (votes, tracking, saves, review likes, participants).
    Hotels, reviews, photos and settings are untouched. */
@@ -875,12 +884,12 @@ export const ELEMENTS = [
   ["list.price",        "Search page: price (from $X)", true],
   ["list.check",        "Search page: \"Check this hotel\" button", true],
   ["list.description",  "Search page: first sentence of the description", true],
-  ["list.vote",         "Search page: Like / Dislike buttons", true],
+  ["list.vote",         "Search page: Like / Dislike buttons", false],
   ["list.reviewCount",  "Search page: number of reviews", true],
   ["detail.price",      "Product page: price", true],
   ["detail.description","Product page: full description", true],
   ["detail.tags",       "Product page: style / amenity tags under the name", true],
-  ["detail.vote",       "Product page: Like / Dislike buttons", true],
+  ["detail.vote",       "Product page: Like / Dislike buttons", false],
   ["detail.gallery",    "Product page: photo thumbnails / gallery", true],
   ["about.section",     "About block (whole section)", true],
   ["about.subRatings",  "About: sub-rating bars (Location, Rooms …)", true],
@@ -897,9 +906,11 @@ export const ELEMENTS = [
   ["reviews.stay",      "Reviews: Date of stay", true],
   ["reviews.tripType",  "Reviews: Trip type", false],
   ["reviews.vote",      "Reviews: Helpful / Not helpful buttons", true],
-  ["list.save",         "Search page: Save (heart) button", true],
-  ["detail.save",       "Product page: Save (heart) button", true],
+  ["list.save",         "Search page: Save button", true],
+  ["detail.save",       "Product page: Save button", true],
   ["saves.fab",         "Floating Saved-list button (bottom right)", true],
+  ["exit.button",       "\"Finish study\" button in the header", true],
+  ["tutorial",          "3-step tutorial after the participant enters their ID", true],
 ];
 export async function getElements() {
   const defaults = Object.fromEntries(ELEMENTS.map(([k, , d]) => [k, d]));
@@ -1157,6 +1168,7 @@ export async function participantSummaries() {
         totalMs: p.totalMs || 0,
         siteFav: Boolean(p.siteFav),
         consentedAt: p.consentedAt ? new Date(p.consentedAt).toISOString() : null,
+        exitedAt: p.exitedAt ? new Date(p.exitedAt).toISOString() : null,
         condition: p.condition || "",
         aiSearch: p.aiSearch ?? null, aiProduct: p.aiProduct ?? null,
         likes: (votesByPid[pid] || {}).up || 0,
@@ -1175,7 +1187,7 @@ export async function participantSummaries() {
       };
     }).sort((a, b) => b.totalMs - a.totalMs);
   }
-  const parts = await pool.query("SELECT pid,total_ms,site_fav,first_seen,last_seen,consented_at,condition,ai_search,ai_product FROM participants");
+  const parts = await pool.query("SELECT pid,total_ms,site_fav,first_seen,last_seen,consented_at,exited_at,condition,ai_search,ai_product FROM participants");
   const favs = await pool.query(`SELECT f.pid, f.hotel_id, h.name FROM hotel_favorites f LEFT JOIN hotels h ON h.id=f.hotel_id`);
   const events = await pool.query(`SELECT e.pid, e.hotel_id, h.name, h.rating, h.review_count, e.seen, e.clicks, e.list_ms, e.detail_ms, e.review_ms, e.review_seen, e.review_total, v.choice, v.source
                                      FROM hotel_events e LEFT JOIN hotels h ON h.id=e.hotel_id
@@ -1190,7 +1202,7 @@ export async function participantSummaries() {
   for (const p of parts.rows) {
     const o = ensure(p.pid);
     o.totalMs = Number(p.total_ms) || 0; o.siteFav = Boolean(p.site_fav);
-    o.firstSeen = p.first_seen; o.lastSeen = p.last_seen; o.consentedAt = p.consented_at; o.condition = p.condition || ""; o.aiSearch = p.ai_search; o.aiProduct = p.ai_product;
+    o.firstSeen = p.first_seen; o.lastSeen = p.last_seen; o.consentedAt = p.consented_at; o.exitedAt = p.exited_at || null; o.condition = p.condition || ""; o.aiSearch = p.ai_search; o.aiProduct = p.ai_product;
   }
   for (const f of favs.rows) ensure(f.pid).favHotels.push({ id: f.hotel_id, name: f.name || f.hotel_id });
   for (const e of events.rows) ensure(e.pid).hotels.push({ id: e.hotel_id, name: e.name || e.hotel_id, rating: e.rating ?? null, reviewCount: e.review_count ?? null, seen: e.seen || 0, clicks: e.clicks || 0, listMs: Number(e.list_ms) || 0, detailMs: Number(e.detail_ms) || 0, reviewMs: Number(e.review_ms) || 0, reviewSeen: e.review_seen || 0, reviewTotal: e.review_total || 0, vote: e.choice || "", voteSource: e.source || "" });

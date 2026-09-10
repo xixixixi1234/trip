@@ -326,7 +326,7 @@ function useVotes() {
   return { mine, pending, errors, saved, vote };
 }
 
-function LikeDislike({ hotelId, mine, pending, errors, saved, vote, size = "sm", stop = true, source = "list" }) {
+function LikeDislike({ hotelId, mine, pending, errors, saved, vote, size = "sm", stop = true, source = "list", only = null }) {
   const my = mine[hotelId];
   const busy = Boolean(pending[hotelId]);
   const err = errors[hotelId];
@@ -345,16 +345,16 @@ function LikeDislike({ hotelId, mine, pending, errors, saved, vote, size = "sm",
   return (
     <div onClick={stop ? (e => e.stopPropagation()) : undefined} onKeyDown={stop ? (e => e.stopPropagation()) : undefined}>
       <div style={{ display: "inline-flex", gap: 8, flexWrap: "wrap" }} role="group" aria-label="Rate this hotel">
-        <button type="button" onClick={handle("up")} disabled={busy} aria-busy={busy} aria-pressed={my === "up"}
+        {only !== "down" && (<button type="button" onClick={handle("up")} disabled={busy} aria-busy={busy} aria-pressed={my === "up"}
           className={`wp-btn wp-vote${my === "up" ? " is-up" : ""}`} style={btn(my === "up", C.green)}>
           {busy && lastChoice.current === "up" ? <Spinner /> : null}
           <span>{my === "up" ? "Liked" : "Like this hotel"}</span>
-        </button>
-        <button type="button" onClick={handle("down")} disabled={busy} aria-busy={busy} aria-pressed={my === "down"}
+        </button>)}
+        {only !== "up" && (<button type="button" onClick={handle("down")} disabled={busy} aria-busy={busy} aria-pressed={my === "down"}
           className={`wp-btn wp-vote${my === "down" ? " is-down" : ""}`} style={btn(my === "down", C.buoy)}>
           {busy && lastChoice.current === "down" ? <Spinner /> : null}
           <span>{my === "down" ? "Disliked" : "Dislike this hotel"}</span>
-        </button>
+        </button>)}
       </div>
       {err && <Status kind="error" onRetry={() => vote(hotelId, lastChoice.current || "up", source)}>{err}</Status>}
       {!err && ok && <Status kind="success">Saved</Status>}
@@ -392,7 +392,7 @@ function BookmarkButton({ favs, size = "md" }) {
 function DetailPage({ listing, onBack, votes, showAi = true }) {
   const show = useShow();
   const layout = useLayout();
-  const headerOrder = layout.detail.filter(k => ["description", "ai", "vote"].includes(k));
+  const headerOrder = layout.detail.filter(k => ["description", "ai", "vote", "save"].includes(k));
   const sectionOrder = layout.detail.filter(k => ["about", "reviews"].includes(k));
   useEffect(() => { Track.openDetail(listing.id); return () => Track.closeDetail(listing.id); }, [listing.id]);
   const gallery = (listing.gallery && listing.gallery.length ? listing.gallery : (listing.image ? [{ src: listing.image, caption: "" }] : []));
@@ -407,11 +407,7 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
       <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, overflow: "hidden", marginBottom: 20 }}>
         <div style={{ position: "relative" }}>
           <CityArt gradient={listing.gradient} image={listing.image} imageFallback={listing.imageRemote} big flat />
-          {show("detail.save") && (
-            <span style={{ position: "absolute", top: 14, right: 14, zIndex: 2 }}>
-              <SaveButton hotelId={listing.id} source="detail" size={42} />
-            </span>
-          )}
+
         </div>
         {gallery.length > 1 && show("detail.gallery") && (
           <div style={{ display: "flex", gap: 8, padding: "10px 12px 0", overflowX: "auto" }} aria-label="Hotel photos">
@@ -451,6 +447,12 @@ function DetailPage({ listing, onBack, votes, showAi = true }) {
               <div key={k} style={{ display: "flex", gap: 10, alignItems: "flex-start", margin: "0 0 18px", maxWidth: 720 }}>
                 <AiBadge />
                 <p className="wp-text" style={{ fontSize: 15, lineHeight: 1.7, color: C.inkSoft, margin: 0 }}>{listing.seo}</p>
+              </div>
+            ) : null;
+            if (k === "save") return show("detail.save") && Track.pid ? (
+              <div key={k} style={{ paddingTop: 14, borderTop: `1px solid ${C.line}`, marginBottom: 14, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                <SavePill hotelId={listing.id} source="detail" size="lg" />
+                {votes && <LikeDislike hotelId={listing.id} {...votes} source="detail" size="lg" stop={false} only="down" />}
               </div>
             ) : null;
             if (k === "vote") return votes && show("detail.vote") ? (
@@ -602,6 +604,65 @@ function AboutSection({ listing }) {
   );
 }
 
+/* ----------------------- Coachmark tutorial (arrows pointing at real features) -----------------------
+   Shown once per device, the first time a hotel list is opened. Each step highlights a real element
+   (hotel card → Save button → Check button) with a spotlight ring and an arrow tooltip.
+   Wording is editable in admin → Study settings → Tutorial steps. */
+function Coachmark({ steps, onDone }) {
+  const [step, setStep] = useState(0);
+  const [box, setBox] = useState(null);
+  const targetFor = (i) => {
+    const row = document.querySelector(".wp-row");
+    if (!row) return null;
+    if (i === 0) return row;
+    if (i === 1) return [...row.querySelectorAll("button")].find(b => /Save this hotel|Saved/.test(b.textContent)) || row;
+    return row.querySelector(".wp-accent") || row;
+  };
+  useEffect(() => {
+    const el = targetFor(step);
+    if (!el) { onDone(); return; }
+    el.scrollIntoView({ block: "center", behavior: "instant" });
+    const t = setTimeout(() => {
+      const r = el.getBoundingClientRect();
+      setBox({ top: r.top, left: r.left, width: r.width, height: r.height });
+    }, 60);
+    const onR = () => { const r2 = el.getBoundingClientRect(); setBox({ top: r2.top, left: r2.left, width: r2.width, height: r2.height }); };
+    window.addEventListener("resize", onR); window.addEventListener("scroll", onR, true);
+    return () => { clearTimeout(t); window.removeEventListener("resize", onR); window.removeEventListener("scroll", onR, true); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+  if (!box) return null;
+  const st = steps[step] || {};
+  const below = box.top + box.height + 170 < window.innerHeight || box.top < 200;   // tooltip under the target unless there is no room
+  const tipTop = below ? box.top + box.height + 14 : undefined;
+  const tipBottom = below ? undefined : window.innerHeight - box.top + 14;
+  const tipLeft = Math.max(12, Math.min(box.left + box.width / 2 - 170, window.innerWidth - 352));
+  const arrowLeft = Math.max(18, Math.min(box.left + box.width / 2 - tipLeft - 9, 322));
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 1100 }} role="dialog" aria-modal="true" aria-label="How this site works">
+      <div style={{ position: "absolute", inset: 0, background: "rgba(18,43,51,0.55)" }} onClick={() => {}} />
+      <div style={{ position: "absolute", top: box.top - 6, left: box.left - 6, width: box.width + 12, height: box.height + 12,
+                    borderRadius: 14, boxShadow: "0 0 0 4000px rgba(18,43,51,0.55)", outline: `3px solid ${C.buoy}`, pointerEvents: "none", background: "transparent" }} />
+      <div style={{ position: "fixed", top: tipTop, bottom: tipBottom, left: tipLeft, width: 340, background: C.card, borderRadius: 12,
+                    padding: "16px 18px 12px", boxShadow: "0 14px 44px rgba(18,43,51,.45)" }}>
+        <span style={{ position: "absolute", [below ? "top" : "bottom"]: -9, left: arrowLeft, width: 0, height: 0,
+                       borderLeft: "9px solid transparent", borderRight: "9px solid transparent",
+                       [below ? "borderBottom" : "borderTop"]: `9px solid ${C.card}` }} aria-hidden="true" />
+        <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 16, fontWeight: 700, color: C.ink, marginBottom: 5 }}>{st.title}</div>
+        <p className="wp-text" style={{ fontSize: 13.5, lineHeight: 1.6, color: C.inkSoft, margin: "0 0 12px" }}>{st.text}</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 12, color: C.inkSoft, flex: 1 }}>{step + 1} / {steps.length}</span>
+          {step > 0 && <button type="button" onClick={() => setStep(sn => sn - 1)} className="wp-btn wp-ghost" style={{ border: `1px solid ${C.line}`, background: C.card, color: C.ink, borderRadius: 99, padding: "7px 14px", fontWeight: 600, fontSize: 13, minHeight: 36 }}>Back</button>}
+          {step < steps.length - 1
+            ? <button type="button" onClick={() => setStep(sn => sn + 1)} className="wp-btn" style={{ background: C.ink, color: "#fff", border: "none", borderRadius: 99, padding: "7px 16px", fontWeight: 700, fontSize: 13, minHeight: 36 }}>Next</button>
+            : <button type="button" onClick={onDone} className="wp-btn" style={{ background: C.green, color: "#fff", border: "none", borderRadius: 99, padding: "7px 16px", fontWeight: 700, fontSize: 13, minHeight: 36 }}>Got it</button>}
+          <button type="button" onClick={onDone} className="wp-btn wp-link" style={{ fontSize: 12, color: C.inkSoft, minHeight: 30 }}>Skip</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ----------------------- Saves (heart button + floating list) ----------------------- */
 
 function HeartIcon({ filled, size = 20 }) {
@@ -610,6 +671,26 @@ function HeartIcon({ filled, size = 20 }) {
       fill={filled ? C.buoy : "none"} stroke={filled ? C.buoy : C.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
     </svg>
+  );
+}
+
+/* Labeled Save button shown where Like/Dislike used to be */
+function SavePill({ hotelId, source, size = "md" }) {
+  const saves = React.useContext(SavesContext);
+  const on = saves.has(hotelId);
+  const pad = size === "lg" ? "14px 28px" : "8px 16px";
+  return (
+    <button type="button"
+      onClick={e => { e.stopPropagation(); saves.toggle(hotelId, source); }}
+      onKeyDown={e => e.stopPropagation()}
+      aria-pressed={on}
+      className="wp-btn wp-ghost"
+      style={{ display: "inline-flex", alignItems: "center", gap: 8, border: `1px solid ${on ? C.buoy : C.line}`,
+               background: on ? "#FDEEE9" : C.card, color: C.ink, borderRadius: 99, padding: pad,
+               fontSize: size === "lg" ? 16.5 : 13.5, fontWeight: 700, minHeight: size === "lg" ? 52 : 40 }}>
+      <HeartIcon filled={on} size={size === "lg" ? 20 : 15} />
+      {on ? "Saved" : "Save this hotel"}
+    </button>
   );
 }
 
@@ -1039,7 +1120,25 @@ function CityPage({ cityKey, onBack, onOpen, votes, favs, cities, hotels: allHot
   const city = cities.find(c => c.key === cityKey) || { name: cityKey, country: "", gradient: null };
   const [page, setPage] = useState(1);
   const [listUi, setListUi] = useState({ first: 20, nav: "pages" });
+  const show = useShow();
+  const [tut, setTut] = useState(null);   // steps array while the coachmark is active
+  useEffect(() => {
+    if (!pid || localStorage.getItem("fah_tut") === "1") return;
+    loadConfig().then(c => {
+      if ((c.elements || {})["tutorial"] === false) return;
+      const steps = Array.isArray(c.tutorialSteps) && c.tutorialSteps.length ? c.tutorialSteps : null;
+      if (steps) setTimeout(() => setTut(steps), 400);   // wait for the first cards to render
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pid]);
   const [shownCount, setShownCount] = useState(20);
+  const [finished, setFinished] = useState(() => localStorage.getItem("fah_done") === "1");
+  const [confirmExit, setConfirmExit] = useState(false);
+  const finish = async () => {
+    setConfirmExit(false); setFinished(true); localStorage.setItem("fah_done", "1");
+    try { Track.flush && Track.flush(); } catch {}
+    try { await postJson("/api/exit", { pid }); } catch {}
+  };
   const [saveIds, setSaveIds] = useState([]);
   useEffect(() => { if (pid) fetchJson(`/api/saves?pid=${encodeURIComponent(pid)}`).then(a => setSaveIds(Array.isArray(a) ? a : [])).catch(() => {}); }, [pid]);
   const savesApi = useMemo(() => ({
@@ -1110,6 +1209,7 @@ function CityPage({ cityKey, onBack, onOpen, votes, favs, cities, hotels: allHot
         </div>
       )}
 
+      {tut && <Coachmark steps={tut} onDone={() => { setTut(null); localStorage.setItem("fah_tut", "1"); }} />}
       {listUi.nav === "pages" && totalPages > 1 && (
         <Pagination page={curPage} totalPages={totalPages} onGo={setPage} />
       )}
@@ -1163,11 +1263,7 @@ function useLayout() {
 function CityHotelRow({ l, onOpen, votes, showAi = true }) {
   const show = useShow();
   const layout = useLayout();
-  const heart = show("list.save") ? (
-    <span style={{ position: "absolute", top: 10, right: 10, zIndex: 2 }}>
-      <SaveButton hotelId={l.id} source="list" size={36} />
-    </span>
-  ) : null;
+  const heart = null;   // the Save action now sits where Like/Dislike used to be (block "save")
   // when the AI summary is hidden in the list (condition), nothing replaces it — no guest-quote fallback
   const [quote, setQuote] = useState({ status: l.seo || !showAi ? "skip" : "loading", data: null });
   const rowRef = useRef(null);
@@ -1256,6 +1352,12 @@ function CityHotelRow({ l, onOpen, votes, showAi = true }) {
           if (k === "description") return desc && show("list.description") ? <p key={k} className="wp-text" style={{ fontSize: 13, lineHeight: 1.6, color: C.ink, margin: "0 0 10px" }}>{firstSentence(desc)}</p> : null;
           if (k === "ai") return body ? <div key={k} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 10 }}>{body}</div> : null;
           if (k === "vote") return votes && show("list.vote") ? <div key={k} style={{ margin: "2px 0 10px" }}><LikeDislike hotelId={l.id} {...votes} source="list" /></div> : null;
+          if (k === "save") return (show("list.save") || show("list.vote")) && Track.pid ? (
+            <div key={k} style={{ margin: "2px 0 10px", display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+              {show("list.save") && <SavePill hotelId={l.id} source="list" size="lg" />}
+              {votes && <LikeDislike hotelId={l.id} {...votes} source="list" size="lg" only="down" />}
+            </div>
+          ) : null;
           if (k === "priceCheck") return (show("list.price") && l.price) || show("list.check") ? (
             <div key={k} style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12, marginTop: 4, paddingTop: 12, borderTop: `1px solid ${C.line}` }}>
               {show("list.price") && l.price ? (
@@ -1466,6 +1568,13 @@ export default function App() {
   // experimental condition: AI summary switches + page-element switches (admin → Study settings)
   const [ai, setAi] = useState({ search: true, product: true });
   const [ui, setUi] = useState({});
+  const [finished, setFinished] = useState(() => localStorage.getItem("fah_done") === "1");
+  const [confirmExit, setConfirmExit] = useState(false);
+  const finish = async () => {
+    setConfirmExit(false); setFinished(true); localStorage.setItem("fah_done", "1");
+    try { Track.flush && Track.flush(); } catch {}
+    try { await postJson("/api/exit", { pid }); } catch {}
+  };
   const [saveIds, setSaveIds] = useState([]);
   useEffect(() => { if (pid) fetchJson(`/api/saves?pid=${encodeURIComponent(pid)}`).then(a => setSaveIds(Array.isArray(a) ? a : [])).catch(() => {}); }, [pid]);
   const savesApi = useMemo(() => ({
@@ -1480,7 +1589,7 @@ export default function App() {
       });
     },
   }), [saveIds, pid]);
-  useEffect(() => { loadConfig().then(c => { if (c && typeof c.aiSearch === "boolean") setAi({ search: c.aiSearch, product: c.aiProduct }); if (c && c.elements) setUi(c.elements); }).catch(() => {}); }, []);
+  useEffect(() => { loadConfig().then(c => { if (c && typeof c.aiSearch === "boolean") setAi({ search: c.aiSearch, product: c.aiProduct }); if (c && c.elements) setUi({ ...c.elements, __goodbye: (c.goodbye || "").trim() }); }).catch(() => {}); }, []);
 
   const loadData = async (isRetry = false) => {
     setDataState(s => ({ status: isRetry ? "error" : "loading", retrying: isRetry }));
@@ -1586,6 +1695,12 @@ export default function App() {
               </span>
             )}
             <button type="button" onClick={() => page.name !== "home" && go({ name: "home" })} className="wp-btn wp-ghost" style={navBtn(page.name === "home")}>Destinations</button>
+            {pid && ui["exit.button"] !== false && (
+              <button type="button" onClick={() => setConfirmExit(true)} className="wp-btn wp-ghost"
+                style={{ ...navBtn(false), border: `1px solid ${C.line}`, borderRadius: 99, padding: "6px 14px" }}>
+                Finish study
+              </button>
+            )}
           </nav>
         </div>
       </header>
@@ -1623,6 +1738,31 @@ export default function App() {
           />
         )}
       </main>
+      {confirmExit && !finished && (
+        <div role="dialog" aria-modal="true" aria-label="Finish study" style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(18,43,51,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+          <div style={{ background: C.card, borderRadius: 14, padding: 26, maxWidth: 440, width: "100%", boxShadow: "0 18px 60px rgba(18,43,51,.4)" }}>
+            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 20, fontWeight: 700, margin: "0 0 10px", color: C.ink }}>Finish and exit?</h2>
+            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: C.inkSoft, margin: "0 0 18px" }}>
+              This ends your browsing session. You won't be able to return to the hotels afterwards.
+            </p>
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", flexWrap: "wrap" }}>
+              <button type="button" onClick={() => setConfirmExit(false)} className="wp-btn wp-ghost" style={{ border: `1px solid ${C.line}`, background: C.card, color: C.ink, borderRadius: 99, padding: "10px 18px", fontWeight: 600, minHeight: 42 }}>Keep browsing</button>
+              <button type="button" onClick={finish} className="wp-btn" style={{ background: C.ink, color: "#fff", border: "none", borderRadius: 99, padding: "10px 20px", fontWeight: 700, minHeight: 42 }}>Finish study</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {finished && (
+        <div role="dialog" aria-modal="true" aria-label="Thank you" style={{ position: "fixed", inset: 0, zIndex: 1300, background: C.paper, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ textAlign: "center", maxWidth: 520 }}>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 30, fontWeight: 700, color: C.ink, marginBottom: 12 }}>Thank you!</div>
+            <p className="wp-text" style={{ fontSize: 16, lineHeight: 1.7, color: C.inkSoft, whiteSpace: "pre-line" }}>
+              {ui.__goodbye || "You have finished this part of the study. Your session has been recorded.\nYou can now close this window and return to the questionnaire."}
+            </p>
+            {pid && <div style={{ marginTop: 14, fontFamily: "'Roboto Mono', monospace", fontSize: 13, color: C.inkSoft }}>Participant ID: {pid}</div>}
+          </div>
+        </div>
+      )}
       <SavesFab allHotels={hotels} onOpen={l => { Track.click(l.id); go({ name: "detail", listing: l, from: "saves", cityKey: l.city }); }} />
     </div>
     </SavesContext.Provider>

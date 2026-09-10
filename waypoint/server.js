@@ -159,6 +159,13 @@ app.get("/api/votes", async (_req, res) => {
   catch (e) { console.error(e); res.status(500).json({ error: "failed to load votes" }); }
 });
 
+/* participant clicks "Finish study" — the exit moment ends their usage time */
+app.post("/api/exit", async (req, res) => {
+  try { const { pid } = req.body || {}; if (!pid) return res.status(400).json({ error: "pid required" });
+    res.json(await db.setExited(String(pid).slice(0, 64))); }
+  catch (e) { console.error(e); res.status(500).json({ error: "failed" }); }
+});
+
 /* save / unsave a hotel to the participant's Saves list */
 app.post("/api/save", async (req, res) => {
   try {
@@ -202,6 +209,8 @@ app.get("/api/settings/welcome", async (_req, res) => {
 // public study config (what the front end needs to render the condition)
 app.get("/api/config", async (_req, res) => {
   try { const sw = await db.getAiSwitches(); res.json({ aiSearch: sw.search, aiProduct: sw.product, elements: await db.getElements(),
+               goodbye: await db.getSetting("goodbye", ""),
+               tutorialSteps: await getTutorialSteps(),
                reviewsUi: { total: parseInt(await db.getSetting("reviews_total", "0"), 10) || 0,
                             first: Math.max(1, parseInt(await db.getSetting("reviews_first", "20"), 10) || 20),
                             nav: (await db.getSetting("reviews_nav", "scroll")) === "pages" ? "pages" : "scroll" },
@@ -218,7 +227,7 @@ app.post("/api/track/consent", async (req, res) => {
 });
 app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
   try {
-    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(),
+    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(), goodbye: await db.getSetting("goodbye", ""), tutorialSteps: await getTutorialSteps(),
                elements: await db.getElements(), elementList: db.ELEMENTS.map(([key, label, def]) => ({ key, label, def })),
                reviewsUi: { total: await db.getSetting("reviews_total", "0"), first: await db.getSetting("reviews_first", "20"), nav: await db.getSetting("reviews_nav", "scroll") },
                listUi: { first: await db.getSetting("list_first", "20"), nav: await db.getSetting("list_nav", "pages") },
@@ -227,7 +236,7 @@ app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
 });
 app.post("/api/admin/settings", requireAdmin, async (req, res) => {
   const { key, value } = req.body || {};
-  if (!key || !["welcome", "ai_search", "ai_product", "elements", "layout", "reviews_total", "reviews_first", "reviews_nav", "list_first", "list_nav"].includes(key)) return res.status(400).json({ error: "unknown setting" });
+  if (!key || !["welcome", "goodbye", "tutorial_steps", "ai_search", "ai_product", "elements", "layout", "reviews_total", "reviews_first", "reviews_nav", "list_first", "list_nav"].includes(key)) return res.status(400).json({ error: "unknown setting" });
   if (key === "elements") { try { const o = JSON.parse(String(value)); if (!o || typeof o !== "object") throw 0; } catch { return res.status(400).json({ error: "elements must be a JSON object" }); } }
   if (key === "ai_search" || key === "ai_product") {
     const sw = await db.getAiSwitches();
@@ -418,6 +427,8 @@ app.get("/api/admin/export/participants.csv", requireAdmin, async (_req, res) =>
       ((p.avgHotelMs || 0) / 1000).toFixed(1),       // mean seconds per hotel (list + detail)
       Math.round((p.totalMs || 0) / 1000),          // total seconds on site
       p.totalMs || 0,                                // same in milliseconds
+      p.exitedAt || "",
+      p.consentedAt && p.exitedAt ? Math.round((new Date(p.exitedAt) - new Date(p.consentedAt)) / 1000) : "",
       p.siteFav ? "yes" : "no",
       p.consentedAt ? "yes" : "no",
       p.aiSearch == null ? "" : (p.aiSearch ? "yes" : "no"),
@@ -428,7 +439,7 @@ app.get("/api/admin/export/participants.csv", requireAdmin, async (_req, res) =>
     ]);
     const csv = toCsv(
       ["participant_id", "hotels_liked", "hotels_disliked", "likes_on_search_page", "likes_on_product_page", "dislikes_on_search_page", "dislikes_on_product_page", "hotels_saved",
-       "hotels_viewed", "hotels_clicked", "avg_seconds_per_hotel", "total_seconds_on_site", "total_ms_on_site", "bookmarked_site", "consented", "ai_summary_in_search_page", "ai_summary_in_product_page", "consent_time", "first_seen", "last_seen"],
+       "hotels_viewed", "hotels_clicked", "avg_seconds_per_hotel", "total_seconds_on_site", "total_ms_on_site", "finished_at", "seconds_consent_to_finish", "bookmarked_site", "consented", "ai_summary_in_search_page", "ai_summary_in_product_page", "consent_time", "first_seen", "last_seen"],
       rows
     );
     sendCsv(res, "participants.csv", csv);
@@ -507,11 +518,28 @@ app.post("/api/admin/import-reviews", requireAdmin, uploadBig.single("file"), as
     res.json({ ok: true, rowsInFile: rows.length, ...result });
   } catch (e) { console.error("Review import failed:", e); res.status(400).json({ error: e.message || "Import failed" }); }
 });
+const DEFAULT_TUTORIAL = [
+  { title: "Browse hotel information", text: "Open any hotel card to see its photos, description, ratings and guest reviews." },
+  { title: "Save hotels you like", text: "Tap \u201cSave this hotel\u201d to keep a shortlist. Your saved hotels live under the Saves button at the bottom right." },
+  { title: "Check availability", text: "The green \u201cCheck this hotel\u201d button opens the full hotel page." },
+];
+async function getTutorialSteps() {
+  try { const v = await db.getSetting("tutorial_steps", ""); if (v) { const a = JSON.parse(v);
+    if (Array.isArray(a) && a.length === 3) return a.map((x, i) => ({ title: String(x.title || DEFAULT_TUTORIAL[i].title), text: String(x.text || DEFAULT_TUTORIAL[i].text) })); } } catch {}
+  return DEFAULT_TUTORIAL;
+}
+
 /* participant-facing page layout (order of blocks); edited in admin → Page layout */
-const DEFAULT_LAYOUT = { list: ["description", "ai", "vote", "priceCheck"], detail: ["description", "ai", "vote", "about", "reviews"] };
+const DEFAULT_LAYOUT = { list: ["description", "ai", "vote", "save", "priceCheck"], detail: ["description", "ai", "vote", "save", "about", "reviews"] };
+function mergeLayout(stored, defaults) {
+  if (!Array.isArray(stored) || !stored.length) return defaults;
+  const out = stored.filter(k => defaults.includes(k));
+  for (const k of defaults) if (!out.includes(k)) out.splice(defaults.indexOf(k), 0, k);   // new blocks appear at their default position
+  return out;
+}
 async function getLayout() {
   try { const v = await db.getSetting("layout", ""); if (v) { const o = JSON.parse(v);
-    return { list: Array.isArray(o.list) && o.list.length ? o.list : DEFAULT_LAYOUT.list, detail: Array.isArray(o.detail) && o.detail.length ? o.detail : DEFAULT_LAYOUT.detail }; } } catch {}
+    return { list: mergeLayout(o.list, DEFAULT_LAYOUT.list), detail: mergeLayout(o.detail, DEFAULT_LAYOUT.detail) }; } } catch {}
   return DEFAULT_LAYOUT;
 }
 
@@ -946,6 +974,21 @@ const ADMIN_HTML = `<!doctype html>
       <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="aiProduct"> AI summary in product page</label>
       <button class="btn" id="aiModeSave">Save</button>
       <span class="muted" id="aiModeMsg"></span>
+    </div>
+
+    <h2>Tutorial steps (arrow tips on the hotel list)</h2>
+    <div class="panel" id="tutPanel">
+      <p class="sub">Shown once per device, the first time a participant opens a city's hotel list. Step 1 points at the first hotel card, step 2 at the Save button, step 3 at the green Check button. Edit the wording below (auto-saves). The whole tutorial can be turned off in Page elements.</p>
+      <div id="tutFields"></div>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn" id="tutSave">Save now</button><span class="muted" id="tutMsg"></span></div>
+    </div>
+
+    <h2>Thank-you text (after "Finish study")</h2>
+    <div class="panel">
+      <p class="sub">Shown full-screen after a participant clicks "Finish study". Leave empty for the default. The participant's ID is always appended.</p>
+      <textarea id="goodbyeText" rows="4" style="width:100%;font:inherit;font-size:14px;padding:10px;border:1px solid var(--line);border-radius:8px;resize:vertical" placeholder="You have finished this part of the study. Your session has been recorded.
+You can now close this window and return to the questionnaire."></textarea>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn" id="goodbyeSave">Save now</button><span class="muted" id="goodbyeMsg"></span></div>
     </div>
 
     <h2 style="color:#B3261E">Danger zone</h2>
@@ -1412,6 +1455,11 @@ const ADMIN_HTML = `<!doctype html>
     document.getElementById('welcomeText').value = d.welcome || d.welcomeDefault || '';
     elemDefs = d.elementList || []; renderElems(d.elements || {});
     const lu = d.listUi || {}; document.getElementById('listFirst').value = lu.first ?? '20'; document.getElementById('listNav').value = (lu.nav === 'scroll') ? 'scroll' : 'pages';
+    document.getElementById('goodbyeText').value = d.goodbye || '';
+    const ts = d.tutorialSteps || [];
+    document.getElementById('tutFields').innerHTML = [0,1,2].map(i => '<div style="margin-bottom:12px"><label style="font-size:12.5px;color:var(--soft)">Step '+(i+1)+' title<input id="tutT'+i+'" value="'+esc((ts[i]||{}).title||'')+'" style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px"></label><label style="font-size:12.5px;color:var(--soft);display:block;margin-top:6px">Step '+(i+1)+' text<textarea id="tutX'+i+'" rows="2" style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;resize:vertical">'+esc((ts[i]||{}).text||'')+'</textarea></label></div>').join('');
+    autosave(document.getElementById('tutPanel'), saveTut, document.getElementById('tutMsg'));
+    document.getElementById('tutSave').onclick=async()=>{ const m=document.getElementById('tutMsg'); try{ m.textContent='Saving…'; await saveTut(); m.style.color='#2E7D5B'; m.textContent='Saved'; }catch(e){ m.style.color='#B3261E'; m.textContent=e.message; } };
     const ru = d.reviewsUi || {}; document.getElementById('rvTotal').value = ru.total ?? '0'; document.getElementById('rvFirst').value = ru.first ?? '20'; document.getElementById('rvNav').value = (ru.nav === 'pages') ? 'pages' : 'scroll';
     const a = d.ai || {}; const cs = document.getElementById('aiSearch'), cp = document.getElementById('aiProduct');
     cs.checked = !!a.search; cp.checked = !!a.product; cs.disabled = !!a.lockedSearch; cp.disabled = !!a.lockedProduct;
@@ -1420,8 +1468,8 @@ const ADMIN_HTML = `<!doctype html>
   }
   // ---- Page layout editor ----
   const LAYOUT_BLOCKS = {
-    list: [['description','First sentence of the description','list.description'],['ai','AI summary','__ai'],['vote','Like / Dislike buttons','list.vote'],['priceCheck','Price + "Check this hotel" button','__pc']],
-    detail: [['description','Full description','detail.description'],['ai','AI summary','__ai'],['vote','Like / Dislike buttons','detail.vote'],['about','About block','about.section'],['reviews','Guest reviews','reviews.section']],
+    list: [['description','First sentence of the description','list.description'],['ai','AI summary','__ai'],['vote','Like / Dislike buttons','list.vote'],['save','Save button','list.save'],['priceCheck','Price + "Check this hotel" button','__pc']],
+    detail: [['description','Full description','detail.description'],['ai','AI summary','__ai'],['vote','Like / Dislike buttons','detail.vote'],['save','Save button','detail.save'],['about','About block','about.section'],['reviews','Guest reviews','reviews.section']],
   };
   let layoutState = null, layoutElems = {};
   function layoutRender(){
@@ -1463,9 +1511,9 @@ const ADMIN_HTML = `<!doctype html>
   document.querySelector('.tab[data-tab="layout"]').addEventListener('click', async ()=>{
     if (layoutLoaded) return; layoutLoaded=true;
     const d=await (await fetch('/api/admin/settings')).json();
-    layoutState=d.layout||{list:['description','ai','vote','priceCheck'],detail:['description','ai','vote','about','reviews']};
+    layoutState=d.layout||{list:['description','ai','vote','save','priceCheck'],detail:['description','ai','vote','save','about','reviews']};
     layoutElems=d.elements||{};
-    document.getElementById('layoutReset').onclick=()=>{ layoutState={list:['description','ai','vote','priceCheck'],detail:['description','ai','vote','about','reviews']}; layoutSave(); layoutRender(); };
+    document.getElementById('layoutReset').onclick=()=>{ layoutState={list:['description','ai','vote','save','priceCheck'],detail:['description','ai','vote','save','about','reviews']}; layoutSave(); layoutRender(); };
     layoutRender();
   });
 
@@ -1483,6 +1531,18 @@ const ADMIN_HTML = `<!doctype html>
     const r=await fetch('/api/admin/reset-content',{method:'POST'}); const d=await r.json();
     dangerMsg.style.color = r.ok?'#2E7D5B':'#B3261E'; dangerMsg.textContent = r.ok?'Content restored to defaults. Reload the tabs to see it.':(d.error||'Failed');
   };
+
+  function tutRead(){ return [0,1,2].map(i => ({ title: document.getElementById('tutT'+i).value, text: document.getElementById('tutX'+i).value })); }
+  async function saveTut(){
+    const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'tutorial_steps',value:JSON.stringify(tutRead())})});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
+  }
+  async function saveGoodbye(){
+    const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'goodbye',value:document.getElementById('goodbyeText').value})});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
+  }
+  autosave(document.getElementById('goodbyeText'), saveGoodbye, document.getElementById('goodbyeMsg'));
+  document.getElementById('goodbyeSave').onclick=async()=>{ const m=document.getElementById('goodbyeMsg'); try{ m.textContent='Saving…'; await saveGoodbye(); m.style.color='#2E7D5B'; m.textContent='Saved'; }catch(e){ m.style.color='#B3261E'; m.textContent=e.message; } };
 
   async function saveReviewsUi(){
     for (const [key, id] of [['reviews_total','rvTotal'],['reviews_first','rvFirst'],['reviews_nav','rvNav']]) {
