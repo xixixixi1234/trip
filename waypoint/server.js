@@ -167,6 +167,24 @@ app.get("/api/assign-id", async (_req, res) => {
   catch (e) { console.error(e); res.status(500).json({ error: "failed" }); }
 });
 
+/* exit review screen: the hotels this participant opened, with current save state */
+app.get("/api/my-hotels", async (req, res) => {
+  try {
+    const pid = String(req.query.pid || "").trim(); if (!pid) return res.json([]);
+    const [ids, savedIds, hotels] = await Promise.all([db.engagedHotels(pid), db.getSaves(pid), db.listHotels({})]);
+    const byId = Object.fromEntries(hotels.map(h => [h.id, h]));
+    const seen = new Set([...ids, ...savedIds]);
+    res.json([...seen].map(id => byId[id]).filter(Boolean).map(h => ({
+      id: h.id, name: h.name, city: h.cityName || h.city, rating: h.rating, price: h.price || "",
+      image: h.image || "", saved: savedIds.includes(h.id) })));
+  } catch (e) { console.error(e); res.status(500).json({ error: "failed" }); }
+});
+app.post("/api/book", async (req, res) => {
+  try { const { pid, hotelId } = req.body || {}; if (!pid) return res.status(400).json({ error: "pid required" });
+    res.json(await db.setBooked(String(pid).slice(0, 64), String(hotelId || ""))); }
+  catch (e) { console.error(e); res.status(500).json({ error: "failed" }); }
+});
+
 /* participant clicks "Finish study" — the exit moment ends their usage time */
 app.post("/api/exit", async (req, res) => {
   try { const { pid } = req.body || {}; if (!pid) return res.status(400).json({ error: "pid required" });
@@ -219,6 +237,7 @@ app.get("/api/config", async (_req, res) => {
   try { const sw = await db.getAiSwitches(); res.json({ aiSearch: sw.search, aiProduct: sw.product, elements: await db.getElements(),
                goodbye: await db.getSetting("goodbye", ""),
                tutorialSteps: await getTutorialSteps(),
+               exitTexts: JSON.parse(await db.getSetting("exit_texts", "null") || "null") || {},
                reviewsUi: { total: parseInt(await db.getSetting("reviews_total", "0"), 10) || 0,
                             first: Math.max(1, parseInt(await db.getSetting("reviews_first", "20"), 10) || 20),
                             nav: (await db.getSetting("reviews_nav", "scroll")) === "pages" ? "pages" : "scroll" },
@@ -235,7 +254,7 @@ app.post("/api/track/consent", async (req, res) => {
 });
 app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
   try {
-    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(), goodbye: await db.getSetting("goodbye", ""), tutorialSteps: await getTutorialSteps(),
+    res.json({ ai: await db.getAiSwitches(), welcome: await db.getSetting("welcome", ""), welcomeDefault: await defaultWelcome(), goodbye: await db.getSetting("goodbye", ""), tutorialSteps: await getTutorialSteps(), exitTexts: JSON.parse(await db.getSetting("exit_texts", "null") || "null") || {},
                elements: await db.getElements(), elementList: db.ELEMENTS.map(([key, label, def]) => ({ key, label, def })),
                reviewsUi: { total: await db.getSetting("reviews_total", "0"), first: await db.getSetting("reviews_first", "20"), nav: await db.getSetting("reviews_nav", "scroll") },
                listUi: { first: await db.getSetting("list_first", "20"), nav: await db.getSetting("list_nav", "pages") },
@@ -244,7 +263,7 @@ app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
 });
 app.post("/api/admin/settings", requireAdmin, async (req, res) => {
   const { key, value } = req.body || {};
-  if (!key || !["welcome", "goodbye", "tutorial_steps", "ai_search", "ai_product", "elements", "layout", "reviews_total", "reviews_first", "reviews_nav", "list_first", "list_nav"].includes(key)) return res.status(400).json({ error: "unknown setting" });
+  if (!key || !["welcome", "goodbye", "tutorial_steps", "exit_texts", "ai_search", "ai_product", "elements", "layout", "reviews_total", "reviews_first", "reviews_nav", "list_first", "list_nav"].includes(key)) return res.status(400).json({ error: "unknown setting" });
   if (key === "elements") { try { const o = JSON.parse(String(value)); if (!o || typeof o !== "object") throw 0; } catch { return res.status(400).json({ error: "elements must be a JSON object" }); } }
   if (key === "ai_search" || key === "ai_product") {
     const sw = await db.getAiSwitches();
@@ -425,6 +444,7 @@ app.get("/api/admin/export/votes.csv", requireAdmin, async (_req, res) => {
 app.get("/api/admin/export/participants.csv", requireAdmin, async (_req, res) => {
   try {
     const savesState = await db.allSavesState();
+    const hotelName = Object.fromEntries((await db.listHotels({})).map(h => [h.id, h.name]));
     const ps = await db.participantSummaries();
     const rows = ps.map(p => [
       p.pid,
@@ -437,6 +457,7 @@ app.get("/api/admin/export/participants.csv", requireAdmin, async (_req, res) =>
       p.totalMs || 0,                                // same in milliseconds
       p.exitedAt || "",
       p.consentedAt && p.exitedAt ? Math.round((new Date(p.exitedAt) - new Date(p.consentedAt)) / 1000) : "",
+      p.booked || "", p.booked && hotelName[p.booked] || "",
       p.siteFav ? "yes" : "no",
       p.consentedAt ? "yes" : "no",
       p.aiSearch == null ? "" : (p.aiSearch ? "yes" : "no"),
@@ -447,7 +468,7 @@ app.get("/api/admin/export/participants.csv", requireAdmin, async (_req, res) =>
     ]);
     const csv = toCsv(
       ["participant_id", "hotels_liked", "hotels_disliked", "likes_on_search_page", "likes_on_product_page", "dislikes_on_search_page", "dislikes_on_product_page", "hotels_saved",
-       "hotels_viewed", "hotels_clicked", "avg_seconds_per_hotel", "total_seconds_on_site", "total_ms_on_site", "finished_at", "seconds_consent_to_finish", "bookmarked_site", "consented", "ai_summary_in_search_page", "ai_summary_in_product_page", "consent_time", "first_seen", "last_seen"],
+       "hotels_viewed", "hotels_clicked", "avg_seconds_per_hotel", "total_seconds_on_site", "total_ms_on_site", "finished_at", "seconds_consent_to_finish", "booked_hotel_id", "booked_hotel_name", "bookmarked_site", "consented", "ai_summary_in_search_page", "ai_summary_in_product_page", "consent_time", "first_seen", "last_seen"],
       rows
     );
     sendCsv(res, "participants.csv", csv);
@@ -995,6 +1016,18 @@ const ADMIN_HTML = `<!doctype html>
       <div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn" id="tutSave">Save now</button><span class="muted" id="tutMsg"></span></div>
     </div>
 
+    <h2>Exit screens (after "Finish study")</h2>
+    <div class="panel" id="exitPanel">
+      <p class="sub">The two pop-ups shown when a participant presses Finish study: first they pick hotels to save, then (only if they saved any) which one to book. Leave a field empty for the default text. Auto-saves.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+        <div><label style="font-size:12.5px;color:var(--soft)">Step 1 title<input id="ex1T" placeholder="Which hotels would you save?" style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px"></label>
+        <label style="font-size:12.5px;color:var(--soft);display:block;margin-top:6px">Step 1 text<textarea id="ex1X" rows="2" placeholder="These are the hotels you looked at. Tap the heart on every hotel you would like to save." style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;resize:vertical"></textarea></label></div>
+        <div><label style="font-size:12.5px;color:var(--soft)">Step 2 title<input id="ex2T" placeholder="Which one would you book?" style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px"></label>
+        <label style="font-size:12.5px;color:var(--soft);display:block;margin-top:6px">Step 2 text<textarea id="ex2X" rows="2" placeholder="From the hotels you saved, pick the one you would book (optional)." style="display:block;width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;resize:vertical"></textarea></label></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn" id="exitSave">Save now</button><span class="muted" id="exitMsg"></span></div>
+    </div>
+
     <h2>Thank-you text (after "Finish study")</h2>
     <div class="panel">
       <p class="sub">Shown full-screen after a participant clicks "Finish study". Leave empty for the default. The participant's ID is always appended.</p>
@@ -1468,6 +1501,7 @@ You can now close this window and return to the questionnaire."></textarea>
     elemDefs = d.elementList || []; renderElems(d.elements || {});
     const lu = d.listUi || {}; document.getElementById('listFirst').value = lu.first ?? '20'; document.getElementById('listNav').value = (lu.nav === 'scroll') ? 'scroll' : 'pages';
     document.getElementById('goodbyeText').value = d.goodbye || '';
+    const ex=d.exitTexts||{}; ex1T.value=ex.s1Title||''; ex1X.value=ex.s1Text||''; ex2T.value=ex.s2Title||''; ex2X.value=ex.s2Text||'';
     tutSteps = (d.tutorialSteps || []).map(x => ({ target: x.target || 'card', title: x.title || '', text: x.text || '' }));
     tutRender();
     autosave(document.getElementById('tutPanel'), saveTut, document.getElementById('tutMsg'));
@@ -1580,6 +1614,13 @@ You can now close this window and return to the questionnaire."></textarea>
     const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'tutorial_steps',value:JSON.stringify(tutRead())})});
     const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
   }
+  async function saveExit(){
+    const v={s1Title:ex1T.value,s1Text:ex1X.value,s2Title:ex2T.value,s2Text:ex2X.value};
+    const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'exit_texts',value:JSON.stringify(v)})});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');
+  }
+  autosave(document.getElementById('exitPanel'), saveExit, document.getElementById('exitMsg'));
+  document.getElementById('exitSave').onclick=async()=>{ const m=document.getElementById('exitMsg'); try{ m.textContent='Saving…'; await saveExit(); m.style.color='#2E7D5B'; m.textContent='Saved'; }catch(e){ m.style.color='#B3261E'; m.textContent=e.message; } };
   async function saveGoodbye(){
     const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:'goodbye',value:document.getElementById('goodbyeText').value})});
     const d=await r.json(); if(!r.ok) throw new Error(d.error||'Save failed');

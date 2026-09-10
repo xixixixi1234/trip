@@ -203,6 +203,7 @@ export async function init() {
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS ai_search BOOLEAN");
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS ai_product BOOLEAN");
   await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS exited_at TIMESTAMPTZ");
+  await pool.query("ALTER TABLE participants ADD COLUMN IF NOT EXISTS booked_hotel TEXT");
   await pool.query("ALTER TABLE hotels ADD COLUMN IF NOT EXISTS source_id TEXT");
   await pool.query("ALTER TABLE hotels ADD COLUMN IF NOT EXISTS details JSONB");
   for (const c of ["location TEXT", "date_visited TEXT", "photos JSONB", "language TEXT", "contributions INTEGER", "avatar TEXT"]) await pool.query(`ALTER TABLE reviews ADD COLUMN IF NOT EXISTS ${c}`);
@@ -569,6 +570,24 @@ export async function nextPid() {
   return parseInt(rows[0].value, 10);
 }
 
+/* the hotel the participant chose to "book" on the exit screen (one per participant) */
+export async function setBooked(pid, hotelId) {
+  if (!pid) return { ok: false };
+  if (!HAS_DB) { const p = mem.participants[pid]; if (p) p.booked = hotelId || ""; return { ok: true }; }
+  await pool.query("UPDATE participants SET booked_hotel=$2 WHERE pid=$1", [pid, hotelId || ""]);
+  return { ok: true };
+}
+/* hotels this participant opened (for the exit review screen) */
+export async function engagedHotels(pid) {
+  if (!pid) return [];
+  if (!HAS_DB) {
+    const ev = mem.hotelEvents[pid] || {};
+    return Object.entries(ev).filter(([, e]) => (e.click || 0) > 0).map(([id]) => id);
+  }
+  const { rows } = await pool.query("SELECT hotel_id FROM hotel_events WHERE pid=$1 AND clicks>0", [pid]);
+  return rows.map(r => r.hotel_id);
+}
+
 /* participant pressed "Finish study" — records the exit moment (kept once; later presses ignored) */
 export async function setExited(pid) {
   if (!pid) return { ok: false };
@@ -616,7 +635,7 @@ export async function resetContent() {
 
 /* ---------------- saved hotels (the "Saves" list) ---------------- */
 export async function setSave(pid, hotelId, on, source) {
-  source = source === "detail" ? "detail" : "list";
+  source = ["detail", "exit"].includes(source) ? source : "list";
   if (!HAS_DB) {
     const m = mem.saves[pid] || (mem.saves[pid] = {});
     if (on) m[hotelId] = { source, created: Date.now() }; else delete m[hotelId];
@@ -1179,6 +1198,7 @@ export async function participantSummaries() {
         siteFav: Boolean(p.siteFav),
         consentedAt: p.consentedAt ? new Date(p.consentedAt).toISOString() : null,
         exitedAt: p.exitedAt ? new Date(p.exitedAt).toISOString() : null,
+        booked: p.booked || "",
         condition: p.condition || "",
         aiSearch: p.aiSearch ?? null, aiProduct: p.aiProduct ?? null,
         likes: (votesByPid[pid] || {}).up || 0,
@@ -1197,7 +1217,7 @@ export async function participantSummaries() {
       };
     }).sort((a, b) => b.totalMs - a.totalMs);
   }
-  const parts = await pool.query("SELECT pid,total_ms,site_fav,first_seen,last_seen,consented_at,exited_at,condition,ai_search,ai_product FROM participants");
+  const parts = await pool.query("SELECT pid,total_ms,site_fav,first_seen,last_seen,consented_at,exited_at,booked_hotel,condition,ai_search,ai_product FROM participants");
   const favs = await pool.query(`SELECT f.pid, f.hotel_id, h.name FROM hotel_favorites f LEFT JOIN hotels h ON h.id=f.hotel_id`);
   const events = await pool.query(`SELECT e.pid, e.hotel_id, h.name, h.rating, h.review_count, e.seen, e.clicks, e.list_ms, e.detail_ms, e.review_ms, e.review_seen, e.review_total, v.choice, v.source
                                      FROM hotel_events e LEFT JOIN hotels h ON h.id=e.hotel_id
@@ -1212,7 +1232,7 @@ export async function participantSummaries() {
   for (const p of parts.rows) {
     const o = ensure(p.pid);
     o.totalMs = Number(p.total_ms) || 0; o.siteFav = Boolean(p.site_fav);
-    o.firstSeen = p.first_seen; o.lastSeen = p.last_seen; o.consentedAt = p.consented_at; o.exitedAt = p.exited_at || null; o.condition = p.condition || ""; o.aiSearch = p.ai_search; o.aiProduct = p.ai_product;
+    o.firstSeen = p.first_seen; o.lastSeen = p.last_seen; o.consentedAt = p.consented_at; o.exitedAt = p.exited_at || null; o.booked = p.booked_hotel || ""; o.condition = p.condition || ""; o.aiSearch = p.ai_search; o.aiProduct = p.ai_product;
   }
   for (const f of favs.rows) ensure(f.pid).favHotels.push({ id: f.hotel_id, name: f.name || f.hotel_id });
   for (const e of events.rows) ensure(e.pid).hotels.push({ id: e.hotel_id, name: e.name || e.hotel_id, rating: e.rating ?? null, reviewCount: e.review_count ?? null, seen: e.seen || 0, clicks: e.clicks || 0, listMs: Number(e.list_ms) || 0, detailMs: Number(e.detail_ms) || 0, reviewMs: Number(e.review_ms) || 0, reviewSeen: e.review_seen || 0, reviewTotal: e.review_total || 0, vote: e.choice || "", voteSource: e.source || "" });

@@ -604,6 +604,88 @@ function AboutSection({ listing }) {
   );
 }
 
+/* ----------------------- exit review: pick saves + one booking before finishing ----------------------- */
+function ExitReview({ pid, saves, onCancel, onFinish }) {
+  const [items, setItems] = useState(null);
+  const [stage, setStage] = useState(1);          // 1 = pick saves, 2 = pick the one to book
+  const [booked, setBooked] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [tx, setTx] = useState({});
+  useEffect(() => {
+    fetchJson(`/api/my-hotels?pid=${encodeURIComponent(pid)}`).then(a => setItems(Array.isArray(a) ? a : [])).catch(() => setItems([]));
+    loadConfig().then(c => setTx((c && c.exitTexts) || {}));
+  }, [pid]);
+  const savedItems = (items || []).filter(h => saves.has(h.id));
+  const confirm = async () => {
+    setBusy(true);
+    try { if (booked) await postJson("/api/book", { pid, hotelId: booked }); } catch {}
+    onFinish();
+  };
+  const Row = ({ h, right }) => (
+    <div style={{ display: "flex", gap: 10, alignItems: "center", border: `1px solid ${C.line}`, background: C.card, borderRadius: 10, padding: 10, marginBottom: 8 }}>
+      <span style={{ width: 56, height: 46, borderRadius: 8, overflow: "hidden", flex: "0 0 auto", background: C.sea }}>
+        {h.image ? <img src={h.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : null}
+      </span>
+      <span style={{ minWidth: 0, flex: 1 }}>
+        <span className="wp-text" style={{ display: "block", fontWeight: 700, fontSize: 13.5, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.name}</span>
+        <span style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: C.inkSoft }}>
+          <Buoys value={h.rating} size={9} /> {Number(h.rating).toFixed(1)} · {h.city}{h.price ? ` · ${h.price.replace(/^from\s*/i, "")}` : ""}
+        </span>
+      </span>
+      {right}
+    </div>
+  );
+  return (
+    <div role="dialog" aria-modal="true" aria-label="Before you finish" style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(18,43,51,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div style={{ background: C.card, borderRadius: 14, maxWidth: 560, width: "100%", maxHeight: "86vh", display: "flex", flexDirection: "column", boxShadow: "0 18px 60px rgba(18,43,51,.4)" }}>
+        <div style={{ padding: "22px 24px 12px" }}>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 0.5, color: C.inkSoft, marginBottom: 4 }}>STEP {stage} OF 2</div>
+          <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 20, fontWeight: 700, margin: "0 0 6px", color: C.ink }}>
+            {stage === 1 ? (tx.s1Title || "Which hotels would you save?") : (tx.s2Title || "Which one would you book?")}
+          </h2>
+          <p style={{ fontSize: 14, lineHeight: 1.6, color: C.inkSoft, margin: 0 }}>
+            {stage === 1
+              ? (tx.s1Text || "These are the hotels you looked at. Tap the heart on every hotel you would like to save.")
+              : (tx.s2Text || "From the hotels you saved, pick the one you would book (optional).")}
+          </p>
+        </div>
+        <div style={{ overflowY: "auto", padding: "4px 18px", flex: 1 }}>
+          {items === null && <div style={{ padding: 18, color: C.inkSoft, fontSize: 14 }}>Loading…</div>}
+          {items && stage === 1 && items.length === 0 && <div style={{ padding: 18, color: C.inkSoft, fontSize: 14 }}>You haven't opened any hotels this session.</div>}
+          {items && stage === 1 && items.map(h => (
+            <Row key={h.id} h={h} right={
+              <button type="button" onClick={() => saves.toggle(h.id, "exit")} aria-pressed={saves.has(h.id)} aria-label={saves.has(h.id) ? `Remove ${h.name} from saves` : `Save ${h.name}`}
+                className="wp-btn" style={{ display: "inline-flex", alignItems: "center", gap: 7, border: `1px solid ${saves.has(h.id) ? C.buoy : C.line}`, background: saves.has(h.id) ? "#FDEEE9" : "#fff", color: C.ink, borderRadius: 99, padding: "8px 14px", fontSize: 12.5, fontWeight: 700, minHeight: 38, flex: "0 0 auto" }}>
+                <HeartIcon filled={saves.has(h.id)} size={15} /> {saves.has(h.id) ? "Saved" : "Save"}
+              </button>
+            } />
+          ))}
+          {items && stage === 2 && savedItems.map(h => (
+            <Row key={h.id} h={h} right={
+              <button type="button" onClick={() => setBooked(b => b === h.id ? "" : h.id)} aria-pressed={booked === h.id}
+                className="wp-btn" style={{ border: `1px solid ${booked === h.id ? C.green : C.line}`, background: booked === h.id ? C.green : "#fff", color: booked === h.id ? "#fff" : C.ink, borderRadius: 99, padding: "8px 14px", fontSize: 12.5, fontWeight: 700, minHeight: 38, flex: "0 0 auto" }}>
+                {booked === h.id ? "Booking ✓" : "Book this one"}
+              </button>
+            } />
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", flexWrap: "wrap", padding: "14px 24px 20px", borderTop: `1px solid ${C.line}` }}>
+          {stage === 1 && <>
+            <button type="button" onClick={onCancel} className="wp-btn wp-ghost" style={{ border: `1px solid ${C.line}`, background: C.card, color: C.ink, borderRadius: 99, padding: "10px 18px", fontWeight: 600, minHeight: 42 }}>Keep browsing</button>
+            <button type="button" onClick={() => savedItems.length ? setStage(2) : confirm()} disabled={busy} className="wp-btn" style={{ background: C.ink, color: "#fff", border: "none", borderRadius: 99, padding: "10px 22px", fontWeight: 700, minHeight: 42, opacity: busy ? 0.7 : 1 }}>{savedItems.length ? "Next" : (busy ? "Finishing…" : "Finish")}</button>
+          </>}
+          {stage === 2 && <>
+            <button type="button" onClick={() => setStage(1)} className="wp-btn wp-ghost" style={{ border: `1px solid ${C.line}`, background: C.card, color: C.ink, borderRadius: 99, padding: "10px 18px", fontWeight: 600, minHeight: 42 }}>Back</button>
+            <button type="button" onClick={confirm} disabled={busy} className="wp-btn" style={{ background: C.ink, color: "#fff", border: "none", borderRadius: 99, padding: "10px 20px", fontWeight: 700, minHeight: 42, opacity: busy ? 0.7 : 1 }}>
+              {busy ? "Finishing…" : "Confirm & finish"}
+            </button>
+          </>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ----------------------- Coachmark tutorial (arrows pointing at real features) -----------------------
    Shown once per device, the first time a hotel list is opened. Each step highlights a real element
    (hotel card → Save button → Check button) with a spotlight ring and an arrow tooltip.
@@ -1712,6 +1794,13 @@ export default function App() {
               </span>
             )}
             <button type="button" onClick={() => page.name !== "home" && go({ name: "home" })} className="wp-btn wp-ghost" style={navBtn(page.name === "home")}>Destinations</button>
+            {pid && !finished && ui["exit.button"] !== false && (
+              <button id="wp-finish" type="button" onClick={() => setConfirmExit(true)} aria-label="Finish study"
+                className="wp-btn"
+                style={{ background: "#B3261E", color: "#fff", border: "none", borderRadius: 99, padding: "9px 18px", fontWeight: 700, fontSize: 14, minHeight: 40 }}>
+                Finish study
+              </button>
+            )}
 
           </nav>
         </div>
@@ -1751,6 +1840,9 @@ export default function App() {
         )}
       </main>
       {confirmExit && !finished && (
+        <ExitReview pid={pid} saves={savesApi} onCancel={() => setConfirmExit(false)} onFinish={finish} />
+      )}
+      {false && (
         <div role="dialog" aria-modal="true" aria-label="Finish study" style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(18,43,51,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
           <div style={{ background: C.card, borderRadius: 14, padding: 26, maxWidth: 440, width: "100%", boxShadow: "0 18px 60px rgba(18,43,51,.4)" }}>
             <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 20, fontWeight: 700, margin: "0 0 10px", color: C.ink }}>Finish and exit?</h2>
@@ -1774,15 +1866,6 @@ export default function App() {
             {pid && <div style={{ marginTop: 14, fontFamily: "'Roboto Mono', monospace", fontSize: 13, color: C.inkSoft }}>Participant ID: {pid}</div>}
           </div>
         </div>
-      )}
-      {pid && !finished && ui["exit.button"] !== false && (
-        <button id="wp-finish" type="button" onClick={() => setConfirmExit(true)} aria-label="Finish study"
-          className="wp-btn"
-          style={{ position: "fixed", right: 148, bottom: 18, zIndex: 900, display: "inline-flex", alignItems: "center", gap: 8,
-                   background: "#B3261E", color: "#fff", border: "none", borderRadius: 99, padding: "12px 20px", fontWeight: 700, fontSize: 14.5,
-                   boxShadow: "0 6px 20px rgba(179,38,30,.35)", minHeight: 46 }}>
-          Finish study
-        </button>
       )}
       <SavesFab allHotels={hotels} onOpen={l => { Track.click(l.id); go({ name: "detail", listing: l, from: "saves", cityKey: l.city }); }} />
     </div>
