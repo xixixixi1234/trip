@@ -547,7 +547,11 @@ app.get("/api/admin/export/participants.csv", requireAdmin, async (req, res) => 
     const csv = toCsv(
       ["participant_id", "hotels_liked", "hotels_disliked", "likes_on_search_page", "likes_on_product_page", "dislikes_on_search_page", "dislikes_on_product_page", "hotels_saved",
        "saves_before_product_page", "likes_before_product_page", "dislikes_before_product_page",
+<<<<<<< HEAD
        "hotels_viewed", "hotels_clicked", "avg_seconds_per_hotel", "total_seconds_on_site", "total_ms_on_site", "finished_at", "seconds_consent_to_finish", "booked_hotel_id", "booked_hotel_name", "bookmarked_site", "consented", "ai_summary_in_search_page", "ai_summary_in_product_page", "consent_time", "tutorial_completed_at", "first_seen", "last_seen"],
+=======
+       "hotels_viewed", "hotels_clicked", "avg_seconds_per_hotel", "total_seconds_on_site", "total_ms_on_site", "finished_at", "seconds_consent_to_finish", "booked_hotel_id", "booked_hotel_name", "bookmarked_site", "consented", "ai_summary_in_search_page", "ai_summary_in_product_page", "consent_time", "first_seen", "last_seen"],
+>>>>>>> b2fb50c81dda5d0feb8325b9e934911e89ad50cc
       rows
     );
     sendCsv(res, "participants.csv", csv);
