@@ -1192,7 +1192,7 @@ You can now close this window and return to the questionnaire."></textarea>
           </select></label>
         <label style="font-size:13px">Summary text weight
           <select id="aisBold" style="display:block;font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;margin-top:4px">
-            <option value="off">Normal</option><option value="on" selected>Bold (default)</option>
+            <option value="off" selected>Normal (default)</option><option value="on">Bold</option>
           </select></label>
         <label style="font-size:13px">Summary text size
           <select id="aisSize" style="display:block;font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;margin-top:4px">
@@ -1668,7 +1668,7 @@ You can now close this window and return to the questionnaire."></textarea>
     document.getElementById('welcomeText').value = d.welcome || d.welcomeDefault || '';
     elemDefs = d.elementList || []; renderElems(d.elements || {});
     document.getElementById('saveSize').value = d.saveSize || 'lg';
-    const ais = d.aiStyle || {}; aisBadge.value = ais.badge || 'lg'; aisBold.value = ais.bold || 'on'; aisSize.value = ais.size || 'sm'; aisBox.value = ais.box || 'off';
+    const ais = d.aiStyle || {}; aisBadge.value = ais.badge || 'lg'; aisBold.value = ais.bold || 'off'; aisSize.value = ais.size || 'sm'; aisBox.value = ais.box || 'off';
     const lu = d.listUi || {}; document.getElementById('listFirst').value = lu.first ?? '20'; document.getElementById('listNav').value = (lu.nav === 'scroll') ? 'scroll' : 'pages';
     document.getElementById('goodbyeText').value = d.goodbye || ''; document.getElementById('returnUrl').value = d.returnUrl || '';
     const ex=d.exitTexts||{}; ex1T.value=ex.s1Title||''; ex1X.value=ex.s1Text||''; ex2T.value=ex.s2Title||''; ex2X.value=ex.s2Text||'';
